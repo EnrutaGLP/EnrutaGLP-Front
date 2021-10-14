@@ -267,10 +267,15 @@ export default {
                 let fecha=hoy.getDate()+'-'+(hoy.getMonth()+1)+'-'+hoy.getFullYear();
                 let hora=hoy.getHours()+':'+hoy.getMinutes()+':'+hoy.getSeconds();
                 let fechaPedido=fecha+' '+hora;
+                let fechaEntregaAux=fechaEntrega.split('-');
+                fechaEntrega=fechaEntregaAux[2]+'-'+fechaEntregaAux[1]+'-'+fechaEntregaAux[0];
                 let fechaLimite=fechaEntrega+ ' ' + horaEntrega+':00';
                 this.editedItem.fechaHora=fechaLimite;
                 this.editedItem.estado="Pendiente";
                 this.editedItem.posiciones="("+posX+","+posY+")";
+                
+
+
                 console.log(fecha);
                 console.log(hora);
                 console.log(fechaPedido);
