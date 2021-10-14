@@ -283,9 +283,9 @@ export default {
                 this.verificarFormatoFecha(fechaPedido);
                 this.verificarFormatoFecha(fechaLimite);
                 let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
-                let aux=this.editedItem;
+
                 setTimeout(()=>{
-                    this.pedidos.push(aux);
+                    this.pedidos.push(this.editedItem);
                 },0);
                 this.editedItem={...this.defaultItem};
                 this.editedIndex=-1;
