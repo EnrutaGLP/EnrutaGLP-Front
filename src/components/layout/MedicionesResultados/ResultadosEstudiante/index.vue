@@ -87,8 +87,9 @@ export default {
                     posX:datas.ubicacionX,
                     posY:datas.ubicacionY,
                     fechaHora:datas.fechaLimite,
-                    estado:datas.estado.nombre,
-                    posiciones: "(" + datas.posX + "," + datas.posY + ")",
+                    //estado:datas.estado.nombre,
+                    estado:"En cola",
+                    posiciones: "(" + datas.ubicacionX + "," + datas.ubicacionY + ")",
                 }));
                 this.cargando=false;
             } catch (err) {
