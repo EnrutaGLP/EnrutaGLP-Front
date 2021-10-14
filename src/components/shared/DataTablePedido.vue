@@ -280,7 +280,7 @@ export default {
                 console.log(hora);
                 console.log(fechaPedido);
                 console.log(fechaLimite);
-                //let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
+                let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
                 let aux=this.editedItem;
                 setTimeout(()=>{
                     this.pedidos.push(aux);

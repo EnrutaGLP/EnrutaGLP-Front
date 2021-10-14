@@ -5,10 +5,9 @@ import * as base from '../../../../base-config.json';
 var direccion = "https://" + base.url + ':' + base.port;
 //const URL = "http://100.25.226.224:80";
 //const URL = "http://54.174.91.225:80";
-const URL = "localhost:8080";
+const URL = "http://localhost:8080";
 //const URL = direccion;
 var idPersonaLoggeada;
-axios.defaults.withCredentials = true;
 export function getAcceso(correo, constrasena) {
     setIdPersonaLoggeada(correo, constrasena);
     return axios.post(URL + "/acceso", {
@@ -998,13 +997,15 @@ export function porcentajesLogrosResultadosEstudianteHistoricos(idEspecialidad,i
 
 //#region pedidos
 export function getPedidos(){
-    return axios.post(URL+"/pedidos/listar");
+    return axios.get(URL+"/pedidos/listar");
 }
 export function setPedido(codigo,cliente,cantidadGLP,posX,posY,fechaPedido,fechaLimite){
+    console.log(fechaPedido);
+    console.log(fechaLimite);
     return axios.post(URL+"/pedidos/registrar",{
         "codigo":codigo,
         "cliente":cliente,
-        "cantidadGLP":cantidadGLP,
+        "cantidadGlp":cantidadGLP,
         "ubicacionX":posX,
         "ubicacionY":posY,
         "fechaPedido":fechaPedido,
