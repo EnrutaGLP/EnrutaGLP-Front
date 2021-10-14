@@ -83,12 +83,12 @@ export default {
                     idPedido: datas.id,
                     codigo: datas.codigo,
                     razonSocial:datas.cliente,
-                    glp:datas.cantidadGLP,
+                    glp:datas.cantidadGlp,
                     posX:datas.ubicacionX,
                     posY:datas.ubicacionY,
                     fechaHora:datas.fechaLimite,
                     estado:datas.estado.nombre,
-                    posiciones: "(" + datas.pos_x + "," + datas.pos_y + ")",
+                    posiciones: "(" + datas.posX + "," + datas.posY + ")",
                 }));
                 this.cargando=false;
             } catch (err) {
