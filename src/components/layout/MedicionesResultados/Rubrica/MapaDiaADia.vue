@@ -147,7 +147,7 @@ export default {
                 p5.textSize(11);
                 for(let i=0;i<this.camionesUbicacionActual.length;i++){
                     p5.ellipse(14*this.camionesUbicacionActual[i].ubicacionActualX,14*this.camionesUbicacionActual[i].ubicacionActualY,14,14);
-                    p5.text(this.camionesUbicacionActual[i].codigo,14*this.camionesUbicacionActual[i].ubicacionActualX-14,14*this.camionesUbicacionActual[i].ubicacionActualX+14);
+                    p5.text(this.camionesUbicacionActual[i].codigo,14*this.camionesUbicacionActual[i].ubicacionActualX-14,14*this.camionesUbicacionActual[i].ubicacionActualY+14);
                 }
             };
             p5.dibujarCuadricula = () => {
