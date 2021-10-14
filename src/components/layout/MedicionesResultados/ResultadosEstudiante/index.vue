@@ -78,7 +78,8 @@ export default {
         async listarPedidos() {
             try {
                 const data = await getPedidos();
-                this.pedidos = data.data.map((datas) => ({
+                console.log(data);
+                this.pedidos = data.data.data.map((datas) => ({
                     idPedido: datas.id,
                     codigo: datas.codigo,
                     razonSocial:datas.cliente,
