@@ -261,25 +261,27 @@ export default {
                 return false;
             }
         },
+        verificarFormatoFecha(fecha){
+            let fechaSplit=fecha.split
+        },
         async anadirPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaEntrega,horaEntrega){
             try{
                 let hoy=new Date();
                 let fecha=hoy.getDate()+'-'+(hoy.getMonth()+1)+'-'+hoy.getFullYear();
-                let hora=hoy.getHours()+':'+hoy.getMinutes()+':'+hoy.getSeconds();
+                let hora=hoy.getHours()+':'+hoy.getMinutes()+':'+'11';
                 let fechaPedido=fecha+' '+hora;
                 let fechaEntregaAux=fechaEntrega.split('-');
                 fechaEntrega=fechaEntregaAux[2]+'-'+fechaEntregaAux[1]+'-'+fechaEntregaAux[0];
-                let fechaLimite=fechaEntrega+ ' ' + horaEntrega+':00';
+                
+                let fechaLimite=fechaEntrega+ ' ' + horaEntrega+':11';
                 this.editedItem.fechaHora=fechaLimite;
                 this.editedItem.estado="Pendiente";
                 this.editedItem.posiciones="("+posX+","+posY+")";
                 
-
-
-                console.log(fecha);
-                console.log(hora);
                 console.log(fechaPedido);
                 console.log(fechaLimite);
+                this.verificarFormatoFecha(fechaPedido);
+                this.verificarFormatoFecha(fechaLimite);
                 let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
                 let aux=this.editedItem;
                 setTimeout(()=>{
