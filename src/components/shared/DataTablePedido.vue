@@ -226,7 +226,7 @@ export default {
             console.log(this.fechaEntrega);
             console.log(this.horaEntrega);
             this.$nextTick(() => {
-                this.editedItem = { ...this.defaultItem };
+                //this.editedItem = { ...this.defaultItem };
                 this.fechaEntrega="";
                 this.horaEntrega="";
                 this.editedIndex = -1;
@@ -275,7 +275,7 @@ export default {
                 
                 let fechaLimite=fechaEntrega+ ' ' + horaEntrega+':11';
                 this.editedItem.fechaHora=fechaLimite;
-                this.editedItem.estado="Pendiente";
+                this.editedItem.estado="En cola";
                 this.editedItem.posiciones="("+posX+","+posY+")";
                 
                 console.log(fechaPedido);
@@ -283,9 +283,10 @@ export default {
                 this.verificarFormatoFecha(fechaPedido);
                 this.verificarFormatoFecha(fechaLimite);
                 let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
-
+                let aux = this.editedItem;  
+                console.log("aux:",aux);
                 setTimeout(()=>{
-                    this.pedidos.push(this.editedItem);
+                    this.pedidos.push(aux);
                 },0);
                 this.editedItem={...this.defaultItem};
                 this.editedIndex=-1;
