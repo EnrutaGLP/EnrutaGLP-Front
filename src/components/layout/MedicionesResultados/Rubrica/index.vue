@@ -28,7 +28,10 @@
                 {{textoAlerta}}
             </v-alert>
             <div class="mapa">
-                <MapaDiaADia/>
+                <MapaDiaADia
+                    v-bind:averia="nuevaAveria"
+                />
+                
             </div>
             <div class="row">
                 <div class="col sm-5">
@@ -41,6 +44,7 @@
 
 <script>
 import MapaDiaADia from '../Rubrica/MapaDiaADia.vue'
+import LeyendaMapa from '../../../shared/LeyendaMapa.vue'
 import {
     setAveria, setBloqueosMasivo
 } from '../../../util/services/index';
@@ -58,6 +62,7 @@ export default {
         AveriasDialog,
         ModalInputFileUsuarios,
         MapaDiaADia,
+        LeyendaMapa,
     },
     data() {
         return {
@@ -66,12 +71,13 @@ export default {
             hayAlerta: false,
 
             cargaBloqueos:false,
+
+            nuevaAveria:"",
         };
     },
     methods: {
         async subirBloqueos(listaBloqueos){
             this.cargaBloqueos=true;
-            console.log("xd");
             console.log(listaBloqueos);
             try{
                 let data=await setBloqueosMasivo(listaBloqueos);
@@ -84,11 +90,16 @@ export default {
             }
         },
         async registroAveria(dato){
-            console.log(dato);
             try {
-                let data=await setAveria(dato);
-                console.log(data);
-                this.manejarAlerta(0,0);
+                //let data=await setAveria(dato);
+                //console.log(data);
+                //data.data.status!="error"
+                if(true){
+                    this.nuevaAveria=dato;
+                    this.manejarAlerta(0,0);
+                }else{
+                    this.manejarAlerta(1,0);
+                }
             } catch (err) {
                 this.manejarAlerta(1,0);
             }

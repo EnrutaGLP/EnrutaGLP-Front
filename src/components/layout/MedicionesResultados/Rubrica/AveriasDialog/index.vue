@@ -22,16 +22,17 @@
             <v-card-title>
                 <span class="headline">Ingrese el camión con la avería</span>
             </v-card-title>
-            <v-card-text>
-                <v-text-field
-                    v-model="codigo"
-                    label="Código del camión"
-                    :rules="[rules.required]"
-                    counter
-                    maxlength="50"
-                ></v-text-field>
-            </v-card-text>
-
+            <v-form  ref="form">
+                <v-card-text>
+                    <v-text-field
+                        v-model="codigo"
+                        label="Código del camión"
+                        :rules="[rules.required]"
+                        counter
+                        maxlength="50"
+                    ></v-text-field>
+                </v-card-text>
+            </v-form>
             <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn
@@ -81,6 +82,8 @@ export default {
 
     methods: {
         close() {
+            this.codigo="";
+            this.$refs.form.resetValidation();
             this.dialog = false;
         },
 
