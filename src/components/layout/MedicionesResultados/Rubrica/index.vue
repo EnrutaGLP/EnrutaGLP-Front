@@ -20,6 +20,7 @@
                 </v-row>
             </div>
             <br>
+            <br>
             <v-alert
                 :value="hayAlerta"
                 v-bind:type="tipoAlerta"
@@ -44,9 +45,8 @@
 
 <script>
 import MapaDiaADia from '../Rubrica/MapaDiaADia.vue'
-import LeyendaMapa from '../../../shared/LeyendaMapa.vue'
 import {
-    setAveria, setBloqueosMasivo
+    setAveria, setBloqueosMasivo, setConfiguracionDiaADia
 } from '../../../util/services/index';
 import Title from '../../../shared/Title.vue';
 import BackButton from '../../../shared/BackButton.vue';
@@ -62,7 +62,6 @@ export default {
         AveriasDialog,
         ModalInputFileUsuarios,
         MapaDiaADia,
-        LeyendaMapa,
     },
     data() {
         return {
@@ -110,7 +109,7 @@ export default {
                 if(accion==0) {
                     this.textoAlerta="Se registró exitosamente la avería";
                 }else if(accion==1){
-                    this.textoAlerta="Se registraron exitosamente los bloqueos";
+                    this.textoAlerta="Se registraron los bloqueos";
                 }
             }else {
                 this.tipoAlerta="error";
@@ -128,7 +127,12 @@ export default {
     },
 
     async created() {
-        
+        try {
+            let data=await setConfiguracionDiaADia();
+            console.log(data);
+        } catch (err) {
+            console.log(err);
+        }
     },
 };
 </script>

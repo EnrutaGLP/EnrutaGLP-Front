@@ -88,11 +88,12 @@ export default {
                     posY:datas.ubicacionY,
                     fechaHora:datas.fechaLimite,
                     //estado:datas.estado.nombre,
-                    estado:"En cola",
+                    estado:datas.estado,
                     posiciones: "(" + datas.ubicacionX + "," + datas.ubicacionY + ")",
                 }));
                 this.cargando=false;
             } catch (err) {
+                console.log(err);
                 this.pedidos=[
                     {idPedido: 1, codigo:"G-12231",razonSocial:"Cliente 1",glp:150,posX:10,posY:10,fechaHora:"10/08/2021-09:00",estado:"Entregado", posiciones:"(10,10)"},
                     {idPedido: 2, codigo:"G-12232",razonSocial:"Cliente 2",glp:13,posX:70,posY:30,fechaHora:"11/08/2021-09:00",estado:"Pendiente", posiciones:"(70,30)"},

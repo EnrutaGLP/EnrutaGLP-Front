@@ -6,13 +6,14 @@
         >
             <template v-slot:activator="{ on, attrs }">
                 <div>
-                    <v-progress-circular :value="40" indeterminate v-if="cargando"></v-progress-circular>
                     <v-btn class="btnImportar"
                         v-bind="attrs"
                         v-on="on"
+                        :loading="cargando"
+                        dark
+                        color="#7434EB"
                     >
-                    <v-icon dark left>mdi-file-import-outline</v-icon>
-                        Importar Alumnos
+                        Importar Pedidos
                     </v-btn>
                 </div>
             </template>
@@ -22,9 +23,6 @@
                 </v-card-title> 
                 <hr>
                 <v-card-text>
-                    <span>Solo se admiten archivos con extensión .xls</span>
-                    <br/>
-                    <span>Este archivo lo puede descargar del Campus Virtual en la sección de Cursos y Actividades > Curso > Alumnos > Copiar a disco</span>
                     <br>
                     <div class="inputFile">
                         <InputFileAlumnos 
@@ -50,7 +48,7 @@
                         class="btnGuardarModal"
                         @click="enviarAlumnosATabla"
                     ><v-icon left>mdi-check</v-icon>
-                        OK
+                        Subir
                     </v-btn>
                 </v-card-actions>
             </v-card>
@@ -108,7 +106,6 @@ export default {
     }
 
     .btnImportar {
-        background-color: var(--wb2) !important;
         margin-left: 15px;
     }
 

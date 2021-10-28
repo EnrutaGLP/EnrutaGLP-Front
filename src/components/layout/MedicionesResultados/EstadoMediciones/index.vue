@@ -1,48 +1,71 @@
 <template>
     <div class="contenedorPrincipal">
-        <div class="resultadosEstudiante">
-            <Title texto="Mediciones y Resultados > Estado de las mediciones" :usarBotonAyuda=true urlKey="estadoMediciones"/>
+        <div class="simulaciones">
+            <Title texto="Simulaciones"/>
             <br>
-            <div class="row">
-                <div>
-                    <table allign="left" cellpadding="5">
-                        <tr>
-                            <div class="col sm-12">
-                                <td>Especialidad: </td>
-                            </div>
-                            <td class="col sm-12">
-                                <Select
-                                    class="selectResultadosEstudiante"
-                                    texto="Seleccione una especialidad"
-                                    v-on:cambio-seleccion="cambioEspecialidad"
-                                    v-bind:items="especialidades"
-                                    v-model="especialidadSeleccionada"
-                                    :value="especialidadSeleccionada"
-                                    v-if="tieneMasDeUnaEsp" 
-                                />
-                                <p v-if="!tieneMasDeUnaEsp">{{nombreUnicaEsp}}</p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+            <div class="botones">
+                <v-row>
+                    <v-col>
+                        <ModalInputFileAlumnos
+                            :disabled="false"
+                            v-on:importarDatos="subirPedidos"
+                            :cargando="cargaPedidos"
+                        />
+                    </v-col>
+                    <v-col>
+                        <ModalInputFileUsuarios
+                            :disabled="false"
+                            v-on:importarDatos="subirBloqueos"
+                            :cargando="cargaBloqueos"
+                        />
+                    </v-col>
+                </v-row>
             </div>
-            <Alert
-                :senalAlerta="senalAlerta"
-                :textoAlerta="textoAlerta"
-                :hayAlert="hayAlert"
-            />
-            <div class="DataTableEstadoMediciones">
-                <DataTableMuestras 
-                    :headers="cabeceras"
-                    :dataList="muestras"
-                    @cambioEstado="enviarEstado"
-                    @linkTo="goTo"
+            <p v-if="importoArchivos">Debe importar el archivo de pedidos y bloqueos antes de empezar la simulación</p>
+            <br>
+            <br>
+            <v-alert
+                :value="hayAlerta"
+                v-bind:type="tipoAlerta"
+                transition="scale-transition"
+            >
+                {{textoAlerta}}
+            </v-alert>
+            <div class="controlesSimulacion">
+                <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    small
+                    color="#7434EB"
+                    :disabled="importoArchivos"
+                    @click="dioPlay"
+                >
+                    <v-icon>mdi-play</v-icon>
+                </v-btn>
+                <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    small
+                    color="#7434EB"
+                    :disabled="importoArchivos"
+                    @click="dioStop"
+                >
+                    <v-icon>mdi-stop</v-icon>
+                </v-btn>
+            </div>
+            <br>
+            <div class="mapa">
+                <MapaDiaADia
+                    esSimulacion=1
+                    :reanudoSimulacion="reanudoSimulacion"
                 />
+                
             </div>
-            <br>
             <div class="row">
                 <div class="col sm-5">
-                    <BackButton />
+                    <BackButton></BackButton>
                 </div>
             </div>
         </div>
@@ -50,214 +73,115 @@
 </template>
 
 <script>
-import { 
-    getEspecialidadesPorFacultad, 
-    getMuestrasXEspecialidad, 
-    cambiarEstadoMuestra 
+import MapaDiaADia from '../Rubrica/MapaDiaADia.vue'
+import {
+    setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionTresDias
 } from '../../../util/services/index';
-import BackButton from '../../../shared/BackButton.vue';
-import Select from '../../../shared/Select.vue';
 import Title from '../../../shared/Title.vue';
-import Alert from '../../../shared/Alert.vue';
-import DataTableMuestras from './DataTableMuestras';
-import * as CryptoJS from 'crypto-js';
+import BackButton from '../../../shared/BackButton.vue';
+import ModalInputFileUsuarios from "../../../shared/ModalInputFileUsuarios.vue";
+import ModalInputFileAlumnos from "../../../shared/ModalInputFileAlumnos.vue";
 
 export default {
-    name: 'EstadoMediciones',
+    name: 'Simulaciones',
     components: {
         BackButton,
-        Select,
         Title,
-        Alert,
-        DataTableMuestras,
+        ModalInputFileUsuarios,
+        ModalInputFileAlumnos,
+        MapaDiaADia,
     },
     data() {
         return {
-            especialidades: [], // lista de las especialidades
-            id_persona: -1,
-            filtros: {
-                idEspecialidad: 0,
-                idCiclo: -1,
-            },
-            tieneMasDeUnaEsp: true,
-            nombreUnicaEsp: '',
-            textoAlerta: "",
-            senalAlerta: '',
-            hayAlert: false,
-            datosUsuario: {},
-            acceso: -1,
-            cabeceras: [
-                    {
-                        text: "Espacio de Medición",
-                        align: "start",
-                        sortable: true,
-                        value: "medicion",
-                    },
-                    { text: "Muestra", value: "muestra" },
-                    { text: "Profesores", value: "profesores" },
-                    { text: "Estado", value: "estado", sortable: true },
-                ],
-            muestras: [],
-            data: {},
-            especialidadSeleccionada: 0,
+            tipoAlerta:"success",
+            textoAlerta:"",
+            hayAlerta: false,
+
+            cargaBloqueos:false,
+            cargaPedidos:false,
+
+            importoPedidos:false,
+            importoBloqueos:false,
+
+            reanudoSimulacion:false,
         };
     },
     methods: {
-        goTo(item) {
-            this.$router.push({
-                name: 'MedicionesDetalle',
-                params: {
-                    curso: item.medicion,
-                    horario: item.muestra,
-                    idMuestra: item.idMuestra,
-                    idSemestre: this.data.semestre.id_semestre,
-                    nombreSemestre: this.data.semestre.nombre,
-                    terminar: !item.estado,
-                },
-            });
-        },
-        enviarEstado(item){
-            cambiarEstadoMuestra(item.idMuestra, !item.estado)
-                .catch((e) => {
-                    console.error("Error al cambiar los estados:", e);
-                    this.manejarAlerta(2, 1);
-                }).then(() => {
-                    this.manejarAlerta(0,0)
-                })
-        },
-        getProfesores(profesores){
-            let profesoresCad = "";
-            profesores.forEach((item, index) => {
-                if(index)
-                    profesoresCad += `, ${item.nombre}`;
-                else
-                    profesoresCad = item.nombre;
-            });
-            return profesoresCad;
-        },
-        cambioEspecialidad(dato=1) {
-            this.filtros.idEspecialidad = dato;
-            this.manejarPromesa(this.filtros.idEspecialidad);
-        },
-        cambioSemestre(dato){
-            this.filtros.idCiclo=dato;
-            this.manejarPromesa(this.filtros.idEspecialidad);
-        },
-        async manejarPromesa(idEsp) {
-            try {
-                // obtener las muestras
-                getMuestrasXEspecialidad(idEsp).catch((e) => {
-                    console.error("Error al obtener las muestras:", e);
-                }).then(result => {
-                    this.data = result.data;
-                    if(this.data.status == "error" && this.data.message == "plan_medicion"){
-                        this.manejarAlerta(3, 0);
-                        this.muestras = [];
-                        return;
-                    }
-                    // llenar arreglo de muestras
-                    this.muestras = this.data.muestrasEvaluacion.map( item => {
-                        return {
-                            idMuestra: item.idMuestra, 
-                            medicion: item.nombreMedicion, 
-                            muestra: item.nombreMuestra, 
-                            profesores: this.getProfesores(item.profesores), 
-                            estado: !item.terminado,
-                        }
-                    });
-                })
-            } catch (err) {
-                console.error("Error listar mediciones: ", err);
+        async subirBloqueos(listaBloqueos){
+            this.cargaBloqueos=true;
+            console.log(listaBloqueos);
+            try{
+                let data=await setBloqueosMasivo(listaBloqueos);
+                console.log(data);
+                this.cargaBloqueos=false;
+                this.importoBloqueos=true;
+                this.manejarAlerta(0,1);
+            }catch(err){
+                this.cargaBloqueos=false;
+                this.manejarAlerta(1,1);
             }
         },
-        async listarEspecialidades(idFacultad) {
-            let listaEspecialidades = [];
-            this.resultadosEstudianteConId=[];
+        async subirPedidos(listaPedidos){
+            this.cargaPedidos=true;
+            console.log(listaPedidos);
             try {
-                const data = await getEspecialidadesPorFacultad(idFacultad);
-                //console.log(data);
-                listaEspecialidades = data.data.especialidades;
-                listaEspecialidades.forEach(element => {
-                    this.especialidades.push({text: element.nombre, value: element.id_especialidad});
-                });
-                this.especialidades.sort((a,b) => a.text.charCodeAt(0) - b.text.charCodeAt(0));
+                let data=await setPedidosMasivo(listaPedidos);
+                console.log(data);
+                this.cargaPedidos=false;
+                this.importoPedidos=true;
+                this.manejarAlerta(0,0);
             } catch (err) {
-                console.error("Error en el listado de especialidades: ", err);
+                this.cargaPedidos=false;
+                this.manejarAlerta(1,0);
             }
         },
         manejarAlerta(tipo, accion) {
             if (tipo == 0) {
-                this.hayAlert=!this.hayAlert;
-                this.senalAlerta=tipo;
-                if(accion==0) {//registro
-                    this.textoAlerta="Se cambió el estado de la medición";
-                } else if (accion==1) {//editar
-                    this.textoAlerta="Se cambió el estado de la medición";
-                } else {//delete
-                    this.textoAlerta="Se cambió el estado de la medición";
+                this.tipoAlerta="success";
+                if(accion==0) {
+                    this.textoAlerta="Se registró exitosamente los pedidos";
+                }else if(accion==1){
+                    this.textoAlerta="Se registraron los bloqueos";
                 }
-            } else if (tipo == 2){
-                this.hayAlert=!this.hayAlert;
-                this.senalAlerta=tipo;
-                if (accion==0) {//registro
-                    this.textoAlerta="No existen mediciones para esta especialidad";
-                } else if(accion==1) {//editar
-                    this.textoAlerta="Hubo un error al cambiar el estado de la medición";
-                } else {//delete
-                    this.textoAlerta="Hubo un error al cambiar el estado de la medición";
+            }else {
+                this.tipoAlerta="error";
+                if(accion==0) {
+                    this.textoAlerta="Hubo un error al registrar los pedidos";
+                }else if(accion==1){
+                    this.textoAlerta="Hubo un error al registrar los bloqueos";
                 }
-            } else {
-                    this.hayAlert=!this.hayAlert;
-                    this.senalAlerta=tipo;
-                    if (accion==0) {//registro
-                        this.textoAlerta="No existen mediciones para esta especialidad";
-                    } else if(accion==1) {//editar
-                        this.textoAlerta="Hubo un error al cambiar el estado de la medición";
-                    } else {//delete
-                        this.textoAlerta="Hubo un error al cambiar el estado de la medición";
-                    }
             }
-        }
+            this.hayAlerta=true;
+            setTimeout(() => {
+                this.hayAlerta = false;
+            }, 2000);
+        },
+        async dioPlay(){
+            this.reanudoSimulacion=true;
+            try {
+                let data=await setConfiguracionSimulacionTresDias();
+                console.log(data);
+            } catch (err) {
+                console.log(err);
+            }
+        },
+        async dioStop(){
+            this.reanudoSimulacion=false;
+            try {
+                let data=await setConfiguracionDiaADia();
+                console.log(data);
+            } catch (err) {
+                console.log(err);
+            }
+        },
+    },
+    computed:{
+        importoArchivos:function(){
+            return !(this.importoPedidos&&this.importoBloqueos);
+        }  
     },
     async created() {
-        try{
-            let acces = localStorage.getItem('acceso');
-            if (!acces) {
-                this.$router.push('/login');
-            }
-            this.acceso = CryptoJS.AES.decrypt(localStorage.getItem('acceso'), 'acceso');
-            this.acceso = this.acceso.toString(CryptoJS.enc.Utf8);
-            if (this.acceso == 0) {
-                this.$router.push('/login');
-            } else if (this.acceso < 2) {
-                this.$router.push('/home');
-            }
-            this.id_persona = CryptoJS.AES.decrypt(localStorage.getItem('id_persona'), 'id_persona');
-            this.id_persona = this.id_persona.toString(CryptoJS.enc.Utf8);
-            let jsonStrDesencriptado=CryptoJS.AES.decrypt(localStorage.getItem('json'),'json');
-            this.datosUsuario=JSON.parse(jsonStrDesencriptado.toString(CryptoJS.enc.Utf8));
-            if(this.acceso<7){//no admin
-                for(let i of this.datosUsuario.facultades)
-                    await this.listarEspecialidades(i.id_facultad);
-                this.datosUsuario.especialidaes.forEach(element=>{
-                    this.especialidades.push({text:element.nombre, value:element.id_especialidad});
-                });
-                this.especialidades.sort((a,b) => a.text.charCodeAt(0) - b.text.charCodeAt(0));
-                if(this.especialidades.length===1){
-                    this.tieneMasDeUnaEsp=false;
-                    this.nombreUnicaEsp=this.especialidades[0].text;
-                    this.cambioEspecialidad(this.especialidades[0].value);
-                }
-                // debug
-                this.especialidadSeleccionada = this.especialidades[0];
-                this.cambioEspecialidad(this.especialidades[0].value);
-                this.filtros.idEspecialidad=this.especialidades[0].value;
-            }else{//admin
-                this.$router.push('/home');
-            }
-        }catch(err){
-            
-        }
+        
     },
     mounted() {
 
@@ -265,10 +189,7 @@ export default {
 };
 </script>
 <style scoped>
-    .selectSemestre{
-        width: 8rem !important;
-    }
-    .filtroEspecialidad{
-        width : 100px !important;
+    .botones{
+        float:right;
     }
 </style>

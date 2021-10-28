@@ -1,21 +1,30 @@
 <template>
-    <div>
+    <div class = "mapaEntero">
         <div id="canvas" class="mapa"></div>
-        
+        <div class="rutasCamiones">
+            <p class="tituloRutas">Rutas:</p>
+            <div class="rutas" :key="camionUbicacionActual.id" v-for="camionUbicacionActual in camionesUbicacionActual">
+                <span>Camión: {{camionUbicacionActual.codigo}}</span>
+                <div>Placa: {{camionUbicacionActual.placa}}</div>
+                <span>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</span>
+                <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
 import {getCamionesUbicacionesActuales} from '../../../util/services/index';
-import LeyendaMapa from '../../../shared/LeyendaMapa.vue'
 
 export default {
     props:[
-        'averia'
+        'averia',
+        'esSimulacion',
+        'reanudoSimulacion',
     ],
     components:{
-        LeyendaMapa,
+
     },  
     name:"MapaDiaADia",
     data(){
@@ -26,7 +35,7 @@ export default {
             stompClient:null,
             socket:null,
 
-            escalaPixeles:14,
+            escalaPixeles:10,
             tamXMapa:70,
             tamYMapa:50,
             almacenCentralPosX:12,
@@ -50,9 +59,9 @@ export default {
             try{
                 /*const data=await getCamionesUbicacionesActuales();
                 console.log(data);
-                this.camionesUbicacionActual=data.data.data.camiones;
+                this.camionesUbicacionActual=data.data.data.otros;
                 this.bloqueosActuales=data.data.data.bloqueos;
-                this.averiasActuales=data.data.data.averias;*/
+                this.averiasActuales=data.data.data.averiados;*/
                 this.camionesUbicacionActual=[
                     {
                         id:1,
@@ -68,7 +77,7 @@ export default {
                         }
                     },
                     {
-                        id:1,
+                        id:2,
                         codigo:"TA02",
                         placa:"ABC-122",
                         ubicacionActualX:40,
@@ -89,8 +98,21 @@ export default {
                         cargaActualGLP:20,
                         cargaActualPetroleo:10,
                         estado:{
-                            id:4,
-                            nombre:"Averiado",
+                            id:1,
+                            nombre:"En ruta",
+                        }
+                    },
+                    {
+                        id:4,
+                        codigo:"TA04",
+                        placa:"ABC-127",
+                        ubicacionActualX:30,
+                        ubicacionActualY:38,
+                        cargaActualGLP:20,
+                        cargaActualPetroleo:10,
+                        estado:{
+                            id:1,
+                            nombre:"En ruta",
                         }
                     },
                 ];
@@ -120,18 +142,6 @@ export default {
                         ubicacionY:45,
                     },
                 ];
-                /*
-                this.averiasActuales=[
-                    {
-                        ubicacionX:40,
-                        ubicacionY:49,
-                    },
-                    {
-                        ubicacionX:42,
-                        ubicacionY:49,
-                    },
-                ];
-                */
             }catch(err){
                 
             }
@@ -190,16 +200,25 @@ export default {
                 }
             }
         },
-        /*actualizarDatos(datos){
-            this.camionesUbicacionActual=datos.camiones;
-            this.bloqueosActuales=datos.bloqueos;
-            this.averiasActuales=datos.averias;
-        },*/
+        actualizarDatos(datos){
+            if(this.esSimulacion){
+                if(this.reanudoSimulacion){
+                    this.camionesUbicacionActual=datos.camiones;
+                    this.bloqueosActuales=datos.bloqueos;
+                    this.averiasActuales=datos.averias;
+
+                }
+            }else{
+                this.camionesUbicacionActual=datos.camiones;
+                this.bloqueosActuales=datos.bloqueos;
+                this.averiasActuales=datos.averias;
+            }
+        },
     },
     mounted(){
         this.script = p5 => {
             p5.setup = () => {
-                //escala de 70 * 14
+                //escala de 70 * 10
                 //20*this.escalaPixeles, espacio para la leyenda
                 p5.createCanvas(70*this.escalaPixeles+20*this.escalaPixeles,50*this.escalaPixeles);
             };
@@ -210,8 +229,8 @@ export default {
                 p5.dibujarAlmacenes();
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
-                //p5.actualizarAverias();
                 p5.registrarAveria();
+                //p5.actualizarAverias();
                 p5.actualizarBloqueos();
             };
             p5.dibujarLeyenda = () => {
@@ -266,14 +285,6 @@ export default {
                 p5.fill(c);
                 p5.text("Cliente",margenMapaYLeyenda+10,127);
             };
-            /*p5.actualizarAverias = () => {
-                let c=p5.color("#815C97");
-                p5.fill(c);
-                for(let i=0;i<this.averiasActuales.length;i++){
-                    p5.ellipse(this.escalaPixeles*this.averiasActuales[i].ubicacionX,
-                    this.escalaPixeles*this.averiasActuales[i].ubicacionY,this.escalaPixeles,this.escalaPixeles);
-                }
-            };*/
             p5.registrarAveria = () => {
                 if(this.seRegistroAveria){
                     let c=p5.color("#FF0000");
@@ -282,8 +293,22 @@ export default {
                     this.escalaPixeles*this.averiaPosY,this.escalaPixeles,this.escalaPixeles);
                 }
             };
+            p5.actualizarAverias = () => {
+                let c=p5.color("#FF0000");
+                p5.fill(c);
+                p5.textSize(this.escalaPixeles);
+                for(let i=0;i<this.averiasActuales.length;i++){
+                    p5.fill(c);
+                    p5.ellipse(this.escalaPixeles*this.averiasActuales[i].ubicacionActualX,
+                    this.escalaPixeles*this.averiasActuales[i].ubicacionActualY,this.escalaPixeles,this.escalaPixeles);
+                    p5.text(this.averiasActuales[i].codigo,
+                    this.escalaPixeles*this.averiasActuales[i].ubicacionActualX-this.escalaPixeles,
+                    this.escalaPixeles*this.averiasActuales[i].ubicacionActualY+this.escalaPixeles);
+                }
+            };
             p5.actualizarBloqueos = () => {
                 p5.stroke("#FF0000");
+                p5.strokeWeight(5);
                 for(let i=0;i<this.bloqueosActuales.length-1;i++){
                     p5.line(this.escalaPixeles*this.bloqueosActuales[i].ubicacionX,
                     this.escalaPixeles*this.bloqueosActuales[i].ubicacionY,
@@ -292,16 +317,17 @@ export default {
                 }
                 let c=p5.color("#FF0000");
                 p5.fill(c);
-                p5.ellipse(this.escalaPixeles*this.bloqueosActuales[0].ubicacionX,
+                /*p5.ellipse(this.escalaPixeles*this.bloqueosActuales[0].ubicacionX,
                 this.escalaPixeles*this.bloqueosActuales[0].ubicacionY,this.escalaPixeles,this.escalaPixeles);
                 p5.ellipse(this.escalaPixeles*this.bloqueosActuales[this.bloqueosActuales.length-1].ubicacionX,
                 this.escalaPixeles*this.bloqueosActuales[this.bloqueosActuales.length-1].ubicacionY,
-                this.escalaPixeles,this.escalaPixeles);
+                this.escalaPixeles,this.escalaPixeles);*/
+                p5.strokeWeight(1);
             };
             p5.actualizarCamiones = () => {
                 let c=p5.color("#0000FF");
                 p5.fill(c);
-                p5.textSize(11);
+                p5.textSize(this.escalaPixeles);
                 for(let i=0;i<this.camionesUbicacionActual.length;i++){
                     if(this.camionesUbicacionActual[i].estado.nombre=="Averiado"){
                         c=p5.color("#FF0000");
@@ -365,22 +391,52 @@ export default {
                     this.averiaPosY=-1;
                 },3000);
             }
-        }
+        },
     },
     async created(){
-        await this.obtenerPosicionesYBloqueosActuales();
-        /*this.socket=new SockJS('http://localhost:8080');
+        /*this.socket=new SockJS('http://44.198.125.137:8080');
         this.stompClient=Stomp.over(socket);
         this.stompClient.connect({},function(frame){
             this.stompClient.subscribe('camiones/ubicaciones',function(datos){
                 console.log(datos);
                 this.actualizarDatos(datos.data.data);
-            })
+            });
         })*/
-        setInterval(this.actualizarCamionesMapa,10000);
+        if(!this.esSimulacion){
+            await this.obtenerPosicionesYBloqueosActuales();
+            
+            setInterval(this.actualizarCamionesMapa,10000);
+        }else{
+
+        }
     }
 }
 </script>
 <style>
-    
+    .rutasCamiones{
+        width:300px;
+        height: 500px;
+        background: #FFFFFF;
+        overflow-y:scroll;
+        float:right;
+        margin-left: 4rem;
+    }
+    .mapa{
+        float:left;
+    }
+    .tituloRutas{
+        text-decoration: underline;
+        text-align: center;
+    }
+    .rutas{
+        font-size: 13px;
+        margin-left: 25px;
+        margin-bottom: 10px;
+        padding: 0.5rem;
+        width: 250px;
+        height: 150px;
+        overflow-y:scroll;
+        border-style: ridge;
+        background: #B6B6E3;
+    }
 </style>

@@ -9,7 +9,7 @@
 </template>
 
 <script>
-    import { readXlsxUsuarios, readUsuarios } from "../util/import/readFile";
+    import { readXlsxBloqueos, readUsuarios } from "../util/import/readFile";
     export default{
         name: 'InputFileUsuarios',
         props: {
@@ -23,7 +23,7 @@
         methods: {
             async fileChanged(arch) {
                 console.log(arch);
-                this.datos = readXlsxUsuarios(arch);
+                this.datos = readXlsxBloqueos(arch);
                 console.log("datos",this.datos);
                 this.success = true;
                 this.$emit("entregarDatos",this.datos);

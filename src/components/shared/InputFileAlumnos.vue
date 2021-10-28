@@ -11,7 +11,7 @@
 
 
 <script>
-import { readAlumnos, readXlsxAlumnos, readXlsAlumnos } from '../util/import/readFile';
+import { readPedidos, readXlsxAlumnos, readXlsAlumnos } from '../util/import/readFile';
 export default{
     name: 'InputFileAlumnos',
     props: {
@@ -24,7 +24,7 @@ export default{
     }),
     methods: {
         async fileChanged(arch) {
-            this.datos = readAlumnos(arch);
+            this.datos = readPedidos(arch);
             console.log("saliendo de readFile.js: ", this.datos);
             this.success = true;
             this.$emit("entregarDatos", this.datos);

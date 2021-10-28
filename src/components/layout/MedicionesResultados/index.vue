@@ -17,6 +17,12 @@
                     route="mediciones-resultados/Rubrica/"
                     :imgSrc="Rubricaimg"
                 />
+                <Card class="card"
+                    title="Simulaciones"
+                    description="Permite simular como trabajaría el sistema con archivos de prueba."
+                    route="mediciones-resultados/EstadoMediciones/"
+                    :imgSrc="ListaVerificacionimg"
+                />
             </div>
         </div>
     </div>

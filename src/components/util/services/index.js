@@ -5,7 +5,7 @@ import * as base from '../../../../base-config.json';
 var direccion = "https://" + base.url + ':' + base.port;
 //const URL = "http://100.25.226.224:80";
 //const URL = "http://54.174.91.225:80";
-const URL = "http://localhost:8080";
+const URL = "http://44.198.125.137:8080";
 //const URL = direccion;
 var idPersonaLoggeada;
 export function getAcceso(correo, constrasena) {
@@ -1018,11 +1018,21 @@ export function setAveria(codigo){
     });
 }
 export function setBloqueosMasivo(bloqueos){
-    return axios.post(URL+"/bloqueos/registro-masivo",{
-        "bloqueos":bloqueos,
-    });
+    return axios.post(URL+"/bloqueos/registro-masivo",bloqueos);
+}
+export function setPedidosMasivo(pedidos){
+    return axios.post(URL+"/pedidos/registro-masivo",pedidos);
 }
 export function getCamionesUbicacionesActuales(){
     return axios.get(URL+"/camiones/ubicaciones-actuales");
+}
+export function setConfiguracionDiaADia(){
+    return axios.put(URL+"/configuracion/dia-a-dia");
+}
+export function setConfiguracionSimulacionTresDias(){
+    return axios.put(URL+"/configuracion/simulacion-tres-dias");
+}
+export function setConfiguracionSimulacionColapsoLogistico(){
+    return axios.put(URL+"/configuracion/simulacion-colapso-logisico");
 }
 //#endregion
