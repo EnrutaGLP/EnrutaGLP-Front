@@ -128,9 +128,9 @@
 </template>
 <script>
 
-import { setPedido } from '../util/services/index';
-import DatePicker from "../../components/shared/DatePicker.vue";
-import TimePicker from "../../components/shared/TimePicker.vue";
+import { setPedido } from '../../../../util/services/index';
+import DatePicker from "../../../../shared/DatePicker.vue";
+import TimePicker from "../../../../shared/TimePicker.vue";
 
 export default {
     props: [

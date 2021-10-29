@@ -1,7 +1,7 @@
 <template>
     <div class="contenedorPrincipal">
-        <div class="simulaciones">
-            <Title texto="Simulaciones"/>
+        <div class="simulación3dias">
+            <Title texto="Simulación de 3 días"/>
             <br>
             <div class="botones">
                 <v-row>
@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import MapaDiaADia from '../Rubrica/MapaDiaADia.vue'
+import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue'
 import {
     setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionTresDias
 } from '../../../util/services/index';
@@ -83,7 +83,7 @@ import ModalInputFileUsuarios from "../../../shared/ModalInputFileUsuarios.vue";
 import ModalInputFileAlumnos from "../../../shared/ModalInputFileAlumnos.vue";
 
 export default {
-    name: 'Simulaciones',
+    name: 'SimulacionTresDias',
     components: {
         BackButton,
         Title,

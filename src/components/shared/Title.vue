@@ -3,7 +3,6 @@
         <div class="titulo">
             <div class="titulo2">
                 <p class="titulo" >{{texto}}</p>
-                <HelpButton class="botonAyuda" v-if="usarBotonAyuda" :urlKey="urlKey"/>
             </div>
             <hr class="linea">
 
@@ -12,7 +11,6 @@
     </div>
 </template>
 <script>
-import HelpButton from "./HelpButton"
 export default {
     props:{
         texto: String, 
@@ -20,7 +18,7 @@ export default {
         usarBotonAyuda: Boolean,
     },
     components: {
-        HelpButton,
+            
     },
 }
 </script>

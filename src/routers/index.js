@@ -2,25 +2,23 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from '../components/layout/Home/index.vue';
 import Mantenimientos from '../components/layout/Mantenimientos/index.vue';
-import MedicionesResultados from '../components/layout/MedicionesResultados/index.vue';
+import EnrutaGLP from '../components/layout/EnrutaGLP/index.vue';
 import Reportes from '../components/layout/Reportes/index.vue';
 import Main from '../components/layout/Main/index.vue';
 import ErrorNotFound from '../components/layout/ErrorNotFound/index.vue';
 import Login from '../components/layout/Login/index.vue';
 
 import ReporteRE from '../components/layout/Reportes/ReporteRE/index.vue';
-import ReporteCursos from '../components/layout/Reportes/ReporteCursos/index.vue';
 import ReporteHorario from '../components/layout/Reportes/ReporteHorario/index.vue';
 import ReporteHistorico from '../components/layout/Reportes/ReporteHistorico/index.vue';
-import ResultadosEstudiante from '../components/layout/MedicionesResultados/ResultadosEstudiante/index.vue';
-import Mediciones from '../components/layout/MedicionesResultados/Mediciones/index.vue';
-import MedicionesDetalle from '../components/layout/MedicionesResultados/Mediciones/MedicionesDetalle/index.vue';
-import Evidencias from '../components/layout/MedicionesResultados/Mediciones/MedicionesDetalle/Evidencias/index.vue';
-import IndicadoresDesempeno from '../components/layout/MedicionesResultados/ResultadosEstudiante/IndicadoresDesempeno/index.vue';
-import PlanMedicion from '../components/layout/MedicionesResultados/PlanMedicion/index.vue';
-import VerMedicion from '../components/layout/MedicionesResultados/PlanMedicion/VerMedicion/index.vue';
-import Rubrica from '../components/layout/MedicionesResultados/Rubrica/index.vue';
-import EstadoMediciones from '../components/layout/MedicionesResultados/EstadoMediciones/index.vue';
+import Pedidos from '../components/layout/EnrutaGLP/Pedidos/index.vue';
+import Mediciones from '../components/layout/EnrutaGLP/Mediciones/index.vue';
+import MedicionesDetalle from '../components/layout/EnrutaGLP/Mediciones/MedicionesDetalle/index.vue';
+import Evidencias from '../components/layout/EnrutaGLP/Mediciones/MedicionesDetalle/Evidencias/index.vue';
+import PlanMedicion from '../components/layout/EnrutaGLP/PlanMedicion/index.vue';
+import VerMedicion from '../components/layout/EnrutaGLP/PlanMedicion/VerMedicion/index.vue';
+import OperacionDiaADia from '../components/layout/EnrutaGLP/OperacionDiaADia/index.vue';
+import SimulacionTresDias from '../components/layout/EnrutaGLP/SimulacionTresDias/index.vue';
 import Facultades from '../components/layout/Mantenimientos/Facultades/index.vue';
 import Especialidades from '../components/layout/Mantenimientos/Facultades/Especialidades/index.vue';
 import Usuarios from '../components/layout/Mantenimientos/Usuarios/index.vue';
@@ -85,54 +83,49 @@ export default new Router({
                     component: Cursos,
                 },
                 {
-                    path: 'mediciones-resultados/',
-                    name: 'MedicionesResultados',
-                    component: MedicionesResultados,
+                    path: 'enruta-glp/',
+                    name: 'EnrutaGLP',
+                    component: EnrutaGLP,
                 },
                 {
-                    path: 'mediciones-resultados/ResultadosEstudiante/',
-                    name: 'ResultadosEstudiante',
-                    component: ResultadosEstudiante,
+                    path: 'enruta-glp/Pedidos/',
+                    name: 'Pedidos',
+                    component: Pedidos,
                 },
                 {
-                    path: 'mediciones-resultados/ResultadosEstudiante/IndicadoresDesempeno',
-                    name: 'IndicadoresDesempeno',
-                    component: IndicadoresDesempeno,
+                    path: 'enruta-glp/OperacionDiaADia/',
+                    name: 'OperacionDiaADia',
+                    component: OperacionDiaADia,
                 },
                 {
-                    path: 'mediciones-resultados/Rubrica/',
-                    name: 'Rubrica',
-                    component: Rubrica,
-                },
-                {
-                    path: 'mediciones-resultados/PlanMedicion/',
+                    path: 'enruta-glp/PlanMedicion/',
                     name: 'PlanMedicion',
                     component: PlanMedicion,
                 },
                 {
-                    path:'mediciones-resultados/PlanMedicion/VerMedicion/:id',
+                    path:'enruta-glp/PlanMedicion/VerMedicion/:id',
                     name:'VerMedicion',
                     component: VerMedicion,
                 },
                 {
-                    path: 'mediciones-resultados/Mediciones',
+                    path: 'enruta-glp/Mediciones',
                     name: 'Mediciones',
                     component: Mediciones,
                 },
                 {
-                    path: 'mediciones-resultados/Mediciones/MedicionesDetalle/:idMuestra',
+                    path: 'enruta-glp/Mediciones/MedicionesDetalle/:idMuestra',
                     name: 'MedicionesDetalle',
                     component: MedicionesDetalle,
                 },
                 {
-                    path: 'mediciones-resultados/MedicionesDetalle/Evidencias',
+                    path: 'enruta-glp/MedicionesDetalle/Evidencias',
                     name: 'Evidencias',
                     component: Evidencias,
                 },
                 {
-                    path: 'mediciones-resultados/EstadoMediciones',
-                    name: 'EstadoMediciones',
-                    component: EstadoMediciones,
+                    path: 'enruta-glp/SimulacionTresDias',
+                    name: 'SimulacionTresDias',
+                    component: SimulacionTresDias,
                 },
                 {
                     path: 'reportes/',
@@ -143,11 +136,6 @@ export default new Router({
                     path: 'reportes/reporte-re/',
                     name: 'ReporteRE',
                     component: ReporteRE,
-                },
-                {
-                    path: 'reportes/reporte-cursos/',
-                    name: 'ReporteCursos',
-                    component: ReporteCursos,
                 },
                 {
                     path: 'reportes/reporte-horario/',

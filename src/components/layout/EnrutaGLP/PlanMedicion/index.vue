@@ -1,7 +1,7 @@
 <template>
 	<div class="contenedorPrincipal">
 		<div>
-			<Title texto="Mediciones y Resultados > Planes de Medición" :usarBotonAyuda=true urlKey="planMedicion" />
+			<Title texto="Mediciones y Resultados > Planes de Medición"/>
 			<br />
 			<v-row class="containerFiltrosIniciales">
 				<v-col cols="4" class="containerEspecialidad">
@@ -154,7 +154,6 @@ import DataTable from "./DataTable";
 import Select from "../../../shared/Select";
 import Title from "../../../shared/Title";
 import DatePicker from "../../../shared/DatePicker";
-import HelpButton from "../../../shared/HelpButton";
 import * as CryptoJS from 'crypto-js';
 import {
 	getResultadosEstudiante,
@@ -183,7 +182,6 @@ export default {
 		Title,
 		DatePicker,
 		Alert,
-		HelpButton,
 		//CRUDDataTable,
 	},
 	data() {

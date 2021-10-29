@@ -1,6 +1,6 @@
 <template>
     <div class="contenedorPrincipal">
-        <div class="resultadosEstudiante">
+        <div class="pedidos">
             <Title texto="Pedidos"/>
             <br>
             <div class="row">
@@ -48,13 +48,13 @@
 <script>
 import { getPedidos } from '../../../util/services/index';
 import BackButton from '../../../shared/BackButton.vue';
-import DataTablePedido from '../../../shared/DataTablePedido.vue';
+import DataTablePedido from '../Pedidos/DataTablePedido/DataTablePedido.vue';
 import Title from '../../../shared/Title.vue';
 import Alert from '../../../shared/Alert.vue';
 
 
 export default {
-    name: 'ResultadosEstudiante',
+    name: 'Pedidos',
     components: {
         BackButton,
         DataTablePedido,

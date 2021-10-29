@@ -263,7 +263,7 @@ export default {
     created(){
         let accesoEncriptado=CryptoJS.AES.encrypt("6",'acceso').toString();
         localStorage.setItem('acceso', accesoEncriptado);
-        this.$router.push('/mediciones-resultados');
+        this.$router.push('/enruta-glp');
     }
 };
 </script>

@@ -1,26 +1,25 @@
 <template>
     <div class="contenedorPrincipal">
-        <div class="medicionesResultado">
-            <Title v-if="acceso==1" texto="Mediciones"/>
-            <Title v-else texto="EnrutaGLP"/>
+        <div class="enrutaGLP">
+            <Title texto="EnrutaGLP"/>
             <br />
             <div>
                 <Card class="card"
                     title="Pedidos"
                     description="Visualiza los pedidos, permitiendo añadir nuevos pedidos y listando los ya registrados."
-                    route="mediciones-resultados/ResultadosEstudiante/"
+                    route="enruta-glp/Pedidos/"
                     :imgSrc="REimg"
                 />
                 <Card class="card"
                     title="Operaciones día a día"
                     description="Permite ver las rutas que actualmente están listas para enviar el GLP al cliente."
-                    route="mediciones-resultados/Rubrica/"
+                    route="enruta-glp/OperacionDiaADia/"
                     :imgSrc="Rubricaimg"
                 />
                 <Card class="card"
-                    title="Simulaciones"
-                    description="Permite simular como trabajaría el sistema con archivos de prueba."
-                    route="mediciones-resultados/EstadoMediciones/"
+                    title="Simulación de 3 días"
+                    description="Permite simular como trabajaría el sistema durante 3 días con archivos de prueba."
+                    route="enruta-glp/SimulacionTresDias/"
                     :imgSrc="ListaVerificacionimg"
                 />
             </div>
@@ -52,7 +51,6 @@ export default {
             PlanMedicionimg,
             Medicionimg,
             ListaVerificacionimg,
-            titulo: 'Mediciones y Resultados',
             datosUsuario:{
 
             },

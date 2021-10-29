@@ -44,6 +44,7 @@ export default {
             almacenIntermedio1PosY:42,
             almacenIntermedio2PosX:63,
             almacenIntermedio2PosY:3,
+            estadoCamiones:["","En reposo","En ruta","Averiado","En mantenimiento preventivo","En mantenimiento correctivo"],
 
             camionesUbicacionActual:[],
             bloqueosActuales:[],

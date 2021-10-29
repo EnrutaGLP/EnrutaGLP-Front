@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import MapaDiaADia from '../Rubrica/MapaDiaADia.vue'
+import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue'
 import {
     setAveria, setBloqueosMasivo, setConfiguracionDiaADia
 } from '../../../util/services/index';
