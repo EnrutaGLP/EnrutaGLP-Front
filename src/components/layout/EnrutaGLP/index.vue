@@ -30,8 +30,6 @@
 <script>
 import REimg from '@/components/assets/shared_icons/resultados-estudiante.png';
 import Rubricaimg from '@/components/assets/shared_icons/rubrica.png';
-import PlanMedicionimg from '@/components/assets/shared_icons/plan-medicion.png';
-import Medicionimg from '@/components/assets/shared_icons/mediciones.png';
 import ListaVerificacionimg from '@/components/assets/shared_icons/listaVerificacion.png';
 import Title from '../../shared/Title.vue';
 import Card from '../../shared/Card.vue';
@@ -48,8 +46,6 @@ export default {
         return {
             REimg,
             Rubricaimg,
-            PlanMedicionimg,
-            Medicionimg,
             ListaVerificacionimg,
             datosUsuario:{
 
@@ -58,21 +54,7 @@ export default {
         };
     },
     created() {
-        try{
-            let acces = localStorage.getItem('acceso');
-            if (!acces) {
-                this.$router.push('/login');
-            }
-            this.acceso = CryptoJS.AES.decrypt(localStorage.getItem('acceso'), 'acceso');
-            this.acceso = this.acceso.toString(CryptoJS.enc.Utf8);
-            if (this.acceso == 0) {
-                this.$router.push('/login');
-            }
-            let jsonStrDesencriptado=CryptoJS.AES.decrypt(localStorage.getItem('json'),'json');
-            this.datosUsuario=JSON.parse(jsonStrDesencriptado.toString(CryptoJS.enc.Utf8));
-        }catch(err){
 
-        }
     },
 };
 </script>
