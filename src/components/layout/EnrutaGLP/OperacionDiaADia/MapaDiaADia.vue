@@ -3,11 +3,12 @@
         <div id="canvas" class="mapa"></div>
         <div class="rutasCamiones">
             <p class="tituloRutas">Rutas:</p>
-            <div class="rutas" :key="camionUbicacionActual.id" v-for="camionUbicacionActual in camionesUbicacionActual">
-                <span>Camión: {{camionUbicacionActual.codigo}}</span>
+            <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual">
+                <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':listaColoresCamiones[k]}"><div class="circulo"></div></div></span>
                 <div>Placa: {{camionUbicacionActual.placa}}</div>
                 <span>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</span>
                 <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
+                <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
             </div>
         </div>
     </div>
@@ -32,10 +33,33 @@ export default {
             script:null,
             p5canvas:null,
 
+            listaColoresCamiones:[
+                '#0071BC',
+                '#008F4C',
+                '#EAC102',
+                '#AA0000',
+                '#AF6E37',
+                '#FF6600',
+                '#51D1F6',
+                '#808080',
+                '#81D8D0',
+                '#96C8A2',
+                '#CE4676',
+                '#8A9A5B',
+                '#93C592',
+                '#BFFF00',
+                '#4A5D23',
+                '#F9BDA1',
+                '#2E7294',
+                '#C20009',
+                '#910765',
+                '#FFFB00',
+            ],
+
             stompClient:null,
             socket:null,
 
-            escalaPixeles:10,
+            escalaPixeles:11.5,
             tamXMapa:70,
             tamYMapa:50,
             almacenCentralPosX:12,
@@ -47,6 +71,10 @@ export default {
             estadoCamiones:["","En reposo","En ruta","Averiado","En mantenimiento preventivo","En mantenimiento correctivo"],
 
             camionesUbicacionActual:[],
+            rutasActuales:[],
+            auxRutasActuales:[],
+            longitudRutasActuales:[],
+            posicionRutasActuales:[],
             bloqueosActuales:[],
             //averiasActuales:[],
 
@@ -61,14 +89,15 @@ export default {
                 /*const data=await getCamionesUbicacionesActuales();
                 console.log(data);
                 this.camionesUbicacionActual=data.data.data.otros;
-                this.bloqueosActuales=data.data.data.bloqueos;
-                this.averiasActuales=data.data.data.averiados;*/
+                this.bloqueosActuales=data.data.data.bloqueos.puntos;
+                this.averiasActuales=data.data.data.averiados;
+                this.rutasActuales=data.data.data.rutas;*/
                 this.camionesUbicacionActual=[
                     {
                         id:1,
                         codigo:"TA01",
                         placa:"ABC-123",
-                        ubicacionActualX:10,
+                        ubicacionActualX:1,
                         ubicacionActualY:2,
                         cargaActualGLP:20,
                         cargaActualPetroleo:10,
@@ -81,8 +110,8 @@ export default {
                         id:2,
                         codigo:"TA02",
                         placa:"ABC-122",
-                        ubicacionActualX:40,
-                        ubicacionActualY:40,
+                        ubicacionActualX:4,
+                        ubicacionActualY:5,
                         cargaActualGLP:20,
                         cargaActualPetroleo:10,
                         estado:{
@@ -94,8 +123,8 @@ export default {
                         id:3,
                         codigo:"TA03",
                         placa:"ABC-123",
-                        ubicacionActualX:50,
-                        ubicacionActualY:48,
+                        ubicacionActualX:14,
+                        ubicacionActualY:15,
                         cargaActualGLP:20,
                         cargaActualPetroleo:10,
                         estado:{
@@ -107,8 +136,8 @@ export default {
                         id:4,
                         codigo:"TA04",
                         placa:"ABC-127",
-                        ubicacionActualX:30,
-                        ubicacionActualY:38,
+                        ubicacionActualX:24,
+                        ubicacionActualY:25,
                         cargaActualGLP:20,
                         cargaActualPetroleo:10,
                         estado:{
@@ -143,63 +172,168 @@ export default {
                         ubicacionY:45,
                     },
                 ];
+                this.rutasActuales=[
+                    {
+                        codigo:"TA01",
+                        ruta:[
+                            {
+                                ubicacionX: 1,
+                                ubicacionY: 2,
+                            },
+                            {
+                                ubicacionX: 2,
+                                ubicacionY: 2,
+                            },
+                            {
+                                ubicacionX: 3,
+                                ubicacionY: 2,
+                            },
+                        ],
+                    },
+                    {
+                        codigo:"TA02",
+                        ruta:[
+                            {
+                                ubicacionX: 4,
+                                ubicacionY: 5,
+                            },
+                            {
+                                ubicacionX: 5,
+                                ubicacionY: 5,
+                            },
+                            {
+                                ubicacionX: 5,
+                                ubicacionY: 6,
+                            },
+                        ],
+                    },
+                    {
+                        codigo:"TA03",
+                        ruta:[
+                            {
+                                ubicacionX: 14,
+                                ubicacionY: 15,
+                            },
+                            {
+                                ubicacionX: 15,
+                                ubicacionY: 15,
+                            },
+                            {
+                                ubicacionX: 15,
+                                ubicacionY: 16,
+                            },
+                            {
+                                ubicacionX: 15,
+                                ubicacionY: 17,
+                            },
+                            {
+                                ubicacionX: 15,
+                                ubicacionY: 18,
+                            },
+                            {
+                                ubicacionX: 15,
+                                ubicacionY: 19,
+                            },
+                            {
+                                ubicacionX: 16,
+                                ubicacionY: 19,
+                            },
+                            {
+                                ubicacionX: 17,
+                                ubicacionY: 19,
+                            },
+                            {
+                                ubicacionX: 18,
+                                ubicacionY: 19,
+                            },
+                            {
+                                ubicacionX: 18,
+                                ubicacionY: 17,
+                            },
+                            {
+                                ubicacionX: 17,
+                                ubicacionY: 17,
+                            },
+                            {
+                                ubicacionX: 16,
+                                ubicacionY: 17,
+                            },
+                            {
+                                ubicacionX: 15,
+                                ubicacionY: 17,
+                            },
+                            {
+                                ubicacionX: 14,
+                                ubicacionY: 17,
+                            },
+                            {
+                                ubicacionX: 13,
+                                ubicacionY: 17,
+                            },
+                        ],
+                    },
+                    {
+                        codigo:"TA04",
+                        ruta:[
+                            {
+                                ubicacionX: 24,
+                                ubicacionY: 25,
+                            },
+                            {
+                                ubicacionX: 25,
+                                ubicacionY: 25,
+                            },
+                            {
+                                ubicacionX: 25,
+                                ubicacionY: 26,
+                            },
+                            {
+                                ubicacionX: 25,
+                                ubicacionY: 27,
+                            },
+                            {
+                                ubicacionX: 25,
+                                ubicacionY: 28,
+                            },
+                            {
+                                ubicacionX: 25,
+                                ubicacionY: 29,
+                            },
+                            {
+                                ubicacionX: 25,
+                                ubicacionY: 30,
+                            },
+                        ],
+                    },
+                ];
+                //this.auxRutasActuales=JSON.parse(JSON.stringify(this.rutasActuales));
+                for(let i=0;i<this.rutasActuales.length;i++){
+                    this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
+                    this.posicionRutasActuales.push(0);
+                }
             }catch(err){
                 
             }
         },
         actualizarCamionesMapa(){
-            //this.obtenerPosicionActualCamion();
-            let a=Math.random();
-            let b=Math.random();
-            if(a<0.5){//mover vertical
-                if(b<0.5){//mover abajo
-                    if(this.camionesUbicacionActual[0].ubicacionActualY+1>50){
-                        this.camionesUbicacionActual[0].ubicacionActualY--;
-                    }else{
-                        this.camionesUbicacionActual[0].ubicacionActualY++;
-                    }
-                    if(this.camionesUbicacionActual[1].ubicacionActualY+1>50){
-                        this.camionesUbicacionActual[1].ubicacionActualY--;
-                    }else{
-                        this.camionesUbicacionActual[1].ubicacionActualY++;
-                    }
-                }else{//mover arriba
-                    if(this.camionesUbicacionActual[0].ubicacionActualY-1<0){
-                        this.camionesUbicacionActual[0].ubicacionActualY++;
-                    }else{
-                        this.camionesUbicacionActual[0].ubicacionActualY--;
-                    }
-                    if(this.camionesUbicacionActual[1].ubicacionActualY-1<0){
-                        this.camionesUbicacionActual[1].ubicacionActualY++;
-                    }else{
-                        this.camionesUbicacionActual[1].ubicacionActualY--;
-                    }
+            let i=0;
+            let indicesAEliminar=[];
+            while(i<this.camionesUbicacionActual.length){
+                this.camionesUbicacionActual[i].ubicacionActualX=this.rutasActuales[i].ruta[this.posicionRutasActuales[i]].ubicacionX;
+                this.camionesUbicacionActual[i].ubicacionActualY=this.rutasActuales[i].ruta[this.posicionRutasActuales[i]].ubicacionY;
+                this.posicionRutasActuales[i]++;
+                if(this.posicionRutasActuales[i]>=this.longitudRutasActuales[i]){
+                    indicesAEliminar.push(i);
                 }
-            }else{//mover horizontal
-                if(b<0.5){//mover izquierda
-                    if(this.camionesUbicacionActual[0].ubicacionActualX-1<0){
-                        this.camionesUbicacionActual[0].ubicacionActualX++;
-                    }else{
-                        this.camionesUbicacionActual[0].ubicacionActualX--;
-                    }
-                    if(this.camionesUbicacionActual[1].ubicacionActualX-1<0){
-                        this.camionesUbicacionActual[1].ubicacionActualX++;
-                    }else{
-                        this.camionesUbicacionActual[1].ubicacionActualX--;
-                    }
-                }else{//mover derecha
-                    if(this.camionesUbicacionActual[0].ubicacionActualX+1>70){
-                        this.camionesUbicacionActual[0].ubicacionActualX--;
-                    }else{
-                        this.camionesUbicacionActual[0].ubicacionActualX++;
-                    }
-                    if(this.camionesUbicacionActual[1].ubicacionActualX+1>70){
-                        this.camionesUbicacionActual[1].ubicacionActualX--;
-                    }else{
-                        this.camionesUbicacionActual[1].ubicacionActualX++;
-                    }
-                }
+                i++;
             }
+            for(let j=indicesAEliminar.length-1;j>=0;j--){
+                this.camionesUbicacionActual.splice(indicesAEliminar[j],1);
+                this.rutasActuales.splice(indicesAEliminar[j],1);
+                this.posicionRutasActuales.splice(indicesAEliminar[j],1);
+                this.longitudRutasActuales.splice(indicesAEliminar[j],1);
+            }
+            indicesAEliminar=[];
         },
         actualizarDatos(datos){
             if(this.esSimulacion){
@@ -207,12 +341,21 @@ export default {
                     this.camionesUbicacionActual=datos.camiones;
                     this.bloqueosActuales=datos.bloqueos;
                     this.averiasActuales=datos.averias;
-
+                    this.rutasActuales=datos.rutas;
+                    for(let i=0;i<this.rutasActuales.length;i++){
+                        this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
+                        this.posicionRutasActuales.push(0);
+                    }
                 }
             }else{
                 this.camionesUbicacionActual=datos.camiones;
                 this.bloqueosActuales=datos.bloqueos;
                 this.averiasActuales=datos.averias;
+                this.rutasActuales=datos.rutas;
+                for(let i=0;i<this.rutasActuales.length;i++){
+                    this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
+                    this.posicionRutasActuales.push(0);
+                }
             }
         },
     },
@@ -230,6 +373,7 @@ export default {
                 p5.dibujarAlmacenes();
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
+                //p5.actualizarRutas();
                 p5.registrarAveria();
                 //p5.actualizarAverias();
                 p5.actualizarBloqueos();
@@ -244,7 +388,7 @@ export default {
                 p5.textSize(15);
                 p5.text("Leyenda:",margenMapaYLeyenda,20);
 
-                c=p5.color("#0000FF");
+                c=p5.color("#0071BC");
                 p5.fill(c);
                 p5.ellipse(margenMapaYLeyenda,35,10,10);
                 c=p5.color("#000000")
@@ -285,6 +429,13 @@ export default {
                 c=p5.color("#000000")
                 p5.fill(c);
                 p5.text("Cliente",margenMapaYLeyenda+10,127);
+
+                c=p5.color("#0071BC");
+                p5.fill(c);
+                p5.rect(margenMapaYLeyenda-5,134,10,5);
+                c=p5.color("#000000")
+                p5.fill(c);
+                p5.text("Ruta",margenMapaYLeyenda+10,142);
             };
             p5.registrarAveria = () => {
                 if(this.seRegistroAveria){
@@ -326,22 +477,30 @@ export default {
                 p5.strokeWeight(1);
             };
             p5.actualizarCamiones = () => {
-                let c=p5.color("#0000FF");
-                p5.fill(c);
+                let c;
                 p5.textSize(this.escalaPixeles);
+                p5.strokeWeight(2);
                 for(let i=0;i<this.camionesUbicacionActual.length;i++){
-                    if(this.camionesUbicacionActual[i].estado.nombre=="Averiado"){
-                        c=p5.color("#FF0000");
-                    }else{
-                        c=p5.color("#0000FF");
-                    }
+                    c=p5.color(this.listaColoresCamiones[i]);
                     p5.fill(c);
+                    p5.stroke("#EEEEEE");
                     p5.ellipse(this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX,
                     this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualY,this.escalaPixeles,this.escalaPixeles);
                     p5.text(this.camionesUbicacionActual[i].codigo,
                     this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX-this.escalaPixeles,
                     this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualY+this.escalaPixeles);
+                    p5.stroke(this.listaColoresCamiones[i]);
+                    for(let j=0;j<this.rutasActuales[i].ruta.length-1;j++){
+                        p5.line(this.escalaPixeles*this.rutasActuales[i].ruta[j].ubicacionX,
+                        this.escalaPixeles*this.rutasActuales[i].ruta[j].ubicacionY,
+                        this.escalaPixeles*this.rutasActuales[i].ruta[j+1].ubicacionX,
+                        this.escalaPixeles*this.rutasActuales[i].ruta[j+1].ubicacionY);
+                    }
                 }
+                p5.strokeWeight(1);
+            };
+            p5.actualizarRutas = () => {
+                
             };
             p5.dibujarCuadricula = () => {
                 p5.stroke("#C3C3C3");
@@ -406,7 +565,7 @@ export default {
         if(!this.esSimulacion){
             await this.obtenerPosicionesYBloqueosActuales();
             
-            setInterval(this.actualizarCamionesMapa,10000);
+            setInterval(this.actualizarCamionesMapa,2000);
         }else{
 
         }
@@ -416,7 +575,7 @@ export default {
 <style>
     .rutasCamiones{
         width:300px;
-        height: 500px;
+        height: 570px;
         background: #FFFFFF;
         overflow-y:scroll;
         float:right;
@@ -439,5 +598,11 @@ export default {
         overflow-y:scroll;
         border-style: ridge;
         background: #B6B6E3;
+    }
+    .circulo{
+        width: 10px;
+        height: 10px;
+        -moz-border-radius: 50%;
+        -webkit-border-radius: 50%;
     }
 </style>

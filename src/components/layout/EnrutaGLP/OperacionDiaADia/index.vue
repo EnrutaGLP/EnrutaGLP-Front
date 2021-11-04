@@ -17,6 +17,11 @@
                             :cargando="cargaBloqueos"
                         />
                     </v-col>
+                    <v-col>
+                        <BloqueosDialog
+                            v-on:cambio="registroBloqueo"
+                        />
+                    </v-col>
                 </v-row>
             </div>
             <br>
@@ -44,7 +49,8 @@
 </template>
 
 <script>
-import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue'
+import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue';
+import BloqueosDialog from '../OperacionDiaADia/BloqueosDialog.vue';
 import {
     setAveria, setBloqueosMasivo, setConfiguracionDiaADia
 } from '../../../util/services/index';
@@ -62,6 +68,7 @@ export default {
         AveriasDialog,
         ModalInputFileUsuarios,
         MapaDiaADia,
+        BloqueosDialog,
     },
     data() {
         return {
@@ -102,6 +109,13 @@ export default {
             } catch (err) {
                 this.manejarAlerta(1,0);
             }
+        },
+        async registroBloqueo(bloqueo,fechaIniBloqueo,horaIniBloqueo,fechaFinBloqueo,horaFinBloqueo){
+            console.log(bloqueo);
+            console.log(fechaIniBloqueo);
+            console.log(horaIniBloqueo);
+            console.log(fechaFinBloqueo);
+            console.log(horaFinBloqueo);
         },
         manejarAlerta(tipo, accion) {
             if (tipo == 0) {

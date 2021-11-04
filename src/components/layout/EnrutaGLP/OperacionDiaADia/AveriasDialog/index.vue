@@ -57,7 +57,7 @@
 <script>
 
 export default {
-    name: 'NivelesDialog',
+    name: 'AveriasDialog',
     props: {
         
     },
