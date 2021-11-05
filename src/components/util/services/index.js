@@ -5,7 +5,7 @@ import * as base from '../../../../base-config.json';
 var direccion = "https://" + base.url + ':' + base.port;
 //const URL = "http://100.25.226.224:80";
 //const URL = "http://54.174.91.225:80";
-const URL = "http://44.198.125.137:8080";
+const URL = "http://54.145.192.162:8080";
 //const URL = direccion;
 var idPersonaLoggeada;
 export function getAcceso(correo, constrasena) {
@@ -37,6 +37,9 @@ export function setAveria(codigo){
     return axios.post(URL+"/averias/registrar",{
         "codigo":codigo,
     });
+}
+export function getBloqueosActuales(){
+    return axios.get(URL+"/bloqueos/actuales");
 }
 export function setBloqueosMasivo(bloqueos){
     return axios.post(URL+"/bloqueos/registro-masivo",bloqueos);

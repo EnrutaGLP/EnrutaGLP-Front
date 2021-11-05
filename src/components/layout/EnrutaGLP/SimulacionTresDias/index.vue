@@ -60,6 +60,7 @@
                 <MapaDiaADia
                     esSimulacion=1
                     :reanudoSimulacion="reanudoSimulacion"
+                    :velocidadSimulacion="velocidadSimulacion"
                 />
                 
             </div>
@@ -104,6 +105,7 @@ export default {
             importoBloqueos:false,
 
             reanudoSimulacion:false,
+            velocidadSimulacion:1,
         };
     },
     methods: {
