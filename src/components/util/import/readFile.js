@@ -57,6 +57,10 @@ export function readPedidos(obj) {
     let ano=obj.name.substr(6,4);
     console.log("año",ano);
     let mes=obj.name.substr(10,2);
+    let mesStr=mes;
+    mes=parseInt(mes);
+    mes=mes-1;
+    mes=`${mes.toString()}`.padStart(2,'0')
     console.log("mes",mes);
     let pedidos=[];
 
@@ -80,12 +84,12 @@ export function readPedidos(obj) {
                 pedido=element.split(",");
                 datosFecha=pedido[0].split(":");
                 fechaLimite=new Date(ano,mes,datosFecha[0],datosFecha[1],datosFecha[2],11);
-                fechaLimite.setHours(fechaLimite.getHours()+pedido[4]);
+                fechaLimite.setHours(fechaLimite.getHours()+parseInt(pedido[4]));
                 pedidoObj.cantidadGlp=pedido[1];
                 pedidoObj.ubicacionX=pedido[2];
                 pedidoObj.ubicacionY=pedido[3];
-                pedidoObj.fechaPedido=datosFecha[0]+"-"+mes+"-"+ano+" "+datosFecha[1]+":"+datosFecha[2]+":11";
-                pedidoObj.fechaLimite=`${fechaLimite.getDay()}`.padStart(2,'0')+"-"+`${fechaLimite.getMonth()}`.padStart(2,'0')+"-"+
+                pedidoObj.fechaPedido=datosFecha[0]+"-"+mesStr+"-"+ano+" "+datosFecha[1]+":"+datosFecha[2]+":11";
+                pedidoObj.fechaLimite=`${fechaLimite.getDate()}`.padStart(2,'0')+"-"+`${fechaLimite.getMonth()+1}`.padStart(2,'0')+"-"+
                 fechaLimite.getFullYear()+" "+`${fechaLimite.getHours()}`.padStart(2,'0')+":"+ 
                 `${fechaLimite.getMinutes()}`.padStart(2,'0')+":"+fechaLimite.getSeconds();
                 pedidos.push(Object.assign({},pedidoObj));

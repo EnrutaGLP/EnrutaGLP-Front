@@ -267,13 +267,18 @@ export default {
         async anadirPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaEntrega,horaEntrega){
             try{
                 let hoy=new Date();
-                let fecha=hoy.getDate()+'-'+(hoy.getMonth()+1)+'-'+hoy.getFullYear();
-                let hora=hoy.getHours()+':'+hoy.getMinutes()+':'+'11';
-                let fechaPedido=fecha+' '+hora;
-                let fechaEntregaAux=fechaEntrega.split('-');
-                fechaEntrega=fechaEntregaAux[2]+'-'+fechaEntregaAux[1]+'-'+fechaEntregaAux[0];
                 
-                let fechaLimite=fechaEntrega+ ' ' + horaEntrega+':11';
+                let fechaPedido;
+                fechaPedido=`${hoy.getDate()}`.padStart(2,'0')+"-"+`${hoy.getMonth()}`.padStart(2,'0')+"-"+
+                hoy.getFullYear()+" "+`${hoy.getHours()}`.padStart(2,'0')+":"+`${hoy.getMinutes()}`.padStart(2,'0')+':11';
+
+                let fechaEntregaAux=fechaEntrega.split('-');
+                let horaEntregaAux=horaEntrega.split(':');
+                let fechaLimite;
+                fechaLimite=`${fechaEntregaAux[2]}`.padStart(2,'0')+"-"+`${fechaEntregaAux[1]}`.padStart(2,'0')+"-"+
+                fechaEntregaAux[0]+" "+horaEntregaAux[0]+":"+horaEntregaAux[1]+':11';
+                
+                
                 this.editedItem.fechaHora=fechaLimite;
                 this.editedItem.estado="En cola";
                 this.editedItem.posiciones="("+posX+","+posY+")";

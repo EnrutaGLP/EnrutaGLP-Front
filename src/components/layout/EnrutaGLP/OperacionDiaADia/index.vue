@@ -17,11 +17,7 @@
                             :cargando="cargaBloqueos"
                         />
                     </v-col>
-                    <v-col>
-                        <BloqueosDialog
-                            v-on:cambio="registroBloqueo"
-                        />
-                    </v-col>
+                    
                 </v-row>
             </div>
             <br>
