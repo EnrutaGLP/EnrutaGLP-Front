@@ -16,7 +16,7 @@
 <script>
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
-import Stomp from 'sockjs-client';
+import {Stomp} from '@stomp/stompjs';
 import {getCamionesUbicacionesActuales, getBloqueosActuales} from '../../../util/services/index';
 
 export default {
@@ -486,7 +486,12 @@ export default {
                 //this.actualizarDatos(datos.data.data);
             });
         })*/
-        this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
+        /*this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
+
+        this.socket.onopen = function() {
+            console.log('open');
+        };
+
         this.socket.onmessage=function(e){
             console.log(e.data);
         }
@@ -497,14 +502,17 @@ export default {
         }else{
 
         }*/
-        /*this.socket=new SockJS('http://54.145.192.162:8080');
+        this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
         this.stompClient=Stomp.over(this.socket);
-        this.stompClient.connect({},function(frame){
-            console.log(frame);
+        this.stompClient.connect({}, (frame) => {
+            console.log("frame:" + frame);
+            var send = JSON.stringify({'name':'Enma'});
+            console.log("send:"+send);
             this.stompClient.subscribe('/topic/greetings',function(greeting){
                 console.log(greeting);
             });
-        })*/
+            this.stompClient.send("/app/hello", {}, send);
+        })
         await this.obtenerPosicionesYBloqueosActuales();    
         setInterval(this.actualizarCamionesMapa,this.tiempoDeSimulacion);
     }
