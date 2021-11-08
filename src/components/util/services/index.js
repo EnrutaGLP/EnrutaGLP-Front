@@ -7,7 +7,6 @@ var direccion = "https://" + base.url + ':' + base.port;
 //const URL = "http://54.174.91.225:80";
 const URL = "http://54.145.192.162:8080";
 //const URL = direccion;
-var idPersonaLoggeada;
 export function getAcceso(correo, constrasena) {
     setIdPersonaLoggeada(correo, constrasena);
     return axios.post(URL + "/acceso", {

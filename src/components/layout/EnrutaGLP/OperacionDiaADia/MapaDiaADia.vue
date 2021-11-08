@@ -16,6 +16,7 @@
 <script>
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
+import Stomp from 'sockjs-client';
 import {getCamionesUbicacionesActuales, getBloqueosActuales} from '../../../util/services/index';
 
 export default {
@@ -476,6 +477,7 @@ export default {
         }
     },
     async created(){
+
         /*this.socket=new SockJS('http://54.145.192.162:8080');
         //this.stompClient=Stomp.over(socket);
         this.socket.connect({},function(frame){
@@ -484,10 +486,10 @@ export default {
                 //this.actualizarDatos(datos.data.data);
             });
         })*/
-        /*this.socket=new SockJS('http://54.145.192.162:8080/bloqueos/actuales');
+        this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
         this.socket.onmessage=function(e){
             console.log(e.data);
-        }*/
+        }
         /*if(!this.esSimulacion){
             await this.obtenerPosicionesYBloqueosActuales();
             
@@ -495,6 +497,14 @@ export default {
         }else{
 
         }*/
+        /*this.socket=new SockJS('http://54.145.192.162:8080');
+        this.stompClient=Stomp.over(this.socket);
+        this.stompClient.connect({},function(frame){
+            console.log(frame);
+            this.stompClient.subscribe('/topic/greetings',function(greeting){
+                console.log(greeting);
+            });
+        })*/
         await this.obtenerPosicionesYBloqueosActuales();    
         setInterval(this.actualizarCamionesMapa,this.tiempoDeSimulacion);
     }
