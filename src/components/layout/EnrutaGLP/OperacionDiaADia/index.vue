@@ -20,6 +20,7 @@
                     
                 </v-row>
             </div>
+            <v-progress-circular indeterminate color="#7434EB" v-if="cargaRutas"></v-progress-circular>
             <br>
             <br>
             <v-alert
@@ -32,6 +33,7 @@
             <div class="mapa">
                 <MapaDiaADia
                     v-bind:averia="nuevaAveria"
+                    v-on:cargoRutas="cargandoRutas"
                 />
                 
             </div>
@@ -73,11 +75,15 @@ export default {
             hayAlerta: false,
 
             cargaBloqueos:false,
+            cargaRutas:false,
 
             nuevaAveria:"",
         };
     },
     methods: {
+        cargandoRutas(dato){
+            this.cargaRutas=dato;
+        },
         async subirBloqueos(listaBloqueos){
             this.cargaBloqueos=true;
             console.log(listaBloqueos);
@@ -93,15 +99,20 @@ export default {
         },
         async registroAveria(dato){
             try {
-                //let data=await setAveria(dato);
-                //console.log(data);
-                //data.data.status!="error"
-                if(true){
+                let hoy=new Date();
+                let fecha;
+                fecha=`${hoy.getDate()}`.padStart(2,'0')+"-"+`${hoy.getMonth()}`.padStart(2,'0')+"-"+
+                hoy.getFullYear()+" "+`${hoy.getHours()}`.padStart(2,'0')+":"+`${hoy.getMinutes()}`.padStart(2,'0')+':11';
+
+                /*let data=await setAveria(dato,fecha);
+                console.log(data);
+                if(data.data.status!="error"){
                     this.nuevaAveria=dato;
                     this.manejarAlerta(0,0);
                 }else{
                     this.manejarAlerta(1,0);
-                }
+                }*/
+                this.manejarAlerta(0,0);
             } catch (err) {
                 this.manejarAlerta(1,0);
             }

@@ -261,9 +261,6 @@ export default {
                 return false;
             }
         },
-        verificarFormatoFecha(fecha){
-            let fechaSplit=fecha.split
-        },
         async anadirPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaEntrega,horaEntrega){
             try{
                 let hoy=new Date();
@@ -285,8 +282,6 @@ export default {
                 
                 console.log(fechaPedido);
                 console.log(fechaLimite);
-                this.verificarFormatoFecha(fechaPedido);
-                this.verificarFormatoFecha(fechaLimite);
                 let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
                 let aux = this.editedItem;  
                 console.log("aux:",aux);

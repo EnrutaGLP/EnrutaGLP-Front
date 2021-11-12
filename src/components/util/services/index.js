@@ -19,6 +19,9 @@ export function getAcceso(correo, constrasena) {
 export function getPedidos(){
     return axios.get(URL+"/pedidos/listar");
 }
+export function getPedidosActuales(){
+    return axios.get(URL+"/pedidos/actuales");
+}
 export function setPedido(codigo,cliente,cantidadGLP,posX,posY,fechaPedido,fechaLimite){
     console.log(fechaPedido);
     console.log(fechaLimite);
@@ -32,23 +35,40 @@ export function setPedido(codigo,cliente,cantidadGLP,posX,posY,fechaPedido,fecha
         "fechaLimite":fechaLimite,
     });
 }
-export function setAveria(codigo){
+export function setPedidosMasivo(pedidos){
+    return axios.post(URL+"/pedidos/registro-masivo",pedidos);
+}
+//#endregion
+//#region averia
+export function setAveria(codigo,fecha){
     return axios.post(URL+"/averias/registrar",{
         "codigo":codigo,
+        "fecha":fecha,
     });
 }
+//#endregion
+//#region bloqueos
 export function getBloqueosActuales(){
     return axios.get(URL+"/bloqueos/actuales");
 }
 export function setBloqueosMasivo(bloqueos){
     return axios.post(URL+"/bloqueos/registro-masivo",bloqueos);
 }
-export function setPedidosMasivo(pedidos){
-    return axios.post(URL+"/pedidos/registro-masivo",pedidos);
-}
+//#endregion
+
+//#region ubicacion camiones
 export function getCamionesUbicacionesActuales(){
     return axios.get(URL+"/camiones/ubicaciones-actuales");
 }
+//#endregion
+
+//#region rutas
+export function getRutasActuales(){
+    return axios.get(URL+"/rutas/actuales");
+}
+//#endregion
+
+//#region configuraciones
 export function setConfiguracionDiaADia(){
     return axios.put(URL+"/configuracion/dia-a-dia");
 }

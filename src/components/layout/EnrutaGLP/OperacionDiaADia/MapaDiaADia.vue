@@ -5,8 +5,8 @@
             <p class="tituloRutas">Rutas:</p>
             <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual">
                 <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':listaColoresCamiones[k]}"><div class="circulo"></div></div></span>
-                <div>Placa: {{camionUbicacionActual.placa}}</div>
-                <span>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</span>
+                
+                <div>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</div>
                 <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
                 <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
             </div>
@@ -17,7 +17,7 @@
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
-import {getCamionesUbicacionesActuales, getBloqueosActuales} from '../../../util/services/index';
+import {getBloqueosActuales, getRutasActuales, getPedidosActuales} from '../../../util/services/index';
 
 export default {
     props:[
@@ -80,7 +80,8 @@ export default {
             longitudRutasActuales:[],
             posicionRutasActuales:[],
             bloqueosActuales:[],
-            //averiasActuales:[],
+            averiasActuales:[],
+            pedidosActuales:[],
 
             seRegistroAveria:false,
             averiaPosX:-1,
@@ -90,12 +91,117 @@ export default {
     methods:{
         async obtenerPosicionesYBloqueosActuales(){
             try{
-                /*const data=await getCamionesUbicacionesActuales();
-                console.log(data);
-                this.camionesUbicacionActual=data.data.data.otros;
-                this.bloqueosActuales=data.data.data.bloqueos.puntos;
-                this.averiasActuales=data.data.data.averiados;
-                this.rutasActuales=data.data.data.rutas;*/
+                //const data=await getCamionesUbicacionesActuales();
+
+                const data1=await getRutasActuales();
+                console.log(data1);
+
+                const data2=await getPedidosActuales();
+                console.log(data2);
+
+                this.pedidosActuales=data2.data.data;
+                console.log(this.pedidosActuales);
+
+                this.averiasActuales=data1.data.data.averiados;
+
+                /*const data1={
+                    data:{
+                        averiados:[
+                            {
+                                codigo:"TA08",
+                                ubicacionActualX:40,
+                                ubicacionActualY:40,
+                                ruta:[],
+                            },
+                        ],
+                        otros:[
+                            {
+                                codigo: "TA01",
+                                ubicacionActualX: 12,
+                                ubicacionActualY: 8,
+                                estadoId: 1,
+                                estadoNombre: "En reposo",
+                                ruta: [
+                                    {
+                                        ubicacionX: 12,
+                                        ubicacionY: 8,
+                                        orden: 1
+                                    },
+                                    {
+                                        ubicacionX: 12,
+                                        ubicacionY: 9,
+                                        orden: 2
+                                    },
+                                    {
+                                        ubicacionX: 12,
+                                        ubicacionY: 10,
+                                        orden: 3
+                                    },
+                                    {
+                                        ubicacionX: 11,
+                                        ubicacionY: 10,
+                                        orden: 4
+                                    },
+                                    {
+                                        ubicacionX: 10,
+                                        ubicacionY: 10,
+                                        orden: 5
+                                    }
+                                ]
+                            },
+                            {
+                                codigo: "TA02",
+                                ubicacionActualX: 12,
+                                ubicacionActualY: 8,
+                                estadoId: 1,
+                                estadoNombre: "En reposo",
+                                ruta: [
+                                    {
+                                        ubicacionX: 12,
+                                        ubicacionY: 8,
+                                        orden: 1
+                                    },
+                                    {
+                                        ubicacionX: 12,
+                                        ubicacionY: 9,
+                                        orden: 2
+                                    },
+                                    {
+                                        ubicacionX: 12,
+                                        ubicacionY: 10,
+                                        orden: 3
+                                    },
+                                    {
+                                        ubicacionX: 11,
+                                        ubicacionY: 10,
+                                        orden: 4
+                                    },
+                                    {
+                                        ubicacionX: 10,
+                                        ubicacionY: 10,
+                                        orden: 5
+                                    }
+                                ]
+                            }
+                        ],
+                    }
+                }*/
+                data1.data.data.otros.forEach(element => {
+                    this.camionesUbicacionActual.push({
+                        codigo:element.codigo,
+                        ubicacionActualX:element.ubicacionActualX,
+                        ubicacionActualY:element.ubicacionActualY,
+                        estado:{
+                            id:element.estadoId,
+                            nombre:element.nombre,
+                        }
+                    });
+                    this.rutasActuales.push({
+                        codigo:element.codigo,
+                        ruta:element.ruta,
+                    })
+                });
+                console.log(this.rutasActuales);
                 const data=await getBloqueosActuales();
                 console.log(data);
                 console.log(data.data.data);
@@ -111,126 +217,7 @@ export default {
                     }
                 }
                 console.log(this.bloqueosActuales);
-                this.camionesUbicacionActual=[
-                    {
-                        id:1,
-                        codigo:"TA01",
-                        placa:"ABC-123",
-                        ubicacionActualX:12,
-                        ubicacionActualY:8,
-                        cargaActualGLP:20,
-                        cargaActualPetroleo:10,
-                        estado:{
-                            id:1,
-                            nombre:"En ruta",
-                        }
-                    },
-                    {
-                        id:2,
-                        codigo:"TA02",
-                        placa:"ABC-122",
-                        ubicacionActualX:4,
-                        ubicacionActualY:5,
-                        cargaActualGLP:20,
-                        cargaActualPetroleo:10,
-                        estado:{
-                            id:1,
-                            nombre:"En ruta",
-                        }
-                    },
-                    {
-                        id:3,
-                        codigo:"TA03",
-                        placa:"ABC-123",
-                        ubicacionActualX:14,
-                        ubicacionActualY:15,
-                        cargaActualGLP:20,
-                        cargaActualPetroleo:10,
-                        estado:{
-                            id:1,
-                            nombre:"En ruta",
-                        }
-                    },
-                    {
-                        id:4,
-                        codigo:"TA04",
-                        placa:"ABC-127",
-                        ubicacionActualX:24,
-                        ubicacionActualY:25,
-                        cargaActualGLP:20,
-                        cargaActualPetroleo:10,
-                        estado:{
-                            id:1,
-                            nombre:"En ruta",
-                        }
-                    },
-                ];
-                this.rutasActuales=[
-                    {
-                        codigo:"TA01",
-
-                        ruta:[
-                            {ubicacionX: 12, ubicacionY: 8,},{ubicacionX: 12, ubicacionY: 7,},
-                            {ubicacionX: 12, ubicacionY: 6,},{ubicacionX: 12, ubicacionY: 5,},{ubicacionX: 12, ubicacionY: 4,},
-                            {ubicacionX: 12, ubicacionY: 3,},{ubicacionX: 11, ubicacionY: 3,},
-                            {ubicacionX: 10, ubicacionY: 3,},{ubicacionX: 9, ubicacionY: 3,},{ubicacionX: 8, ubicacionY: 3,},
-                            {ubicacionX: 7, ubicacionY: 3,},{ubicacionX: 6, ubicacionY: 3,},{ubicacionX: 5, ubicacionY: 3,},
-                            {ubicacionX: 5, ubicacionY: 2,},{ubicacionX: 6, ubicacionY: 2,},{ubicacionX: 7, ubicacionY: 2,},
-                            {ubicacionX: 8, ubicacionY: 2,},{ubicacionX: 9, ubicacionY: 2,},{ubicacionX: 10, ubicacionY: 2,},
-                            {ubicacionX: 11, ubicacionY: 2,},{ubicacionX: 12, ubicacionY: 2,},{ubicacionX: 13, ubicacionY: 2,},
-                            {ubicacionX: 14, ubicacionY: 2,},{ubicacionX: 15, ubicacionY: 2,},{ubicacionX: 15, ubicacionY: 3,},
-                            {ubicacionX: 15, ubicacionY: 4,},{ubicacionX: 15, ubicacionY: 5,},{ubicacionX: 15, ubicacionY: 6,},
-                            {ubicacionX: 15, ubicacionY: 7,},{ubicacionX: 15, ubicacionY: 8,},{ubicacionX: 14, ubicacionY: 8,},
-                            {ubicacionX: 13, ubicacionY: 8,},{ubicacionX: 12, ubicacionY: 8,},
-                        ],
-                    },
-                    {
-                        codigo:"TA02",
-                        ruta:[
-                            {ubicacionX: 4,ubicacionY: 5,},{ubicacionX: 5,ubicacionY: 5,},{ubicacionX: 5,ubicacionY: 6,},
-                            {ubicacionX: 5,ubicacionY: 7,},{ubicacionX: 5,ubicacionY: 8,},{ubicacionX: 6,ubicacionY: 8,},
-                            {ubicacionX: 7,ubicacionY: 8,},{ubicacionX: 8,ubicacionY: 8,},{ubicacionX: 9,ubicacionY: 8,},
-                            {ubicacionX: 10,ubicacionY: 8,},{ubicacionX: 11,ubicacionY: 8,},{ubicacionX: 12,ubicacionY: 8,},
-                        ],
-                    },
-                    {
-                        codigo:"TA03",
-                        ruta:[
-                            {ubicacionX: 14,ubicacionY: 15,},{ubicacionX: 15,ubicacionY: 15,},{ubicacionX: 15,ubicacionY: 16,},
-                            {ubicacionX: 15,ubicacionY: 17,},{ubicacionX: 15,ubicacionY: 18,},{ubicacionX: 15,ubicacionY: 19,},
-                            {ubicacionX: 16,ubicacionY: 19,},{ubicacionX: 17,ubicacionY: 19,},{ubicacionX: 18,ubicacionY: 19,},
-                            {ubicacionX: 18,ubicacionY: 18,},{ubicacionX: 18,ubicacionY: 17,},{ubicacionX: 18,ubicacionY: 16,},
-                            {ubicacionX: 18,ubicacionY: 15,},{ubicacionX: 18,ubicacionY: 14,},{ubicacionX: 18,ubicacionY: 13,},
-                            {ubicacionX: 18,ubicacionY: 12,},{ubicacionX: 18,ubicacionY: 11,},{ubicacionX: 18,ubicacionY: 10,},
-                            {ubicacionX: 18,ubicacionY: 9,},{ubicacionX: 18,ubicacionY: 8,},{ubicacionX: 17,ubicacionY: 8,},
-                            {ubicacionX: 16,ubicacionY: 8,},{ubicacionX: 15,ubicacionY: 8,},{ubicacionX: 14,ubicacionY: 8,},
-                            {ubicacionX: 13,ubicacionY: 8,},{ubicacionX: 12,ubicacionY: 8,},
-                        ],
-                    },
-                    {
-                        codigo:"TA04",
-                        ruta:[
-                            {ubicacionX: 24,ubicacionY: 25,},{ubicacionX: 25,ubicacionY: 25,},{ubicacionX: 26,ubicacionY: 25,},
-                            {ubicacionX: 27,ubicacionY: 25,},{ubicacionX: 28,ubicacionY: 25,},{ubicacionX: 29,ubicacionY: 25,},
-                            {ubicacionX: 30,ubicacionY: 25,},{ubicacionX: 31,ubicacionY: 25,},{ubicacionX: 32,ubicacionY: 25,},
-                            {ubicacionX: 33,ubicacionY: 25,},{ubicacionX: 34,ubicacionY: 25,},{ubicacionX: 35,ubicacionY: 25,},
-                            {ubicacionX: 35,ubicacionY: 24,},{ubicacionX: 35,ubicacionY: 23,},{ubicacionX: 35,ubicacionY: 22,},
-                            {ubicacionX: 35,ubicacionY: 21,},{ubicacionX: 35,ubicacionY: 20,},{ubicacionX: 35,ubicacionY: 19,},
-                            {ubicacionX: 35,ubicacionY: 18,},{ubicacionX: 35,ubicacionY: 17,},{ubicacionX: 35,ubicacionY: 16,},
-                            {ubicacionX: 35,ubicacionY: 15,},{ubicacionX: 35,ubicacionY: 14,},{ubicacionX: 35,ubicacionY: 13,},
-                            {ubicacionX: 35,ubicacionY: 12,},{ubicacionX: 35,ubicacionY: 11,},{ubicacionX: 35,ubicacionY: 10,},
-                            {ubicacionX: 35,ubicacionY: 9,},{ubicacionX: 35,ubicacionY: 8,},{ubicacionX: 34,ubicacionY: 8,},
-                            {ubicacionX: 33,ubicacionY: 8,},{ubicacionX: 32,ubicacionY: 8,},{ubicacionX: 31,ubicacionY: 8,},
-                            {ubicacionX: 30,ubicacionY: 8,},{ubicacionX: 29,ubicacionY: 8,},{ubicacionX: 28,ubicacionY: 8,},
-                            {ubicacionX: 27,ubicacionY: 8,},{ubicacionX: 26,ubicacionY: 8,},{ubicacionX: 25,ubicacionY: 8,},
-                            {ubicacionX: 24,ubicacionY: 8,},{ubicacionX: 23,ubicacionY: 8,},{ubicacionX: 22,ubicacionY: 8,},
-                            {ubicacionX: 21,ubicacionY: 8,},{ubicacionX: 20,ubicacionY: 8,},{ubicacionX: 19,ubicacionY: 8,},
-                            {ubicacionX: 18,ubicacionY: 8,},{ubicacionX: 17,ubicacionY: 8,},{ubicacionX: 16,ubicacionY: 8,},
-                            {ubicacionX: 15,ubicacionY: 8,},{ubicacionX: 14,ubicacionY: 8,},{ubicacionX: 13,ubicacionY: 8,},
-                            {ubicacionX: 12,ubicacionY: 8,},
-                        ],
-                    },
-                ];
+                
                 //this.auxRutasActuales=JSON.parse(JSON.stringify(this.rutasActuales));
                 for(let i=0;i<this.rutasActuales.length;i++){
                     this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
@@ -303,8 +290,23 @@ export default {
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
                 p5.registrarAveria();
-                //p5.actualizarAverias();
+                p5.actualizarAverias();
+                p5.actualizarClientes();
                 p5.actualizarBloqueos();
+            };
+            p5.actualizarClientes = () => {
+                let c=p5.color("#000000");
+                p5.fill(c);
+                p5.stroke("#EEEEEE");
+                p5.textSize(this.escalaPixeles);
+                for(let i=0;i<this.pedidosActuales.length;i++){
+                    p5.fill(c);
+                    p5.ellipse(this.escalaPixeles*this.pedidosActuales[i].ubicacionX,
+                    this.escalaPixeles*this.pedidosActuales[i].ubicacionY,this.escalaPixeles,this.escalaPixeles);
+                    p5.text(this.pedidosActuales[i].codigo,
+                    this.escalaPixeles*this.pedidosActuales[i].ubicacionX-this.escalaPixeles*2.5,
+                    this.escalaPixeles*this.pedidosActuales[i].ubicacionY+this.escalaPixeles);
+                }
             };
             p5.dibujarLeyenda = () => {
                 let margenMapaYLeyenda=this.escalaPixeles*(this.tamXMapa+3);
@@ -351,7 +353,7 @@ export default {
                 p5.fill(c);
                 p5.text("Planta Principal",margenMapaYLeyenda+10,110);
                 
-                c=p5.color("#00FF00");
+                c=p5.color("#000000");
                 p5.fill(c);
                 p5.circle(margenMapaYLeyenda,122,10,10);
                 c=p5.color("#000000")
@@ -469,7 +471,7 @@ export default {
                     this.seRegistroAveria=false;
                     this.averiaPosX=-1;
                     this.averiaPosY=-1;
-                },3000);
+                },600000);
             }
         },
         velocidadSimulacion: function(nuevaVelocidad){
@@ -477,32 +479,12 @@ export default {
         }
     },
     async created(){
-
-        /*this.socket=new SockJS('http://54.145.192.162:8080');
-        //this.stompClient=Stomp.over(socket);
-        this.socket.connect({},function(frame){
-            this.socket.subscribe('/topic/greetings',function(datos){
-                console.log(datos);
-                //this.actualizarDatos(datos.data.data);
-            });
-        })*/
-        /*this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
-
-        this.socket.onopen = function() {
-            console.log('open');
-        };
-
-        this.socket.onmessage=function(e){
-            console.log(e.data);
-        }
-        /*if(!this.esSimulacion){
+        
             await this.obtenerPosicionesYBloqueosActuales();
             
-            setInterval(this.actualizarCamionesMapa,2000);
-        }else{
+            setInterval(this.actualizarCamionesMapa,5000);
 
-        }*/
-        this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
+        /*this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
         this.stompClient=Stomp.over(this.socket);
         this.stompClient.connect({}, (frame) => {
             console.log("frame:" + frame);
@@ -512,9 +494,7 @@ export default {
                 console.log(greeting);
             });
             this.stompClient.send("/app/hello", {}, send);
-        })
-        await this.obtenerPosicionesYBloqueosActuales();    
-        setInterval(this.actualizarCamionesMapa,this.tiempoDeSimulacion);
+        });*/
     }
 }
 </script>
