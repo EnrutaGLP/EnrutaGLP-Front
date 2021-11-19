@@ -22,6 +22,12 @@
                     route="enruta-glp/SimulacionTresDias/"
                     :imgSrc="ListaVerificacionimg"
                 />
+                <Card class="card"
+                    title="Simulación hasta colapso logístico"
+                    description="Permite simular como trabajaría el sistema hasta que no pueda entregar un pedido."
+                    route="enruta-glp/SimulacionColapsoLogistico/"
+                    :imgSrc="ListaVerificacionimg"
+                />
             </div>
         </div>
     </div>

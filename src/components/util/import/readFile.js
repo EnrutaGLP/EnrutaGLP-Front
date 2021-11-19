@@ -85,9 +85,9 @@ export function readPedidos(obj) {
                 datosFecha=pedido[0].split(":");
                 fechaLimite=new Date(ano,mes,datosFecha[0],datosFecha[1],datosFecha[2],11);
                 fechaLimite.setHours(fechaLimite.getHours()+parseInt(pedido[4]));
-                pedidoObj.cantidadGlp=pedido[1];
-                pedidoObj.ubicacionX=pedido[2];
-                pedidoObj.ubicacionY=pedido[3];
+                pedidoObj.cantidadGlp=pedido[3];
+                pedidoObj.ubicacionX=pedido[1];
+                pedidoObj.ubicacionY=pedido[2];
                 pedidoObj.fechaPedido=datosFecha[0]+"-"+mesStr+"-"+ano+" "+datosFecha[1]+":"+datosFecha[2]+":11";
                 pedidoObj.fechaLimite=`${fechaLimite.getDate()}`.padStart(2,'0')+"-"+`${fechaLimite.getMonth()+1}`.padStart(2,'0')+"-"+
                 fechaLimite.getFullYear()+" "+`${fechaLimite.getHours()}`.padStart(2,'0')+":"+ 

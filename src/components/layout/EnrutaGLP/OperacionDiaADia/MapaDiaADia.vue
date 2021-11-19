@@ -89,103 +89,15 @@ export default {
         };
     },
     methods:{
-        async obtenerPosicionesYBloqueosActuales(){
+        async obtenerPosicionesYBloqueosActualesPrimeraVez(){
             try{
-                //const data=await getCamionesUbicacionesActuales();
-
                 const data1=await getRutasActuales();
                 console.log(data1);
-
                 const data2=await getPedidosActuales();
                 console.log(data2);
-
                 this.pedidosActuales=data2.data.data;
                 console.log(this.pedidosActuales);
-
                 this.averiasActuales=data1.data.data.averiados;
-
-                /*const data1={
-                    data:{
-                        averiados:[
-                            {
-                                codigo:"TA08",
-                                ubicacionActualX:40,
-                                ubicacionActualY:40,
-                                ruta:[],
-                            },
-                        ],
-                        otros:[
-                            {
-                                codigo: "TA01",
-                                ubicacionActualX: 12,
-                                ubicacionActualY: 8,
-                                estadoId: 1,
-                                estadoNombre: "En reposo",
-                                ruta: [
-                                    {
-                                        ubicacionX: 12,
-                                        ubicacionY: 8,
-                                        orden: 1
-                                    },
-                                    {
-                                        ubicacionX: 12,
-                                        ubicacionY: 9,
-                                        orden: 2
-                                    },
-                                    {
-                                        ubicacionX: 12,
-                                        ubicacionY: 10,
-                                        orden: 3
-                                    },
-                                    {
-                                        ubicacionX: 11,
-                                        ubicacionY: 10,
-                                        orden: 4
-                                    },
-                                    {
-                                        ubicacionX: 10,
-                                        ubicacionY: 10,
-                                        orden: 5
-                                    }
-                                ]
-                            },
-                            {
-                                codigo: "TA02",
-                                ubicacionActualX: 12,
-                                ubicacionActualY: 8,
-                                estadoId: 1,
-                                estadoNombre: "En reposo",
-                                ruta: [
-                                    {
-                                        ubicacionX: 12,
-                                        ubicacionY: 8,
-                                        orden: 1
-                                    },
-                                    {
-                                        ubicacionX: 12,
-                                        ubicacionY: 9,
-                                        orden: 2
-                                    },
-                                    {
-                                        ubicacionX: 12,
-                                        ubicacionY: 10,
-                                        orden: 3
-                                    },
-                                    {
-                                        ubicacionX: 11,
-                                        ubicacionY: 10,
-                                        orden: 4
-                                    },
-                                    {
-                                        ubicacionX: 10,
-                                        ubicacionY: 10,
-                                        orden: 5
-                                    }
-                                ]
-                            }
-                        ],
-                    }
-                }*/
                 data1.data.data.otros.forEach(element => {
                     this.camionesUbicacionActual.push({
                         codigo:element.codigo,
@@ -213,6 +125,58 @@ export default {
                         this.bloqueosActuales[m].bloqueo.push({
                             ubicacionX:data.data.data[m].puntos[n].ubicacionX,
                             ubicacionY:data.data.data[m].puntos[n].ubicacionY,
+                        })
+                    }
+                }
+                console.log(this.bloqueosActuales);
+                
+                //this.auxRutasActuales=JSON.parse(JSON.stringify(this.rutasActuales));
+                for(let i=0;i<this.rutasActuales.length;i++){
+                    this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
+                    this.posicionRutasActuales.push(0);
+                }
+            }catch(err){
+                
+            }
+        },
+        obtenerPosicionesYBloqueosActuales(jsonGreeting){
+            try{
+                
+                this.camionesUbicacionActual=[];
+                this.rutasActuales=[];
+                this.bloqueosActuales=[];
+                this.longitudRutasActuales=[];
+                this.posicionRutasActuales=[];
+                this.pedidosActuales=jsonGreeting.pedidos;
+                console.log(this.pedidosActuales);
+
+                this.averiasActuales=jsonGreeting.rutas.averiados;
+
+                
+                jsonGreeting.rutas.otros.forEach(element => {
+                    this.camionesUbicacionActual.push({
+                        codigo:element.codigo,
+                        ubicacionActualX:element.ubicacionActualX,
+                        ubicacionActualY:element.ubicacionActualY,
+                        estado:{
+                            id:element.estadoId,
+                            nombre:element.nombre,
+                        }
+                    });
+                    this.rutasActuales.push({
+                        codigo:element.codigo,
+                        ruta:element.ruta,
+                    })
+                });
+                console.log(this.rutasActuales);
+                for(let m=0;m<jsonGreeting.bloqueos.length;m++){
+                    this.bloqueosActuales.push({
+                        bloqueo:[],
+                    });
+                    for(let n=0;n<jsonGreeting.bloqueos[m].puntos.length;n++){
+                        this.bloqueosActuales[m].bloqueo.push({
+                            ubicacionX:jsonGreeting.bloqueos[m].puntos[n].ubicacionX,
+                            ubicacionY:jsonGreeting.bloqueos[m].puntos[n].ubicacionY,
                         })
                     }
                 }
@@ -302,10 +266,11 @@ export default {
                 for(let i=0;i<this.pedidosActuales.length;i++){
                     p5.fill(c);
                     p5.ellipse(this.escalaPixeles*this.pedidosActuales[i].ubicacionX,
-                    this.escalaPixeles*this.pedidosActuales[i].ubicacionY,this.escalaPixeles,this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.pedidosActuales[i].ubicacionY),
+                    this.escalaPixeles,this.escalaPixeles);
                     p5.text(this.pedidosActuales[i].codigo,
                     this.escalaPixeles*this.pedidosActuales[i].ubicacionX-this.escalaPixeles*2.5,
-                    this.escalaPixeles*this.pedidosActuales[i].ubicacionY+this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.pedidosActuales[i].ubicacionY)+this.escalaPixeles);
                 }
             };
             p5.dibujarLeyenda = () => {
@@ -372,7 +337,7 @@ export default {
                     let c=p5.color("#FF0000");
                     p5.fill(c);
                     p5.ellipse(this.escalaPixeles*this.averiaPosX,
-                    this.escalaPixeles*this.averiaPosY,this.escalaPixeles,this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.averiaPosY),this.escalaPixeles,this.escalaPixeles);
                 }
             };
             p5.actualizarAverias = () => {
@@ -382,10 +347,10 @@ export default {
                 for(let i=0;i<this.averiasActuales.length;i++){
                     p5.fill(c);
                     p5.ellipse(this.escalaPixeles*this.averiasActuales[i].ubicacionActualX,
-                    this.escalaPixeles*this.averiasActuales[i].ubicacionActualY,this.escalaPixeles,this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.averiasActuales[i].ubicacionActualY),this.escalaPixeles,this.escalaPixeles);
                     p5.text(this.averiasActuales[i].codigo,
                     this.escalaPixeles*this.averiasActuales[i].ubicacionActualX-this.escalaPixeles,
-                    this.escalaPixeles*this.averiasActuales[i].ubicacionActualY+this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.averiasActuales[i].ubicacionActualY)+this.escalaPixeles);
                 }
             };
             p5.actualizarBloqueos = () => {
@@ -394,9 +359,9 @@ export default {
                 for(let i=0;i<this.bloqueosActuales.length;i++){
                     for(let j=0;j<this.bloqueosActuales[i].bloqueo.length-1;j++){
                         p5.line(this.escalaPixeles*this.bloqueosActuales[i].bloqueo[j].ubicacionX,
-                        this.escalaPixeles*this.bloqueosActuales[i].bloqueo[j].ubicacionY,
+                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[i].bloqueo[j].ubicacionY),
                         this.escalaPixeles*this.bloqueosActuales[i].bloqueo[j+1].ubicacionX,
-                        this.escalaPixeles*this.bloqueosActuales[i].bloqueo[j+1].ubicacionY);
+                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[i].bloqueo[j+1].ubicacionY));
                     }
                 }
                 p5.strokeWeight(1);
@@ -410,16 +375,16 @@ export default {
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
                     p5.ellipse(this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX,
-                    this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualY,this.escalaPixeles,this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.camionesUbicacionActual[i].ubicacionActualY),this.escalaPixeles,this.escalaPixeles);
                     p5.text(this.camionesUbicacionActual[i].codigo,
                     this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX-this.escalaPixeles,
-                    this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualY+this.escalaPixeles);
+                    this.escalaPixeles*(this.tamYMapa-this.camionesUbicacionActual[i].ubicacionActualY)+this.escalaPixeles);
                     p5.stroke(this.listaColoresCamiones[i]);
                     for(let j=0;j<this.rutasActuales[i].ruta.length-1;j++){
                         p5.line(this.escalaPixeles*this.rutasActuales[i].ruta[j].ubicacionX,
-                        this.escalaPixeles*this.rutasActuales[i].ruta[j].ubicacionY,
+                        this.escalaPixeles*(this.tamYMapa-this.rutasActuales[i].ruta[j].ubicacionY),
                         this.escalaPixeles*this.rutasActuales[i].ruta[j+1].ubicacionX,
-                        this.escalaPixeles*this.rutasActuales[i].ruta[j+1].ubicacionY);
+                        this.escalaPixeles*(this.tamYMapa-this.rutasActuales[i].ruta[j+1].ubicacionY));
                     }
                 }
                 p5.strokeWeight(1);
@@ -440,13 +405,15 @@ export default {
                 let c=p5.color("#8f2b9d");
                 p5.fill(c);
                 p5.rect(this.escalaPixeles*this.almacenCentralPosX-this.escalaPixeles/2,
-                this.escalaPixeles*this.almacenCentralPosY-this.escalaPixeles/2,this.escalaPixeles,this.escalaPixeles);
+                this.escalaPixeles*(this.tamYMapa-this.almacenCentralPosY)-this.escalaPixeles/2,this.escalaPixeles,this.escalaPixeles);
                 c=p5.color("#db6eeb");
                 p5.fill(c);
                 p5.rect(this.escalaPixeles*this.almacenIntermedio1PosX-this.escalaPixeles/2,
-                this.escalaPixeles*this.almacenIntermedio1PosY-this.escalaPixeles/2,this.escalaPixeles,this.escalaPixeles);
+                this.escalaPixeles*(this.tamYMapa-this.almacenIntermedio1PosY)-this.escalaPixeles/2,this.escalaPixeles,
+                this.escalaPixeles);
                 p5.rect(this.escalaPixeles*this.almacenIntermedio2PosX-this.escalaPixeles/2,
-                this.escalaPixeles*this.almacenIntermedio2PosY-this.escalaPixeles/2,this.escalaPixeles,this.escalaPixeles);
+                this.escalaPixeles*(this.tamYMapa-this.almacenIntermedio2PosY)-this.escalaPixeles/2,this.escalaPixeles,
+                this.escalaPixeles);
             };
         }
         this.p5canvas=new P5(this.script,'canvas');
@@ -480,21 +447,22 @@ export default {
     },
     async created(){
         
-            await this.obtenerPosicionesYBloqueosActuales();
+        await this.obtenerPosicionesYBloqueosActualesPrimeraVez();
             
-            setInterval(this.actualizarCamionesMapa,5000);
+        //setInterval(this.actualizarCamionesMapa,5000);
 
-        /*this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
+        this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
         this.stompClient=Stomp.over(this.socket);
         this.stompClient.connect({}, (frame) => {
-            console.log("frame:" + frame);
-            var send = JSON.stringify({'name':'Enma'});
-            console.log("send:"+send);
-            this.stompClient.subscribe('/topic/greetings',function(greeting){
+            this.stompClient.subscribe('/topic/estado-general',(greeting)=>{
                 console.log(greeting);
+                let jsonGreeting=JSON.parse(greeting.body);
+                console.log(jsonGreeting);
+                
+                //console.log(this.pedidosActuales);
+                this.obtenerPosicionesYBloqueosActuales(jsonGreeting);
             });
-            this.stompClient.send("/app/hello", {}, send);
-        });*/
+        });
     }
 }
 </script>

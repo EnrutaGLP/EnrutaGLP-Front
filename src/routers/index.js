@@ -10,6 +10,7 @@ import Login from '../components/layout/Login/index.vue';
 import Pedidos from '../components/layout/EnrutaGLP/Pedidos/index.vue';
 import OperacionDiaADia from '../components/layout/EnrutaGLP/OperacionDiaADia/index.vue';
 import SimulacionTresDias from '../components/layout/EnrutaGLP/SimulacionTresDias/index.vue';
+import SimulacionColapsoLogistico from '../components/layout/EnrutaGLP/SimulacionColapsoLogistico/index.vue';
 
 Vue.use(Router);
 
@@ -51,6 +52,11 @@ export default new Router({
                     path: 'enruta-glp/SimulacionTresDias',
                     name: 'SimulacionTresDias',
                     component: SimulacionTresDias,
+                },
+                {
+                    path: 'enruta-glp/SimulacionColapsoLogistico/',
+                    name: 'SimulacionColapsoLogistico',
+                    component: SimulacionColapsoLogistico,
                 },
             ],
         },

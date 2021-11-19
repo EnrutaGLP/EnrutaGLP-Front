@@ -21,7 +21,7 @@
                     </v-col>
                 </v-row>
             </div>
-            <p v-if="importoArchivos">Debe seleccionar una fecha y hora antes de empezar la simulación</p>
+            <p v-if="importoArchivos">Debe seleccionar una fecha antes de empezar la simulación</p>
             <br>
             <br>
             <v-alert
@@ -33,17 +33,11 @@
             </v-alert>
             <div class="fechaPicker">
                 <DatePicker
-                    v-bind:date="fechaInicio"
-                    v-on:cambio-fecha="cambioFechaInicio"
-                    texto="Fecha de inicio de simulación"
-                />
-                <TimePicker
-                    v-bind:hour="horaInicio"
-                    v-on:cambio-hora="cambioHoraInicio"
-                    texto="Hora de inicio de simulación"
+                    v-bind:date="fechaEntrega"
+                    v-on:cambio-fecha="cambioFechaEntrega"
+                    texto="Fecha de entrega"
                 />
             </div>
-            <br>
             <div class="controlesSimulacion">
                 <v-btn
                     class="mx-2"
@@ -89,14 +83,13 @@
 <script>
 import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue'
 import {
-    setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionTresDias, setFechaInicioSimulacion,
+    setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionColapsoLogistico
 } from '../../../util/services/index';
 import Title from '../../../shared/Title.vue';
 import BackButton from '../../../shared/BackButton.vue';
 import ModalInputFileUsuarios from "../../../shared/ModalInputFileUsuarios.vue";
 import ModalInputFileAlumnos from "../../../shared/ModalInputFileAlumnos.vue";
 import DatePicker from "../../../shared/DatePicker.vue";
-import TimePicker from "../../../shared/TimePicker.vue";
 
 export default {
     name: 'SimulacionTresDias',
@@ -107,7 +100,6 @@ export default {
         ModalInputFileAlumnos,
         MapaDiaADia,
         DatePicker,
-        TimePicker,
     },
     data() {
         return {
@@ -124,8 +116,7 @@ export default {
             reanudoSimulacion:false,
             velocidadSimulacion:1,
 
-            fechaInicio:'',
-            horaInicio:'',
+            fechaEntrega:'',
 
         };
     },
@@ -182,9 +173,7 @@ export default {
         async dioPlay(){
             this.reanudoSimulacion=true;
             try {
-                let data=await setConfiguracionSimulacionTresDias();
-                let fechaIni=this.fechaInicio
-                let data2=await setFechaInicioSimulacion();
+                let data=await setConfiguracionSimulacionColapsoLogistico();
                 console.log(data);
             } catch (err) {
                 console.log(err);
@@ -199,16 +188,12 @@ export default {
                 console.log(err);
             }
         },
-        cambioFechaInicio(dato){
-            this.fechaInicio=dato;
-            console.log(this.fechaInicio);
+        cambioFechaEntrega(dato){
+            this.fechaEntrega=dato;
+            console.log("Selecciono data");
             this.importoPedidos=true;
-        },
-        cambioHoraInicio(dato){
-            this.horaInicio=dato;
-            console.log(this.horaInicio);
             this.importoBloqueos=true;
-        }
+        },
     },
     computed:{
         importoArchivos:function(){
@@ -222,16 +207,12 @@ export default {
 
     },
 };
-
 </script>
 <style scoped>
     .botones{
         float:right;
     }
     .fechaPicker{
-        width: 30rem;
-    }
-    .horaPicker{
-        width: 30rem;
+        width: 40rem;
     }
 </style>
