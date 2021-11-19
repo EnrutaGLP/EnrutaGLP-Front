@@ -250,13 +250,13 @@ export default {
                 p5.clear();
                 p5.background('#EEEEEE');
                 p5.dibujarCuadricula();
-                p5.dibujarAlmacenes();
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
                 p5.registrarAveria();
                 p5.actualizarAverias();
                 p5.actualizarClientes();
                 p5.actualizarBloqueos();
+                p5.dibujarAlmacenes();
             };
             p5.actualizarClientes = () => {
                 let c=p5.color("#000000");
@@ -403,6 +403,7 @@ export default {
             };
             p5.dibujarAlmacenes = () => {
                 let c=p5.color("#8f2b9d");
+                p5.stroke("#EEEEEE");
                 p5.fill(c);
                 p5.rect(this.escalaPixeles*this.almacenCentralPosX-this.escalaPixeles/2,
                 this.escalaPixeles*(this.tamYMapa-this.almacenCentralPosY)-this.escalaPixeles/2,this.escalaPixeles,this.escalaPixeles);
@@ -463,6 +464,9 @@ export default {
                 this.obtenerPosicionesYBloqueosActuales(jsonGreeting);
             });
         });
+    },
+    destroyed(){
+        this.socket.close();
     }
 }
 </script>
