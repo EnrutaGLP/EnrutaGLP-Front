@@ -21,8 +21,6 @@ import {getBloqueosActuales, getRutasActuales, getPedidosActuales} from '../../.
 
 export default {
     props:[
-        'averia',
-        'esSimulacion',
         'reanudoSimulacion',
         'velocidadSimulacion',
     ],
@@ -423,27 +421,6 @@ export default {
         
     },
     watch:{
-        averia: function(nuevaAveria){
-            if(nuevaAveria!=""){
-                console.log(nuevaAveria);
-                let i=0;
-                while(i<this.camionesUbicacionActual.length){
-                    if(this.camionesUbicacionActual[i].codigo==nuevaAveria){
-                        this.averiaPosX=this.camionesUbicacionActual[i].ubicacionActualX;
-                        this.averiaPosY=this.camionesUbicacionActual[i].ubicacionActualY;
-                        break;
-                    }
-                    i++;
-                }
-                this.camionesUbicacionActual.splice(i,1);
-                this.seRegistroAveria=true;
-                setTimeout(()=>{
-                    this.seRegistroAveria=false;
-                    this.averiaPosX=-1;
-                    this.averiaPosY=-1;
-                },600000);
-            }
-        },
         velocidadSimulacion: function(nuevaVelocidad){
 
         }
@@ -452,7 +429,7 @@ export default {
         
         await this.obtenerPosicionesYBloqueosActualesPrimeraVez();
             
-        //setInterval(this.actualizarCamionesMapa,5000);
+        //setInterval(this.actualizarCamionesMapa,72000/this.velocidadSimulacion);
 
         this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
         this.stompClient=Stomp.over(this.socket);
@@ -502,7 +479,5 @@ export default {
     .circulo{
         width: 10px;
         height: 10px;
-        -moz-border-radius: 50%;
-        -webkit-border-radius: 50%;
     }
 </style>

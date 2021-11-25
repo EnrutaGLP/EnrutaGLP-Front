@@ -52,6 +52,17 @@
                     small
                     color="#7434EB"
                     :disabled="importoArchivos"
+                    @click="disminuyoVelocidad"
+                >
+                    <v-icon>mdi-rewind</v-icon>
+                </v-btn>
+                <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    small
+                    color="#7434EB"
+                    :disabled="importoArchivos"
                     @click="dioPlay"
                 >
                     <v-icon>mdi-play</v-icon>
@@ -63,15 +74,23 @@
                     small
                     color="#7434EB"
                     :disabled="importoArchivos"
-                    @click="dioStop"
+                    @click="aumentoVelocidad"
                 >
-                    <v-icon>mdi-stop</v-icon>
+                    <v-icon>mdi-fast-forward</v-icon>
                 </v-btn>
+                <v-btn
+                    elevation="2"
+                    disabled=true
+                    v-if="!importoArchivos"
+                >
+                    x{{velocidadSimulacion}}
+                </v-btn>
+                <p style="color:#FF0000" v-if="sePasoDeIncremento">No se puede incrementar la velocidad más allá de x256</p>
+                <p style="color:#FF0000" v-if="sePasoDeDecremento">No se puede disminuir la velocidad más allá de x1</p>
             </div>
             <br>
             <div class="mapa">
-                <MapaDiaADia
-                    esSimulacion=1
+                <MapaSimulacion
                     :reanudoSimulacion="reanudoSimulacion"
                     :velocidadSimulacion="velocidadSimulacion"
                 />
@@ -87,7 +106,7 @@
 </template>
 
 <script>
-import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue'
+import MapaSimulacion from '../SimulacionTresDias/MapaSimulacion.vue'
 import {
     setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionTresDias, setFechaInicioSimulacion,
 } from '../../../util/services/index';
@@ -105,7 +124,7 @@ export default {
         Title,
         ModalInputFileUsuarios,
         ModalInputFileAlumnos,
-        MapaDiaADia,
+        MapaSimulacion,
         DatePicker,
         TimePicker,
     },
@@ -123,10 +142,15 @@ export default {
 
             reanudoSimulacion:false,
             velocidadSimulacion:1,
+            velocidadMinima:1,
+            velocidadMaxima:256,
+            sePasoDeIncremento:false,
+            sePasoDeDecremento:false,
+            yaInicioSimulacion:false,
 
             fechaInicio:'',
             horaInicio:'',
-
+            fechaInicioEnvio:'',
         };
     },
     methods: {
@@ -181,13 +205,38 @@ export default {
         },
         async dioPlay(){
             this.reanudoSimulacion=true;
-            try {
-                let data=await setConfiguracionSimulacionTresDias();
-                let fechaIni=this.fechaInicio
-                let data2=await setFechaInicioSimulacion();
-                console.log(data);
-            } catch (err) {
-                console.log(err);
+            if(!this.yaInicioSimulacion){
+                try {
+                    let data=await setConfiguracionSimulacionTresDias();
+                    let fechaIniAux=this.fechaInicio.split("-");
+                    this.fechaInicioEnvio=fechaIniAux[2]+"-"+fechaIniAux[1]+"-"+fechaIniAux[0]+" "+this.horaInicio+":11";
+                    let data2=await setFechaInicioSimulacion(this.fechaInicioEnvio);
+                    console.log(data);
+                    console.log(data2);
+                } catch (err) {
+                    console.log(err);
+                }
+                this.yaInicioSimulacion=true;
+            }
+        },
+        disminuyoVelocidad(){
+            if(this.velocidadSimulacion>this.velocidadMinima){
+                this.velocidadSimulacion=this.velocidadSimulacion/2;
+            }else{
+                this.sePasoDeDecremento=true;
+                setTimeout(()=>{
+                    this.sePasoDeDecremento=false;
+                },2000);
+            }
+        },
+        aumentoVelocidad(){
+            if(this.velocidadSimulacion<this.velocidadMaxima){
+                this.velocidadSimulacion=this.velocidadSimulacion*2;
+            }else{
+                this.sePasoDeIncremento=true;
+                setTimeout(()=>{
+                    this.sePasoDeIncremento=false;
+                },2000);
             }
         },
         async dioStop(){
