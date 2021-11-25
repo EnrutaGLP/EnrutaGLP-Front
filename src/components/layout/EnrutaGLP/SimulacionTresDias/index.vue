@@ -204,8 +204,8 @@ export default {
             }, 2000);
         },
         async dioPlay(){
-            this.reanudoSimulacion=true;
             if(!this.yaInicioSimulacion){
+                this.reanudoSimulacion=true;
                 try {
                     let data=await setConfiguracionSimulacionTresDias();
                     let fechaIniAux=this.fechaInicio.split("-");

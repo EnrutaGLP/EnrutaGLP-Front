@@ -82,6 +82,7 @@ export default {
             bloqueosActuales:[],
             averiasActuales:[],
             pedidosActuales:[],
+            fechaSimulacion:'',
 
             seRegistroAveria:false,
             averiaPosX:-1,
@@ -257,6 +258,7 @@ export default {
                 p5.actualizarClientes();
                 p5.actualizarBloqueos();
                 p5.dibujarAlmacenes();
+                p5.mostrarFechaSimulacion();
             };
             p5.actualizarClientes = () => {
                 let c=p5.color("#000000");
@@ -272,6 +274,13 @@ export default {
                     this.escalaPixeles*this.pedidosActuales[i].ubicacionX-this.escalaPixeles*2.5,
                     this.escalaPixeles*(this.tamYMapa-this.pedidosActuales[i].ubicacionY)+this.escalaPixeles);
                 }
+            };
+            p5.mostrarFechaSimulacion = () => {
+                p5.stroke("#EEEEEE");
+                let c=p5.color("#000000");
+                p5.fill(c);
+                p5.textSize(18);
+                p5.text(this.fechaSimulacion,this.escalaPixeles*(this.tamXMapa+3),this.tamYMapa*this.escalaPixeles-20);
             };
             p5.dibujarLeyenda = () => {
                 let margenMapaYLeyenda=this.escalaPixeles*(this.tamXMapa+3);
@@ -421,8 +430,11 @@ export default {
         
     },
     watch:{
+        reanudoSimulacion: function(nuevaReanudoSimulacion){
+            this.fechaSimulacion="30-11-2021 04:20:00";
+        },
         velocidadSimulacion: function(nuevaVelocidad){
-
+            
         }
     },
     async created(){
