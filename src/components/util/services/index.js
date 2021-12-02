@@ -84,3 +84,8 @@ export function setFechaInicioSimulacion(fechaInicio){
     });
 }
 //#endregion
+//#region simulacion
+export function getRutasSimulacion(){
+    return axios.get(URL+"/rutas/listar-rutas-simulacion");
+}
+//#endregion

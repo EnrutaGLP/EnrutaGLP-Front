@@ -85,6 +85,12 @@
                 >
                     x{{velocidadSimulacion}}
                 </v-btn>
+                <v-progress-circular
+                    indeterminate
+                    color="7434EB"
+                    v-if="cargandoSimulacion"
+                >
+                </v-progress-circular>
                 <p style="color:#FF0000" v-if="sePasoDeIncremento">No se puede incrementar la velocidad más allá de x256</p>
                 <p style="color:#FF0000" v-if="sePasoDeDecremento">No se puede disminuir la velocidad más allá de x1</p>
             </div>
@@ -93,6 +99,7 @@
                 <MapaSimulacion
                     :reanudoSimulacion="reanudoSimulacion"
                     :velocidadSimulacion="velocidadSimulacion"
+                    v-on:cargandoSimulacion="cargandoSimul"
                 />
                 
             </div>
@@ -151,6 +158,8 @@ export default {
             fechaInicio:'',
             horaInicio:'',
             fechaInicioEnvio:'',
+
+            cargandoSimulacion:false,
         };
     },
     methods: {
@@ -206,14 +215,16 @@ export default {
         async dioPlay(){
             if(!this.yaInicioSimulacion){
                 this.reanudoSimulacion=true;
+                this.cargandoSimulacion=true;
                 try {
-                    let data=await setConfiguracionSimulacionTresDias();
+                    let data=await setConfiguracionSimulacionTresDias(this.fechaInicio+this.horaInicio+":11");
                     let fechaIniAux=this.fechaInicio.split("-");
                     this.fechaInicioEnvio=fechaIniAux[2]+"-"+fechaIniAux[1]+"-"+fechaIniAux[0]+" "+this.horaInicio+":11";
-                    let data2=await setFechaInicioSimulacion(this.fechaInicioEnvio);
+                    //let data2=await setFechaInicioSimulacion(this.fechaInicioEnvio);
                     console.log(data);
-                    console.log(data2);
+                    //console.log(data2);
                 } catch (err) {
+                    this.cargandoSimulacion=false;
                     console.log(err);
                 }
                 this.yaInicioSimulacion=true;
@@ -257,6 +268,9 @@ export default {
             this.horaInicio=dato;
             console.log(this.horaInicio);
             this.importoBloqueos=true;
+        },
+        cargandoSimul(){
+            this.cargandoSimulacion=false;
         }
     },
     computed:{
