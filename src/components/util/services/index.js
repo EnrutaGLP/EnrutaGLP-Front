@@ -14,7 +14,11 @@ export function getAcceso(correo, constrasena) {
                 "password": constrasena,
             });
 }
-
+//#region camiones
+export function getCamiones(){
+    return axios.get(URL+"/camiones/listar");
+}
+//#endregion
 //#region pedidos
 export function getPedidos(){
     return axios.get(URL+"/pedidos/listar");

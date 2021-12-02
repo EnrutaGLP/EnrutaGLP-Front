@@ -17,7 +17,7 @@
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
-import {getBloqueosActuales, getRutasActuales, getPedidosActuales, getRutasSimulacion} from '../../../util/services/index';
+import {getBloqueosActuales, getRutasActuales, getPedidosActuales, getRutasSimulacion, getCamiones} from '../../../util/services/index';
 
 export default {
     props:[
@@ -75,21 +75,51 @@ export default {
             distanciaPunto:1,//1km
             estadoCamiones:["","En reposo","En ruta","Averiado","En mantenimiento preventivo","En mantenimiento correctivo"],
 
-            camionesUbicacionActual:[],
+            camiones:[],
             rutasActuales:[],
-            rutasFuturas:[],//almacenará las rutas que lleguen con las actualizaciones del socket
             bloqueosActuales:[],
             averiasActuales:[],
             pedidosActuales:[],
-            fechaSimulacion:'',//fecha actual de la simulacion en string
-            fechaSimulacionDate:null,//fecha actual de la simulacion en Date
+            fechaSimulacion:null,//fecha actual de la simulacion en Date
+            fechaSimulacionStr:null,//fecha actual de la simulacion en string
             fechaInicioSimulacion:null,//fecha que definio el usuario en Date
             fechaFinSimulacion:null,//fecha limite que definiio el usuario en Date
+            fechaFinEjecucion:null,
+
+            indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
+            //indicesCamionesEliminar:[],//indices(los datos del arreglo indicesCamionesMostrar) que se deberán eliminar
 
             interval:null,
         };
     },
     methods:{
+        async obtenerInformacionCamiones(){
+            //const data=await getCamiones();
+            this.camiones.push({
+                codigo:"TA01",
+                placa:"xdx-dxd",
+                rutas:[],
+            });
+            this.camiones.push({codigo:"TA02",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TB01",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TB02",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TB03",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TB04",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TC01",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TC02",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TC03",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TC04",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD01",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD02",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD03",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD04",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD05",placa:"xdx-dxd",rutas:[],});            
+            this.camiones.push({codigo:"TD06",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD07",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD08",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD09",placa:"xdx-dxd",rutas:[],});
+            this.camiones.push({codigo:"TD10",placa:"xdx-dxd",rutas:[],});            
+        },
         async obtenerPosicionesYBloqueosActualesPrimeraVez(){
             try{
                 const data1=await getRutasActuales();
@@ -136,17 +166,90 @@ export default {
             }
         },
         actualizarMapa(){
-            this.actualizarBloqueos();
+            if(this.fechaSimulacion>=this.fechaFinEjecucion){
+                return;
+            }
             this.actualizarRutasEnMapa();
+            this.actualizarBloqueos();
             //this.actualizarAveriasEnMapa();  
         },
-        obtenerNuevasRutas(jsonGreeting){
-            let i=0;
-            let j=0;
-            let k=0;
-            /*  for(i=0;jsonGreeting.averiados.length;i++){
-                }*/
+        actualizarBloqueos(){
+            for(let i=0;i<this.bloqueosActuales.length;i++){
+                if(this.verificarInterseccionEntreDosRangoDeFechas(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                ,this.fechaSimulacion,this.fechaSimulacion)){
+                     
+                }
+            }
+        },
+        actualizarRutasEnMapa(){
+            this.fechaSimulacionStr=`${fechaSimulacion.getDate()}`.padStart(2,'0')+"-"+`${fechaSimulacion.getMonth()+1}`.padStart(2,'0')
+            + "-"+fechaSimulacion.getFullYear()+" "+`${fechaSimulacion.getHours()}`.padStart(2,'0')+":"
+            + `${fechaSimulacion.getMinutes()}`.padStart(2,'0')+":"+fechaSimulacion.getSeconds();
+            this.fechaSimulacion.setSeconds(this.fechaSimulacion.getSeconds()+72);
+            /*
+            hacer lo de eliminar con el arreglo de indicesCamionesEliminar
+            */
+            let i=0,j=0,k=0;
+            for(i=0;i<this.camiones.length;i++){
+                if(this.camiones[i].rutas.length>0){
+                    if(this.fechaSimulacion>=this.camiones[i].rutas[0].horaSalida){//se evalua si se añade al arreglo de indices
+                        if(!this.verificarIndiceEnArregloDeIndices(i)){
+                            this.indicesCamionesMostrar.push(i);
+                        }
+                        //mover una posición
+                        if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                            if(this.camiones[i].rutas[0].puntos[0].ubicacionY==this.camiones[i].rutas[0].puntos[1].ubicacionY){//eliminar vertice
+                                this.camiones[i].rutas[0].puntos.shift();
+                                //eliminar ruta y indice en caso se haya acabado la ruta
+                                if(this.camiones[i].rutas[0].puntos.length<=1){
+                                    this.camiones[i].rutas.shift();
+                                    this.indicesCamionesMostrar.splice(this.indicesCamionesMostrar.indexOf(i),1);
 
+
+                                    //no olvidar hacer lo del arreglo indicaesCamionesEliminar
+
+
+                                }
+                            }else{//avanzar en eje X
+                                if(this.camiones[i].rutas[0].puntos[0].ubicacionX<this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                                    this.camiones[i].rutas[0].puntos[0].ubicacionX++;
+                                }else{
+                                    this.camiones[i].rutas[0].puntos[0].ubicacionX--;
+                                }
+                            }
+                        }else{//avanzar en eje Y
+                            if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
+                                this.camiones[i].rutas[0].puntos[0].ubicacionY++;
+                            }else{
+                                this.camiones[i].rutas[0].puntos[0].ubicacionY--;
+                            }
+                        }
+                    }
+                }
+            }
+
+        },
+        verificarIndiceEnArregloDeIndices(indice){
+            for(let j=0;j<this.indicesCamionesMostrar.length;j++){
+                if(this.indicesCamionesMostrar[j]==indice){
+                    return true;
+                }
+            }
+            return false;
+        },
+        obtenerNuevasRutas(jsonGreeting){
+            this.fechaFinEjecucion=new Date(jsonGreeting.data.fechaFin);
+            let i=0, j=0, k=0;//hashearlos para después
+            for(i=0;i<jsonGreeting.data.otros.length;i++){
+                for(j=0;j<this.camiones.length;j++){
+                    if(this.camiones[j].codigo==jsonGreeting.data.otros[i].codigo){
+                        for(k=0;k<jsonGreeting.data.otros[i].rutas.length;k++){
+                            this.camiones[j].rutas.push(jsonGreeting.data.otros[i].rutas[k]);
+                            this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=new Date(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
+                        }
+                    }
+                }
+            }
             //suponiendo que las rutas que ya se mostraron en pantalla, se elim inaran del arreglo
             //Pensar luego como adaptarlo para retroceder la simulacion
             
@@ -159,70 +262,66 @@ export default {
             //Porque acepté simular todo en front? xd
 
             //Otra forma es que aparte de añadir la ruta, añadir la fecha de salida y el codigo del pedido
-
             //Añadir todo el objeto ruta, simplemente cambiando el formato de horaSalida a Date
 
-            //Otra opción, tener un arreglo ya definido de objetos camion con el codigo del camion, su placa y infobasica
-            //lo importante es que tendrá un atributo que sean las rutas como tal, est será un arreglo que se llenará
-            //con los objeto ruta que brinda el servicio de back.
 
+
+
+            //Se anda haciendo esta opción:
+            //Otra opción, tener un arreglo ya definido de objetos camion con el codigo del camion, su placa y infobasica
+            //lo importante es que tendrá un atributo que sean las rutas como tal.|Listo|
+            //Este será un arreglo que se llenará con los objeto ruta que brinda el servicio de back. Las horaSalida de las ruta
+            //deben guardarse como objeto Date. Cuando llegue nueva data del back solo se añadirán las rutas a sus respectivos
+            //camiones, aparte de actualizar la fecha final de ejecución del algoritmo.(Para después, hashear los camiones por codigo)
+            //|Listo, pero ver lo de hashear|
+            //
             //Cada vez que se ejecute el interval se actualizan los bloqueos(se ve al final, es lo fácil)
             //
-            //Primero se añaden 72s a fechaSimulacion(el objeto Date y el string). Luego se recorre el arreglo ya definido
-            //de objetos camión. Primero se verifica que tengan rutas, sino no se toma en cuenta, si tiene rutas se verifica
-            //que la primera de estas(siempre estarán ordenadas por tiempo) tenga su horaSalida después de la fechaSimulación.
-            //Los camiones que pasen el filtro son los que se mostrarán en pantalla y se moverán. Antes que nada se verificará
-            //si su primer objeto rutas tiene un codigoPedido diferente de '', en caso lo tenga se deberá mostrar en el mapa un
-            //círculo con el código del pedido debajo. Esto se puede manejar con un if(por ahora)en las funciones del p5js como tal.
+            //Primero se añaden 72s a fechaSimulacion(el objeto Date y el string).|Listo|
+            //Luego se recorre el arreglo ya definido de objetos camión. Primero se verifica que tengan rutas, sino no se toma en
+            //cuenta, si tiene rutas se verifica que la primera de estas(siempre estarán ordenadas por tiempo) tenga su horaSalida
+            //antes de la fechaSimulacion. Los camiones que pasen el filtro son los que se mostrarán en pantalla y se moverán. Antes
+            //que nada se verificará si su primer objeto rutas tiene un codigoPedido diferente de '', en caso lo tenga se deberá
+            //mostrar en el mapa un círculo con el código del pedido debajo. Esto se puede manejar con un if(por ahora)en las funciones
+            //del p5js como tal.|Listo falta la parte del p5js|
             //Ahora para manejar el movimiento de los camiones, se manejará un arreglo de
             //índices, estos índices serán los camiones actuales a mostrar. Cuando un camión es seleccionado primero se
             //verifica si tiene su índice en el arreglo de índices. En caso no tenga se agrega y en caso ya tenga no se agrega
-            //nada. Ya con su índice se procede a mover como tal el camión. Se toma el primer vértice del primer objeto rutas del
+            //nada|Listo|. Ya con su índice se procede a mover como tal el camión. Se toma el primer vértice del primer objeto rutas del
             //camión, este se desplaza un punto en dirección al siguiente vértice. Luego de desplazar se verifica si este vértice es
             //el mismo que el último vértice, en caso lo sean se eliminar el objeto ruta del arreglo de camiones, se quita su índice
-            //del arreglo de índices para que ya no se muestre más en el mapa. Para evitar una desaparición abrupta, se debería quitar
-            //al inicio del siguiente interval(ver para después, se podría usar un arreglo auxiliar de indices para quitar, el cual se
-            //recorrería luego de añadir luego de los 72s de la fecha, para quitar el índice antes de analizar los camiones, así entra
-            //la siguiente ruta sin mantener desaparecido el camión durante un interval).
+            //del arreglo de índices para que ya no se muestre más en el mapa|Listo, falta ver los indicesCamionesEliminar|.
+            //Para evitar una desaparición abrupta, se debería quitar
+            //al inicio del siguiente interval, osea antes de añadir los 72s(ver para después, se podría usar un arreglo auxiliar de
+            //indices para quitar, el cual se recorrería luego de añadir luego de los 72s de la fecha, para quitar el índice antes de
+            //analizar los camiones, así entra la siguiente ruta sin mantener desaparecido el camión durante un interval).|Falta esto|
             //
             //Esto dependerá de los tiempos de ejecución del algoritmo, pero se tendrá una fecha inicial y una fecha final de la toma
             //de datos para la ejecución del algoritmo, si por alguna razón la fechaSimulación pasa la fecha final, se deberia detener
             //la simulación y mostrar en pantalla un mensaje de esperando data de back. La fecha final se actualizará cada vez que
             //llegue nueva data del back. Se debe detener todo cuando fechaSimulación sea igual o mayor a fechaFinSimulacion
-            for(i=0;i<jsonGreeting.otros.length;i++){
-                for(j=0;j<this.rutasActuales.length;j++){
-                    if(this.rutasActuales[j].codigo==jsonGreeting.otros[i].codigo){//el camión sigue aún sigue en ruta
-                        for(k=1;k<jsonGreeting.otros.rutas.length;k++){
-                            this.rutasActuales[j].rutas.push(jsonGreeting.otros[i].rutas[k]);
-                        }
-                    }else{
-                        this.rutasActuales.push(jsonGreeting.otros[i]);
-                    }
-                }
-            }
+            
         },
         async obtenerDatosSimulacion(){
             try{
                 const data=await getRutasSimulacion();
                 console.log(data);
-                this.fechaSimulacion=data.data.data.otros[0].rutas[0].horaSalida;
-                this.fechaSimulacionDate=new Date(fechaSimulacion);
-                this.averiasActuales=data.data.data.averiados;
-                this.rutasActuales=data.data.data.otros;
-                let i=0;
-                let j=0;
-                for(i=0;i<this.averiasActuales.length;i++){
-                    for(j=0;i<this.averiasActuales[i].rutas.length;j++){
-                        this.averiasActuales[i].rutas[j].horaSalida=new Date(this.averiasActuales[i].rutas[j].horaSalida);
+                this.fechaSimulacionStr=data.data.data.otros[0].rutas[0].horaSalida;
+                this.fechaSimulacion=new Date(fechaSimulacionStr);
+                this.fechaFinEjecucion=new Date(data.data.data.fechaFin);
+
+                let i=0, j=0, k=0;//hashearlos para después
+                for(i=0;i<data.data.data.otros.length;i++){
+                    for(j=0;j<this.camiones.length;j++){
+                        if(this.camiones[j].codigo==data.data.data.otros[i].codigo){
+                            for(k=0;k<data.data.data.otros[i].rutas.length;k++){
+                                this.camiones[j].rutas.push(data.data.data.otros[i].rutas[k]);
+                                this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=new Date(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
+                            }
+                        }
                     }
-                    j=0;
                 }
-                for(i=0;i<this.rutasActuales.length;i++){
-                    for(j=0;i<this.rutasActuales[i].rutas.length;j++){
-                        this.rutasActuales[i].rutas[j].horaSalida=new Date(this.rutasActuales[i].rutas[j].horaSalida);
-                    }
-                    j=0;
-                }
+
                 await this.obtenerBloqueosSimulacion();
             
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
@@ -234,8 +333,6 @@ export default {
                         console.log(greeting);
                         let jsonGreeting=JSON.parse(greeting.body);
                         console.log(jsonGreeting);
-                        
-                        //console.log(this.pedidosActuales);
                         this.obtenerNuevasRutas(jsonGreeting);
                     });
                 });
@@ -261,7 +358,7 @@ export default {
             }
         },
         verificarInterseccionEntreDosRangoDeFechas(fechaIni1,fechaFin1,fechaIni2,fechaFin2){
-            if((fechaIni1<=fechaFin2)&&(fechaIni2<=fechaFin1)){
+            if((fechaIni1<=fechaFin2)&&(fechaFin1>=fechaIni2)){
                 return true;
             }
             return false;
@@ -324,7 +421,7 @@ export default {
                 let c=p5.color("#000000");
                 p5.fill(c);
                 p5.textSize(18);
-                p5.text(this.fechaSimulacion,this.escalaPixeles*(this.tamXMapa+3),this.tamYMapa*this.escalaPixeles-20);
+                p5.text(this.fechaSimulacionStr,this.escalaPixeles*(this.tamXMapa+3),this.tamYMapa*this.escalaPixeles-20);
             };
             p5.dibujarLeyenda = () => {
                 let margenMapaYLeyenda=this.escalaPixeles*(this.tamXMapa+3);
@@ -466,7 +563,7 @@ export default {
         
     },
     async created(){
-        
+        await this.obtenerInformacionCamiones();  
     },
     destroyed(){
         this.socket.close();
