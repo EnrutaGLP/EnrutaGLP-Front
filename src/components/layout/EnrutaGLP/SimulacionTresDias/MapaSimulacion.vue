@@ -88,6 +88,8 @@ export default {
 
             indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
             //indicesCamionesEliminar:[],//indices(los datos del arreglo indicesCamionesMostrar) que se deberán eliminar
+            indiceBloqueosMostrar:[],//los dos funcionan igual que el de camiones
+            indiceBloqueosEliminar:[],
 
             interval:null,
         };
@@ -174,10 +176,19 @@ export default {
             //this.actualizarAveriasEnMapa();  
         },
         actualizarBloqueos(){
+            let indiceAux;
             for(let i=0;i<this.bloqueosActuales.length;i++){
-                if(this.verificarInterseccionEntreDosRangoDeFechas(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
-                ,this.fechaSimulacion,this.fechaSimulacion)){
-                     
+                indiceAux=this.indiceBloqueosMostrar.indexOf(i);
+                if(indiceAux!=-1){
+                    if(this.verificarInterseccionEntreDosRangoDeFechas(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                        ,this.fechaSimulacion,this.fechaSimulacion)){
+                        this.indiceBloqueosMostrar.push(i);
+                    }
+                }else{
+                    if(!this.verificarInterseccionEntreDosRangoDeFechas(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                        ,this.fechaSimulacion,this.fechaSimulacion)){
+                        this.indiceBloqueosMostrar.splice(indiceAux,1);
+                    }
                 }
             }
         },
@@ -259,8 +270,6 @@ export default {
             //de rutas para representar en caso de que llegue bastante data y el camión se le asignen varias rutas
             //cuando no acabo ni la primera
 
-            //Porque acepté simular todo en front? xd
-
             //Otra forma es que aparte de añadir la ruta, añadir la fecha de salida y el codigo del pedido
             //Añadir todo el objeto ruta, simplemente cambiando el formato de horaSalida a Date
 
@@ -275,7 +284,7 @@ export default {
             //camiones, aparte de actualizar la fecha final de ejecución del algoritmo.(Para después, hashear los camiones por codigo)
             //|Listo, pero ver lo de hashear|
             //
-            //Cada vez que se ejecute el interval se actualizan los bloqueos(se ve al final, es lo fácil)
+            //Cada vez que se ejecute el interval se actualizan los bloqueos|Listo|
             //
             //Primero se añaden 72s a fechaSimulacion(el objeto Date y el string).|Listo|
             //Luego se recorre el arreglo ya definido de objetos camión. Primero se verifica que tengan rutas, sino no se toma en
@@ -395,26 +404,9 @@ export default {
                 p5.dibujarCuadricula();
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
-                p5.actualizarAverias();
-                p5.actualizarClientes();
                 p5.actualizarBloqueos();
                 p5.dibujarAlmacenes();
                 p5.mostrarFechaSimulacion();
-            };
-            p5.actualizarClientes = () => {
-                let c=p5.color("#000000");
-                p5.fill(c);
-                p5.stroke("#EEEEEE");
-                p5.textSize(this.escalaPixeles);
-                for(let i=0;i<this.pedidosActuales.length;i++){
-                    p5.fill(c);
-                    p5.ellipse(this.escalaPixeles*this.pedidosActuales[i].ubicacionX,
-                    this.escalaPixeles*(this.tamYMapa-this.pedidosActuales[i].ubicacionY),
-                    this.escalaPixeles,this.escalaPixeles);
-                    p5.text(this.pedidosActuales[i].codigo,
-                    this.escalaPixeles*this.pedidosActuales[i].ubicacionX-this.escalaPixeles*2.5,
-                    this.escalaPixeles*(this.tamYMapa-this.pedidosActuales[i].ubicacionY)+this.escalaPixeles);
-                }
             };
             p5.mostrarFechaSimulacion = () => {
                 p5.stroke("#EEEEEE");
@@ -427,7 +419,6 @@ export default {
                 let margenMapaYLeyenda=this.escalaPixeles*(this.tamXMapa+3);
                 p5.stroke("#EEEEEE");
                 let c=p5.color("#000000");
-                
 
                 p5.fill(c);
                 p5.textSize(15);
@@ -482,28 +473,15 @@ export default {
                 p5.fill(c);
                 p5.text("Ruta",margenMapaYLeyenda+10,142);
             };
-            p5.actualizarAverias = () => {
-                let c=p5.color("#FF0000");
-                p5.fill(c);
-                p5.textSize(this.escalaPixeles);
-                for(let i=0;i<this.averiasActuales.length;i++){
-                    p5.fill(c);
-                    p5.ellipse(this.escalaPixeles*this.averiasActuales[i].ubicacionActualX,
-                    this.escalaPixeles*(this.tamYMapa-this.averiasActuales[i].ubicacionActualY),this.escalaPixeles,this.escalaPixeles);
-                    p5.text(this.averiasActuales[i].codigo,
-                    this.escalaPixeles*this.averiasActuales[i].ubicacionActualX-this.escalaPixeles,
-                    this.escalaPixeles*(this.tamYMapa-this.averiasActuales[i].ubicacionActualY)+this.escalaPixeles);
-                }
-            };
             p5.actualizarBloqueos = () => {
                 p5.stroke("#FF0000");
                 p5.strokeWeight(5);
-                for(let i=0;i<this.bloqueosActuales.length;i++){
-                    for(let j=0;j<this.bloqueosActuales[i].bloqueo.length-1;j++){
-                        p5.line(this.escalaPixeles*this.bloqueosActuales[i].bloqueo[j].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[i].bloqueo[j].ubicacionY),
-                        this.escalaPixeles*this.bloqueosActuales[i].bloqueo[j+1].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[i].bloqueo[j+1].ubicacionY));
+                for(let i=0;i<this.indiceBloqueosMostrar.length;i++){
+                    for(let j=0;this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos.length-1;j++){
+                        p5.line(this.escalaPixeles*this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j].ubicacionY),
+                        this.escalaPixeles*this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j+1].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j+1].ubicacionY));
                     }
                 }
                 p5.strokeWeight(1);
@@ -512,21 +490,23 @@ export default {
                 let c;
                 p5.textSize(this.escalaPixeles);
                 p5.strokeWeight(2);
-                for(let i=0;i<this.camionesUbicacionActual.length;i++){
+                for(let i=0;i<this.indicesCamionesMostrar.length;i++){
                     c=p5.color(this.listaColoresCamiones[i]);
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
-                    p5.ellipse(this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX,
-                    this.escalaPixeles*(this.tamYMapa-this.camionesUbicacionActual[i].ubicacionActualY),this.escalaPixeles,this.escalaPixeles);
-                    p5.text(this.camionesUbicacionActual[i].codigo,
-                    this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX-this.escalaPixeles,
-                    this.escalaPixeles*(this.tamYMapa-this.camionesUbicacionActual[i].ubicacionActualY)+this.escalaPixeles);
+                    p5.ellipse(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX,
+                    this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY),
+                    this.escalaPixeles,this.escalaPixeles);
+                    p5.text(this.camiones[indicesCamionesMostrar[i]].codigo,
+                    this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX-this.escalaPixeles,
+                    this.escalaPixeles*(this.tamYMapa-this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY)
+                    +this.escalaPixeles);
                     p5.stroke(this.listaColoresCamiones[i]);
-                    for(let j=0;j<this.rutasActuales[i].ruta.length-1;j++){
-                        p5.line(this.escalaPixeles*this.rutasActuales[i].ruta[j].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.rutasActuales[i].ruta[j].ubicacionY),
-                        this.escalaPixeles*this.rutasActuales[i].ruta[j+1].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.rutasActuales[i].ruta[j+1].ubicacionY));
+                    for(let j=0;j<this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos.length-1;j++){
+                        p5.line(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionY),
+                        this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j+1].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j+1].ubicacionY));
                     }
                 }
                 p5.strokeWeight(1);
