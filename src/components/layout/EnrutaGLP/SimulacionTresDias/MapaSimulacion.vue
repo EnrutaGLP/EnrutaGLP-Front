@@ -96,7 +96,20 @@ export default {
     },
     methods:{
         async obtenerInformacionCamiones(){
-            //const data=await getCamiones();
+            /*try{
+                const data=await getCamiones();
+                data.data.data.forEach(element => {
+                    this.camiones.push({
+                        codigo:element.codigo,
+                        placa:element.placa,
+                        color:element.color,
+                        rutas:[],
+                    });
+                });
+            }catch(err){
+                console.log(err);
+            }*/
+
             this.camiones.push({
                 codigo:"TA01",
                 placa:"xdx-dxd",
@@ -168,7 +181,12 @@ export default {
             }
         },
         actualizarMapa(){
+            if(this.fechaSimulacion>=this.fechaFinSimulacion){
+                this.$emit("finSimulacion");
+                clearInterval(this.interval);
+            }
             if(this.fechaSimulacion>=this.fechaFinEjecucion){
+                this.$emit("faltaDeDataDeBack");
                 return;
             }
             this.actualizarRutasEnMapa();
@@ -249,18 +267,19 @@ export default {
             return false;
         },
         obtenerNuevasRutas(jsonGreeting){
-            this.fechaFinEjecucion=new Date(jsonGreeting.data.fechaFin);
+            this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.data.fechaFin);
             let i=0, j=0, k=0;//hashearlos para después
             for(i=0;i<jsonGreeting.data.otros.length;i++){
                 for(j=0;j<this.camiones.length;j++){
                     if(this.camiones[j].codigo==jsonGreeting.data.otros[i].codigo){
                         for(k=0;k<jsonGreeting.data.otros[i].rutas.length;k++){
                             this.camiones[j].rutas.push(jsonGreeting.data.otros[i].rutas[k]);
-                            this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=new Date(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
+                            this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=this.transformarFechaStrADate(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
                         }
                     }
                 }
             }
+            this.$emit("cargandoSimulacion");
             //suponiendo que las rutas que ya se mostraron en pantalla, se elim inaran del arreglo
             //Pensar luego como adaptarlo para retroceder la simulacion
             
@@ -292,7 +311,7 @@ export default {
             //antes de la fechaSimulacion. Los camiones que pasen el filtro son los que se mostrarán en pantalla y se moverán. Antes
             //que nada se verificará si su primer objeto rutas tiene un codigoPedido diferente de '', en caso lo tenga se deberá
             //mostrar en el mapa un círculo con el código del pedido debajo. Esto se puede manejar con un if(por ahora)en las funciones
-            //del p5js como tal.|Listo falta la parte del p5js|
+            //del p5js como tal.|Listo|
             //Ahora para manejar el movimiento de los camiones, se manejará un arreglo de
             //índices, estos índices serán los camiones actuales a mostrar. Cuando un camión es seleccionado primero se
             //verifica si tiene su índice en el arreglo de índices. En caso no tenga se agrega y en caso ya tenga no se agrega
@@ -308,7 +327,7 @@ export default {
             //Esto dependerá de los tiempos de ejecución del algoritmo, pero se tendrá una fecha inicial y una fecha final de la toma
             //de datos para la ejecución del algoritmo, si por alguna razón la fechaSimulación pasa la fecha final, se deberia detener
             //la simulación y mostrar en pantalla un mensaje de esperando data de back. La fecha final se actualizará cada vez que
-            //llegue nueva data del back. Se debe detener todo cuando fechaSimulación sea igual o mayor a fechaFinSimulacion
+            //llegue nueva data del back. Se debe detener todo cuando fechaSimulación sea igual o mayor a fechaFinSimulacion|Listo|
             
         },
         async obtenerDatosSimulacion(){
@@ -316,8 +335,12 @@ export default {
                 const data=await getRutasSimulacion();
                 console.log(data);
                 this.fechaSimulacionStr=data.data.data.otros[0].rutas[0].horaSalida;
-                this.fechaSimulacion=new Date(fechaSimulacionStr);
-                this.fechaFinEjecucion=new Date(data.data.data.fechaFin);
+                this.fechaSimulacion=this.transformarFechaStrADate(fechaSimulacionStr);
+                this.fechaFinEjecucion=this.transformarFechaStrADate(data.data.data.fechaFin);
+                
+                /*for(let i=0;i<data.data.data.otros.length;i++){
+                    let indiceHasheado=Integer.parseInt(data.data.data.otros[i].codigo.substring(2))-1;
+                }*/
 
                 let i=0, j=0, k=0;//hashearlos para después
                 for(i=0;i<data.data.data.otros.length;i++){
@@ -325,7 +348,7 @@ export default {
                         if(this.camiones[j].codigo==data.data.data.otros[i].codigo){
                             for(k=0;k<data.data.data.otros[i].rutas.length;k++){
                                 this.camiones[j].rutas.push(data.data.data.otros[i].rutas[k]);
-                                this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=new Date(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
+                                this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=this.transformarFechaStrADate(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
                             }
                         }
                     }
@@ -356,10 +379,10 @@ export default {
                 const data=await getBloqueosActuales();
                 console.log(data);
                 data.data.data.forEach(element => {              
-                    if(verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,new Date(element.fechaInicio),new Date(element.fechaFin))){
+                    if(verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
                         this.bloqueosActuales.push(element);
-                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=new Date(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
-                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=new Date(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);
+                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
+                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);
                     }
                 });
             }catch(err){
@@ -371,6 +394,9 @@ export default {
                 return true;
             }
             return false;
+        },
+        transformarFechaStrADate(fechaStr){
+            
         }
     },
     watch:{
@@ -382,7 +408,7 @@ export default {
             interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/nuevaVelocidad);  
         },
         fechaInicioSim: function(nuevaFechaInicioSim){
-            this.fechaInicioSimulacion=new Date(nuevaFechaInicioSim);
+            this.fechaInicioSimulacion=this.transformarFechaStrADate(nuevaFechaInicioSim);
             this.fechaFinSimulacion=this.fechaInicioSimulacion.setDate(this.fechaInicioSimulacion.getDate()+3);
         }
     },
@@ -491,6 +517,7 @@ export default {
                 p5.textSize(this.escalaPixeles);
                 p5.strokeWeight(2);
                 for(let i=0;i<this.indicesCamionesMostrar.length;i++){
+                    //c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
                     c=p5.color(this.listaColoresCamiones[i]);
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
@@ -501,6 +528,15 @@ export default {
                     this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX-this.escalaPixeles,
                     this.escalaPixeles*(this.tamYMapa-this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY)
                     +this.escalaPixeles);
+                    if(this.camiones[indicesCamionesMostrar[i]].rutas[0].codigoPedido!=""){
+                        p5.ellipse(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionY),
+                        this.escalaPixeles,this.escalaPixeles);
+                        p5.text(this.camiones[indicesCamionesMostrar[i]].rutas[0].codigoPedido,
+                        this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionX-this.escalaPixeles,
+                        this.escalaPixeles*(this.tamYMapa-this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionY)
+                        +this.escalaPixeles);
+                    }
                     p5.stroke(this.listaColoresCamiones[i]);
                     for(let j=0;j<this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos.length-1;j++){
                         p5.line(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionX,

@@ -100,6 +100,8 @@
                     :reanudoSimulacion="reanudoSimulacion"
                     :velocidadSimulacion="velocidadSimulacion"
                     v-on:cargandoSimulacion="cargandoSimul"
+                    v-on:finSimulacion="finSimul"
+                    v-on:faltaDeDataDeBack="faltaDataBack"
                 />
                 
             </div>
@@ -271,6 +273,12 @@ export default {
         },
         cargandoSimul(){
             this.cargandoSimulacion=false;
+        },
+        finSimul(){
+            alert("FIN DE LA SIMULACIÓN!");
+        },
+        faltaDataBack(){
+            this.cargandoSimulacion=true;   
         }
     },
     computed:{
