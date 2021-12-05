@@ -93,6 +93,7 @@
                 </v-progress-circular>
                 <p style="color:#FF0000" v-if="sePasoDeIncremento">No se puede incrementar la velocidad más allá de x256</p>
                 <p style="color:#FF0000" v-if="sePasoDeDecremento">No se puede disminuir la velocidad más allá de x1</p>
+                <p style="color:#FF0000" v-if="cargandoDataBack">Cargando las rutas</p>
             </div>
             <br>
             <div class="mapa">
@@ -163,6 +164,7 @@ export default {
             fechaInicioEnvio:'',
 
             cargandoSimulacion:false,
+            cargandoDataBack:false,
         };
     },
     methods: {
@@ -221,7 +223,7 @@ export default {
                 this.cargandoSimulacion=true;
                 try {
                     let fechaIniAux=this.fechaInicio.split("-");
-                    this.fechaInicioEnvio=fechaIniAux[2]+"-"+fechaIniAux[1]+"-"+fechaIniAux[0]+" "+this.horaInicio+":11";
+                    this.fechaInicioEnvio=fechaIniAux[0]+"-"+fechaIniAux[1]+"-"+fechaIniAux[2]+" "+this.horaInicio+":00";
                     let data=await setConfiguracionSimulacionTresDias(this.fechaInicioEnvio);
                     //let data2=await setFechaInicioSimulacion(this.fechaInicioEnvio);
                     console.log(data);
@@ -273,13 +275,15 @@ export default {
             this.importoBloqueos=true;
         },
         cargandoSimul(){
+            this.cargandoDataBack=false;
             this.cargandoSimulacion=false;
         },
         finSimul(){
             alert("FIN DE LA SIMULACIÓN!");
         },
         faltaDataBack(){
-            this.cargandoSimulacion=true;   
+            this.cargandoDataBack=true;
+            this.cargandoSimulacion=true;
         }
     },
     computed:{

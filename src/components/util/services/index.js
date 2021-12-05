@@ -55,6 +55,12 @@ export function setAveria(codigo,fecha){
 export function getBloqueosActuales(){
     return axios.get(URL+"/bloqueos/actuales");
 }
+export function getBloqueosProximos(fechaInicio){
+    console.log(fechaInicio);
+    return axios.get(URL+"/bloqueos/listar-proximos",{
+        "fechaInicio":fechaInicio,
+    });
+}
 export function setBloqueosMasivo(bloqueos){
     return axios.post(URL+"/bloqueos/registro-masivo",bloqueos);
 }
@@ -76,13 +82,17 @@ export function getRutasActuales(){
 export function setConfiguracionDiaADia(){
     return axios.put(URL+"/configuracion/dia-a-dia");
 }
-export function setConfiguracionSimulacionTresDias(){
-    return axios.put(URL+"/configuracion/simulacion-tres-dias");
+export function setConfiguracionSimulacionTresDias(fechaInicio){
+    console.log(fechaInicio);
+    return axios.put(URL+"/configuracion/simulacion-tres-dias",{
+        "fechaInicio":fechaInicio,
+    });
 }
 export function setConfiguracionSimulacionColapsoLogistico(){
     return axios.put(URL+"/configuracion/simulacion-colapso-logisico");
 }
 export function setFechaInicioSimulacion(fechaInicio){
+    console.log(fechaInicio);
     return axios.post(URL+"/",{
         "fechaInicio":fechaInicio,
     });

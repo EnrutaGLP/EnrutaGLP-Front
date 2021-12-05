@@ -3,7 +3,11 @@
         <div id="canvas" class="mapa"></div>
         <div class="rutasCamiones">
             <p class="tituloRutas">Rutas:</p>
-            
+            <div class="rutas" v-for="indiceMostrar in indicesCamionesMostrar">
+                <span>Camión: {{camiones[indiceMostrar].codigo}}<div :style="{'background-color':camiones[indiceMostrar].color}"><div class="circulo"></div></div></span>                
+                <div>Placa: {{camiones[indiceMostrar].placa}}</div>
+                <span>Ubicación Actual: {{camiones[indiceMostrar].rutas[0].puntos[0].ubicacionX}}, {{camiones[indiceMostrar].rutas[0].puntos[0].ubicacionActualY}}</span>
+            </div>
         </div>
     </div>
 </template>
@@ -11,7 +15,7 @@
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
-import {getBloqueosActuales, getRutasActuales, getPedidosActuales, getRutasSimulacion, getCamiones} from '../../../util/services/index';
+import {getBloqueosProximos, getRutasSimulacion, getCamiones} from '../../../util/services/index';
 
 export default {
     props:[
@@ -27,29 +31,6 @@ export default {
         return{
             script:null,
             p5canvas:null,
-
-            listaColoresCamiones:[
-                '#0071BC',
-                '#008F4C',
-                '#EAC102',
-                '#AA0000',
-                '#AF6E37',
-                '#FF6600',
-                '#51D1F6',
-                '#808080',
-                '#81D8D0',
-                '#96C8A2',
-                '#CE4676',
-                '#8A9A5B',
-                '#93C592',
-                '#BFFF00',
-                '#4A5D23',
-                '#F9BDA1',
-                '#2E7294',
-                '#C20009',
-                '#910765',
-                '#FFFB00',
-            ],
 
             stompClient:null,
             socket:null,
@@ -81,17 +62,21 @@ export default {
             fechaFinEjecucion:null,
 
             indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
-            //indicesCamionesEliminar:[],//indices(los datos del arreglo indicesCamionesMostrar) que se deberán eliminar
+            //indicesCamionesEliminar:[],//indices(los datos del arreglo indicesCamionesMostrar) que se deberán eliminar(creo que ya no es necesario)
             indiceBloqueosMostrar:[],//los dos funcionan igual que el de camiones
             indiceBloqueosEliminar:[],
 
             interval:null,
+
+            esFinalSimulacion:false,
+            primerWebSocket:false,
         };
     },
     methods:{
         async obtenerInformacionCamiones(){
-            /*try{
+            try{
                 const data=await getCamiones();
+                console.log(data);
                 data.data.data.forEach(element => {
                     this.camiones.push({
                         codigo:element.codigo,
@@ -102,9 +87,9 @@ export default {
                 });
             }catch(err){
                 console.log(err);
-            }*/
+            }
 
-            this.camiones.push({
+            /*this.camiones.push({
                 codigo:"TA01",
                 placa:"xdx-dxd",
                 rutas:[],
@@ -127,55 +112,11 @@ export default {
             this.camiones.push({codigo:"TD07",placa:"xdx-dxd",rutas:[],});
             this.camiones.push({codigo:"TD08",placa:"xdx-dxd",rutas:[],});
             this.camiones.push({codigo:"TD09",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD10",placa:"xdx-dxd",rutas:[],});            
-        },
-        async obtenerPosicionesYBloqueosActualesPrimeraVez(){
-            try{
-                const data1=await getRutasActuales();
-                console.log(data1);
-                const data2=await getPedidosActuales();
-                console.log(data2);
-                this.pedidosActuales=data2.data.data;
-                console.log(this.pedidosActuales);
-                this.averiasActuales=data1.data.data.averiados;
-                data1.data.data.otros.forEach(element => {
-                    this.camionesUbicacionActual.push({
-                        codigo:element.codigo,
-                        ubicacionActualX:element.ubicacionActualX,
-                        ubicacionActualY:element.ubicacionActualY,
-                        estado:{
-                            id:element.estadoId,
-                            nombre:element.nombre,
-                        }
-                    });
-                    this.rutasActuales.push({
-                        codigo:element.codigo,
-                        ruta:element.ruta,
-                    })
-                });
-                console.log(this.rutasActuales);
-                const data=await getBloqueosActuales();
-                console.log(data);
-                console.log(data.data.data);
-                for(let m=0;m<data.data.data.length;m++){
-                    this.bloqueosActuales.push({
-                        bloqueo:[],
-                    });
-                    for(let n=0;n<data.data.data[m].puntos.length;n++){
-                        this.bloqueosActuales[m].bloqueo.push({
-                            ubicacionX:data.data.data[m].puntos[n].ubicacionX,
-                            ubicacionY:data.data.data[m].puntos[n].ubicacionY,
-                        })
-                    }
-                }
-                console.log(this.bloqueosActuales);
-                
-            }catch(err){
-                
-            }
+            this.camiones.push({codigo:"TD10",placa:"xdx-dxd",rutas:[],});*/
         },
         actualizarMapa(){
-            if(this.fechaSimulacion>=this.fechaFinSimulacion){
+            
+            if(this.esFinalSimulacion){
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
             }
@@ -210,7 +151,7 @@ export default {
             + `${this.fechaSimulacion.getMinutes()}`.padStart(2,'0')+":"+`${this.fechaSimulacion.getSeconds()}`.padStart(2,'0');
             this.fechaSimulacion.setSeconds(this.fechaSimulacion.getSeconds()+72);
             /*
-            hacer lo de eliminar con el arreglo de indicesCamionesEliminar
+            hacer lo de eliminar con el arreglo de indicesCamionesEliminar(creo que ya no es necesario)
             */
             let i=0,j=0,k=0;
             for(i=0;i<this.camiones.length;i++){
@@ -250,7 +191,7 @@ export default {
                                     //planta y su siguiente empiece automaticamente yendo a un cliente.
                                     //verificar si la siguiente ruta (rutas[1]) su horaSalida es igual a la nueva fechaSimulacion
 
-                                    //no olvidar hacer lo del arreglo indicaesCamionesEliminar
+                                    //no olvidar hacer lo del arreglo indicaesCamionesEliminar(creo que ya no es necesario)
                                 }else{//si no se acabo la ruta aún debe avanzar un espacio
                                     if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){
                                         if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
@@ -294,6 +235,16 @@ export default {
             return false;
         },
         obtenerNuevasRutas(jsonGreeting){
+            if(!this.primerWebSocket){
+                this.fechaSimulacionStr=data.data.data.otros[0].rutas[0].horaSalida;
+                this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
+                this.fechaFinEjecucion=this.transformarFechaStrADate(data.data.data.fechaFin);
+                console.log(this.fechaSimulacion);
+                console.log(this.fechaFinEjecucion);
+                console.log(this.fechaFinSimulacion);
+                this.primerWebSocket=true;
+            }
+            this.esFinalSimulacion=jsonGreeting.esFinal;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.data.fechaFin);
             let i=0, j=0, k=0;//hashearlos para después
             for(i=0;i<jsonGreeting.data.otros.length;i++){
@@ -349,7 +300,7 @@ export default {
             //Para evitar una desaparición abrupta, se debería quitar
             //al inicio del siguiente interval, osea antes de añadir los 72s(ver para después, se podría usar un arreglo auxiliar de
             //indices para quitar, el cual se recorrería luego de añadir luego de los 72s de la fecha, para quitar el índice antes de
-            //analizar los camiones, así entra la siguiente ruta sin mantener desaparecido el camión durante un interval).|Falta esto|
+            //analizar los camiones, así entra la siguiente ruta sin mantener desaparecido el camión durante un interval).|Creo que ya|
             //
             //Esto dependerá de los tiempos de ejecución del algoritmo, pero se tendrá una fecha inicial y una fecha final de la toma
             //de datos para la ejecución del algoritmo, si por alguna razón la fechaSimulación pasa la fecha final, se deberia detener
@@ -360,75 +311,15 @@ export default {
         async obtenerDatosSimulacion(){
             try{
                 //const data=await getRutasSimulacion();
-                const data={
-                        data:{
-                            status: "success",
-                            message: null,
-                            data:{
-                                fechaInicio: "29-12-2021 15:59:33",
-                                fechaFin: "30-12-2021 15:59:33",
-                                averiados:[],
-                                otros:[
-                                    {
-                                        codigo:"TA01",
-                                        cargaActualGLP:20,
-                                        cargaActualPetroleo:10,
-                                        rutas:[
-                                            {
-                                                codigoPedido:"ABCD1234",
-                                                horaSalida: "29-12-2021 15:59:33",
-                                                puntos:[
-                                                    {
-                                                        ubicacionX:12,
-                                                        ubicacionY:8,
-                                                    },
-                                                    {
-                                                        ubicacionX:12,
-                                                        ubicacionY:40,
-                                                    },
-                                                    {
-                                                        ubicacionX:20,
-                                                        ubicacionY:40,
-                                                    },
-                                                ],
-                                            },
-                                            {
-                                                codigoPedido:"",
-                                                horaSalida: "29-12-2021 16:47:33",
-                                                puntos:[
-                                                    {
-                                                        ubicacionX:20,
-                                                        ubicacionY:40,
-                                                    },
-                                                    {
-                                                        ubicacionX:20,
-                                                        ubicacionY:8,
-                                                    },
-                                                    {
-                                                        ubicacionX:12,
-                                                        ubicacionY:8,
-                                                    },
-                                                ],
-                                            }
-                                        ],
-                                    },
-                                ],
-                            },
-                        },
-                    }   
-                console.log(data);
-                this.fechaSimulacionStr=data.data.data.otros[0].rutas[0].horaSalida;
-                this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
-                this.fechaFinEjecucion=this.transformarFechaStrADate(data.data.data.fechaFin);
-                console.log(this.fechaSimulacion);
-                console.log(this.fechaFinEjecucion);
-                console.log(this.fechaFinSimulacion);
+                
+                //console.log(data);
+                
                 
                 /*for(let i=0;i<data.data.data.otros.length;i++){
                     let indiceHasheado=Integer.parseInt(data.data.data.otros[i].codigo.substring(2))-1;
                 }*/
 
-                let i=0, j=0, k=0;//hashearlos para después
+                /*let i=0, j=0, k=0;//hashearlos para después
                 for(i=0;i<data.data.data.otros.length;i++){
                     for(j=0;j<this.camiones.length;j++){
                         if(this.camiones[j].codigo==data.data.data.otros[i].codigo){
@@ -438,23 +329,21 @@ export default {
                             }
                         }
                     }
-                }
-
+                }*/
                 await this.obtenerBloqueosSimulacion();
             
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
 
-                /*this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
+                this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
                 this.stompClient=Stomp.over(this.socket);
                 this.stompClient.connect({}, (frame) => {
-                    this.stompClient.subscribe('/topic/estado-general',(greeting)=>{
-                        console.log(greeting);
+                    this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
                         let jsonGreeting=JSON.parse(greeting.body);
                         console.log(jsonGreeting);
                         this.obtenerNuevasRutas(jsonGreeting);
                     });
-                });*/
-                this.$emit("cargandoSimulacion");
+                });
+                //this.$emit("cargandoSimulacion");
             }catch(err){
                 console.log(err);
                 this.$emit("cargandoSimulacion");
@@ -462,7 +351,11 @@ export default {
         },
         async obtenerBloqueosSimulacion(){
             try{
-                const data=await getBloqueosActuales();
+                let auxFechaInicioSimulacion=this.fechaInicioSim.split(" ");
+                let auxFechaSim=auxFechaInicioSimulacion[0].split("-");
+                let auxHoraSim=auxFechaInicioSimulacion[1].split(":");
+
+                const data=await getBloqueosProximos(auxFechaSim[0]+"-"+auxFechaSim[1]+"-"+auxFechaSim[2]+" "+auxHoraSim[0]+":"+auxHoraSim[1]+":"+auxHoraSim[2]);
                 console.log(data);
                 data.data.data.forEach(element => {              
                     if(verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
@@ -493,14 +386,14 @@ export default {
             this.obtenerDatosSimulacion();
         },
         velocidadSimulacion: function(nuevaVelocidad){
-            clearInterval(this.interval);
-            this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/nuevaVelocidad);  
+            if(nuevaVelocidad>=1 && nuevaVelocidad<=256){
+                clearInterval(this.interval);
+                this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/nuevaVelocidad);  
+            }
         },
         fechaInicioSim: function(nuevaFechaInicioSim){
             this.fechaInicioSimulacion=this.transformarFechaStrADate(nuevaFechaInicioSim);
-            console.log(this.fechaInicioSimulacion);
             this.fechaFinSimulacion=new Date(this.fechaInicioSimulacion.setDate(this.fechaInicioSimulacion.getDate()+3));
-            console.log(this.fechaFinSimulacion);
         }
     },
     computed:{
@@ -608,8 +501,8 @@ export default {
                 p5.textSize(this.escalaPixeles);
                 p5.strokeWeight(2);
                 for(let i=0;i<this.indicesCamionesMostrar.length;i++){
-                    //c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
-                    c=p5.color(this.listaColoresCamiones[i]);
+                    c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
+                    //c=p5.color(this.listaColoresCamiones[i]);
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
                     p5.ellipse(this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX,
@@ -630,9 +523,10 @@ export default {
                         this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1].ubicacionX-this.escalaPixeles,
                         this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1].ubicacionY)
                         +this.escalaPixeles);
-                        c=p5.color(this.listaColoresCamiones[i]);
+                        //c=p5.color(this.listaColoresCamiones[i]);
+                        //p5.fill(c);
+                        c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
                         p5.fill(c);
-                        //c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
                     }
                     p5.stroke(this.listaColoresCamiones[i]);
                     for(let j=0;j<this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1;j++){
@@ -680,7 +574,7 @@ export default {
     },
     destroyed(){
         clearInterval(this.interval);
-        //this.socket.close();
+        this.socket.close();
     }
 }
 </script>
