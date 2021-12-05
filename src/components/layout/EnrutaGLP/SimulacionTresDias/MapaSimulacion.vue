@@ -3,13 +3,7 @@
         <div id="canvas" class="mapa"></div>
         <div class="rutasCamiones">
             <p class="tituloRutas">Rutas:</p>
-            <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual">
-                <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':listaColoresCamiones[k]}"><div class="circulo"></div></div></span>
-                
-                <div>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</div>
-                <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
-                <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
-            </div>
+            
         </div>
     </div>
 </template>
@@ -81,7 +75,7 @@ export default {
             averiasActuales:[],
             pedidosActuales:[],
             fechaSimulacion:null,//fecha actual de la simulacion en Date
-            fechaSimulacionStr:null,//fecha actual de la simulacion en string
+            fechaSimulacionStr:'',//fecha actual de la simulacion en string
             fechaInicioSimulacion:null,//fecha que definio el usuario en Date
             fechaFinSimulacion:null,//fecha limite que definiio el usuario en Date
             fechaFinEjecucion:null,
@@ -211,9 +205,9 @@ export default {
             }
         },
         actualizarRutasEnMapa(){
-            this.fechaSimulacionStr=`${fechaSimulacion.getDate()}`.padStart(2,'0')+"-"+`${fechaSimulacion.getMonth()+1}`.padStart(2,'0')
-            + "-"+fechaSimulacion.getFullYear()+" "+`${fechaSimulacion.getHours()}`.padStart(2,'0')+":"
-            + `${fechaSimulacion.getMinutes()}`.padStart(2,'0')+":"+fechaSimulacion.getSeconds();
+            this.fechaSimulacionStr=`${this.fechaSimulacion.getDate()}`.padStart(2,'0')+"-"+`${this.fechaSimulacion.getMonth()+1}`.padStart(2,'0')
+            + "-"+this.fechaSimulacion.getFullYear()+" "+`${this.fechaSimulacion.getHours()}`.padStart(2,'0')+":"
+            + `${this.fechaSimulacion.getMinutes()}`.padStart(2,'0')+":"+`${this.fechaSimulacion.getSeconds()}`.padStart(2,'0');
             this.fechaSimulacion.setSeconds(this.fechaSimulacion.getSeconds()+72);
             /*
             hacer lo de eliminar con el arreglo de indicesCamionesEliminar
@@ -232,25 +226,58 @@ export default {
                                 //eliminar ruta y indice en caso se haya acabado la ruta
                                 if(this.camiones[i].rutas[0].puntos.length<=1){
                                     this.camiones[i].rutas.shift();
-                                    this.indicesCamionesMostrar.splice(this.indicesCamionesMostrar.indexOf(i),1);
-
+                                    if(this.camiones[i].rutas.length==0 || this.camiones[i].rutas[0].horaSalida>this.fechaSimulacion){
+                                        //en caso el camion tenga su siguiente ruta automaticamente despues no se dejará de mostrar
+                                        this.indicesCamionesMostrar.splice(this.indicesCamionesMostrar.indexOf(i),1);
+                                    }else{//se mueve un punto en caso exista una ruta siguiente inmediatamente
+                                        if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                                            if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
+                                                this.camiones[i].rutas[0].puntos[0].ubicacionY++;
+                                            }else{
+                                                this.camiones[i].rutas[0].puntos[0].ubicacionY--;
+                                            }        
+                                        }else{
+                                            if(this.camiones[i].rutas[0].puntos[0].ubicacionX<this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                                                this.camiones[i].rutas[0].puntos[0].ubicacionX++;
+                                            }else{
+                                                this.camiones[i].rutas[0].puntos[0].ubicacionX--;
+                                            }
+                                        }
+                                    }
+                                    //se pierde un interval en el cambio de ruta, ya que se toma uno para eliminarlo, cuando vuelve a aparecer
+                                     //el camión ya aparece avanzado una posición, pero para esto se tomo 2 interval, pérdida de 72s
+                                    //a largo plazo puede descuadrar bastante, esto solo pasa en el caso que la ctual ruta vaya a una
+                                    //planta y su siguiente empiece automaticamente yendo a un cliente.
+                                    //verificar si la siguiente ruta (rutas[1]) su horaSalida es igual a la nueva fechaSimulacion
 
                                     //no olvidar hacer lo del arreglo indicaesCamionesEliminar
-
-
+                                }else{//si no se acabo la ruta aún debe avanzar un espacio
+                                    if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                                        if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
+                                            this.camiones[i].rutas[0].puntos[0].ubicacionY++;
+                                        }else{
+                                            this.camiones[i].rutas[0].puntos[0].ubicacionY--;
+                                        }        
+                                    }else{
+                                        if(this.camiones[i].rutas[0].puntos[0].ubicacionX<this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                                            this.camiones[i].rutas[0].puntos[0].ubicacionX++;
+                                        }else{
+                                            this.camiones[i].rutas[0].puntos[0].ubicacionX--;
+                                        }
+                                    }
                                 }
-                            }else{//avanzar en eje X
-                                if(this.camiones[i].rutas[0].puntos[0].ubicacionX<this.camiones[i].rutas[0].puntos[1].ubicacionX){
-                                    this.camiones[i].rutas[0].puntos[0].ubicacionX++;
+                            }else{//avanzar en eje Y
+                                if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
+                                    this.camiones[i].rutas[0].puntos[0].ubicacionY++;
                                 }else{
-                                    this.camiones[i].rutas[0].puntos[0].ubicacionX--;
+                                    this.camiones[i].rutas[0].puntos[0].ubicacionY--;
                                 }
                             }
-                        }else{//avanzar en eje Y
-                            if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
-                                this.camiones[i].rutas[0].puntos[0].ubicacionY++;
+                        }else{//avanzar en eje X
+                            if(this.camiones[i].rutas[0].puntos[0].ubicacionX<this.camiones[i].rutas[0].puntos[1].ubicacionX){
+                                this.camiones[i].rutas[0].puntos[0].ubicacionX++;
                             }else{
-                                this.camiones[i].rutas[0].puntos[0].ubicacionY--;
+                                this.camiones[i].rutas[0].puntos[0].ubicacionX--;
                             }
                         }
                     }
@@ -332,11 +359,70 @@ export default {
         },
         async obtenerDatosSimulacion(){
             try{
-                const data=await getRutasSimulacion();
+                //const data=await getRutasSimulacion();
+                const data={
+                        data:{
+                            status: "success",
+                            message: null,
+                            data:{
+                                fechaInicio: "29-12-2021 15:59:33",
+                                fechaFin: "30-12-2021 15:59:33",
+                                averiados:[],
+                                otros:[
+                                    {
+                                        codigo:"TA01",
+                                        cargaActualGLP:20,
+                                        cargaActualPetroleo:10,
+                                        rutas:[
+                                            {
+                                                codigoPedido:"ABCD1234",
+                                                horaSalida: "29-12-2021 15:59:33",
+                                                puntos:[
+                                                    {
+                                                        ubicacionX:12,
+                                                        ubicacionY:8,
+                                                    },
+                                                    {
+                                                        ubicacionX:12,
+                                                        ubicacionY:40,
+                                                    },
+                                                    {
+                                                        ubicacionX:20,
+                                                        ubicacionY:40,
+                                                    },
+                                                ],
+                                            },
+                                            {
+                                                codigoPedido:"",
+                                                horaSalida: "29-12-2021 16:47:33",
+                                                puntos:[
+                                                    {
+                                                        ubicacionX:20,
+                                                        ubicacionY:40,
+                                                    },
+                                                    {
+                                                        ubicacionX:20,
+                                                        ubicacionY:8,
+                                                    },
+                                                    {
+                                                        ubicacionX:12,
+                                                        ubicacionY:8,
+                                                    },
+                                                ],
+                                            }
+                                        ],
+                                    },
+                                ],
+                            },
+                        },
+                    }   
                 console.log(data);
                 this.fechaSimulacionStr=data.data.data.otros[0].rutas[0].horaSalida;
-                this.fechaSimulacion=this.transformarFechaStrADate(fechaSimulacionStr);
+                this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
                 this.fechaFinEjecucion=this.transformarFechaStrADate(data.data.data.fechaFin);
+                console.log(this.fechaSimulacion);
+                console.log(this.fechaFinEjecucion);
+                console.log(this.fechaFinSimulacion);
                 
                 /*for(let i=0;i<data.data.data.otros.length;i++){
                     let indiceHasheado=Integer.parseInt(data.data.data.otros[i].codigo.substring(2))-1;
@@ -358,7 +444,7 @@ export default {
             
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
 
-                this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
+                /*this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
                 this.stompClient=Stomp.over(this.socket);
                 this.stompClient.connect({}, (frame) => {
                     this.stompClient.subscribe('/topic/estado-general',(greeting)=>{
@@ -367,7 +453,7 @@ export default {
                         console.log(jsonGreeting);
                         this.obtenerNuevasRutas(jsonGreeting);
                     });
-                });
+                });*/
                 this.$emit("cargandoSimulacion");
             }catch(err){
                 console.log(err);
@@ -396,7 +482,10 @@ export default {
             return false;
         },
         transformarFechaStrADate(fechaStr){
-            
+            let fechaStrAux=fechaStr.split(' ');
+            let fechaAux=fechaStrAux[0].split('-');
+            let horaAux=fechaStrAux[1].split(':');
+            return new Date(parseInt(fechaAux[2]),parseInt(fechaAux[1])+1,parseInt(fechaAux[0]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
         }
     },
     watch:{
@@ -405,11 +494,13 @@ export default {
         },
         velocidadSimulacion: function(nuevaVelocidad){
             clearInterval(this.interval);
-            interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/nuevaVelocidad);  
+            this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/nuevaVelocidad);  
         },
         fechaInicioSim: function(nuevaFechaInicioSim){
             this.fechaInicioSimulacion=this.transformarFechaStrADate(nuevaFechaInicioSim);
-            this.fechaFinSimulacion=this.fechaInicioSimulacion.setDate(this.fechaInicioSimulacion.getDate()+3);
+            console.log(this.fechaInicioSimulacion);
+            this.fechaFinSimulacion=new Date(this.fechaInicioSimulacion.setDate(this.fechaInicioSimulacion.getDate()+3));
+            console.log(this.fechaFinSimulacion);
         }
     },
     computed:{
@@ -503,11 +594,11 @@ export default {
                 p5.stroke("#FF0000");
                 p5.strokeWeight(5);
                 for(let i=0;i<this.indiceBloqueosMostrar.length;i++){
-                    for(let j=0;this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos.length-1;j++){
-                        p5.line(this.escalaPixeles*this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j].ubicacionY),
-                        this.escalaPixeles*this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j+1].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[indiceBloqueosMostrar[i]].puntos[j+1].ubicacionY));
+                    for(let j=0;this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos.length-1;j++){
+                        p5.line(this.escalaPixeles*this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j].ubicacionY),
+                        this.escalaPixeles*this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j+1].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j+1].ubicacionY));
                     }
                 }
                 p5.strokeWeight(1);
@@ -521,28 +612,34 @@ export default {
                     c=p5.color(this.listaColoresCamiones[i]);
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
-                    p5.ellipse(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX,
-                    this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY),
+                    p5.ellipse(this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX,
+                    this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY),
                     this.escalaPixeles,this.escalaPixeles);
-                    p5.text(this.camiones[indicesCamionesMostrar[i]].codigo,
-                    this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX-this.escalaPixeles,
-                    this.escalaPixeles*(this.tamYMapa-this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY)
+                    p5.text(this.camiones[this.indicesCamionesMostrar[i]].codigo,
+                    this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionX-this.escalaPixeles,
+                    this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[0].ubicacionY)
                     +this.escalaPixeles);
-                    if(this.camiones[indicesCamionesMostrar[i]].rutas[0].codigoPedido!=""){
-                        p5.ellipse(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionY),
+
+                    if(this.camiones[this.indicesCamionesMostrar[i]].rutas[0].codigoPedido!=""){
+                        c=p5.color("#000000");
+                        p5.fill(c);
+                        p5.ellipse(this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1].ubicacionY),
                         this.escalaPixeles,this.escalaPixeles);
-                        p5.text(this.camiones[indicesCamionesMostrar[i]].rutas[0].codigoPedido,
-                        this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionX-this.escalaPixeles,
-                        this.escalaPixeles*(this.tamYMapa-this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[indicesCamiones[i]].rutas[0].puntos.length-1].ubicacionY)
+                        p5.text(this.camiones[this.indicesCamionesMostrar[i]].rutas[0].codigoPedido,
+                        this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1].ubicacionX-this.escalaPixeles,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1].ubicacionY)
                         +this.escalaPixeles);
+                        c=p5.color(this.listaColoresCamiones[i]);
+                        p5.fill(c);
+                        //c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
                     }
                     p5.stroke(this.listaColoresCamiones[i]);
-                    for(let j=0;j<this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos.length-1;j++){
-                        p5.line(this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionY),
-                        this.escalaPixeles*this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j+1].ubicacionX,
-                        this.escalaPixeles*(this.tamYMapa-this.camiones[indicesCamionesMostrar[i]].rutas[0].puntos[j+1].ubicacionY));
+                    for(let j=0;j<this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1;j++){
+                        p5.line(this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionY),
+                        this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[j+1].ubicacionX,
+                        this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[j+1].ubicacionY));
                     }
                 }
                 p5.strokeWeight(1);
@@ -582,7 +679,8 @@ export default {
         await this.obtenerInformacionCamiones();  
     },
     destroyed(){
-        this.socket.close();
+        clearInterval(this.interval);
+        //this.socket.close();
     }
 }
 </script>

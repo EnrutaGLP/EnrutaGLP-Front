@@ -99,6 +99,7 @@
                 <MapaSimulacion
                     :reanudoSimulacion="reanudoSimulacion"
                     :velocidadSimulacion="velocidadSimulacion"
+                    :fechaInicioSim="fechaInicioEnvio"
                     v-on:cargandoSimulacion="cargandoSimul"
                     v-on:finSimulacion="finSimul"
                     v-on:faltaDeDataDeBack="faltaDataBack"
@@ -219,9 +220,9 @@ export default {
                 this.reanudoSimulacion=true;
                 this.cargandoSimulacion=true;
                 try {
-                    let data=await setConfiguracionSimulacionTresDias(this.fechaInicio+this.horaInicio+":11");
                     let fechaIniAux=this.fechaInicio.split("-");
                     this.fechaInicioEnvio=fechaIniAux[2]+"-"+fechaIniAux[1]+"-"+fechaIniAux[0]+" "+this.horaInicio+":11";
+                    let data=await setConfiguracionSimulacionTresDias(this.fechaInicioEnvio);
                     //let data2=await setFechaInicioSimulacion(this.fechaInicioEnvio);
                     console.log(data);
                     //console.log(data2);
@@ -284,7 +285,7 @@ export default {
     computed:{
         importoArchivos:function(){
             return !(this.importoPedidos&&this.importoBloqueos);
-        }  
+        },
     },
     async created() {
         
