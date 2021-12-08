@@ -41,7 +41,7 @@
                                             label="Código"
                                             :rules="[rules.required, rules.codigo]"
                                             counter
-                                            maxlength="20"
+                                            maxlength="8"
                                         ></v-text-field>
                                     </v-col>
                                 </v-row>
@@ -181,7 +181,7 @@ export default {
         },
         rules:{
             required: value => !!value || 'No puede dejar campos vacíos',
-            codigo:v=>v.length<=20 || 'Máximo 20 caracteres',
+            codigo:v=>v.length<=20 || 'Máximo 8 caracteres',
             razonSocial:v=>v.length<=100 || 'Máximo 100 caracteres',
             glp:[
                 v => Number.isInteger(Number(v)) || 'Tiene que ser un número',
@@ -283,16 +283,24 @@ export default {
                 console.log(fechaPedido);
                 console.log(fechaLimite);
                 let data=await setPedido(codigo,razonSocial,cantidadGLP,posX,posY,fechaPedido,fechaLimite);
-                let aux = this.editedItem;  
-                console.log("aux:",aux);
-                setTimeout(()=>{
-                    this.pedidos.push(aux);
-                },0);
-                this.editedItem={...this.defaultItem};
-                this.editedIndex=-1;
-                this.$refs.form.resetValidation();
-                console.log(data);
-                this.manejarAlerta(0,0);
+                if(data.data.status=="success"){
+                    let aux = this.editedItem;  
+                    console.log("aux:",aux);
+                    setTimeout(()=>{
+                        this.pedidos.push(aux);
+                    },0);
+                    this.editedItem={...this.defaultItem};
+                    this.editedIndex=-1;
+                    this.$refs.form.resetValidation();
+                    console.log(data);
+                    this.manejarAlerta(0,0);
+                }else{
+                    this.editedItem={...this.defaultItem};
+                    this.editedIndex=-1;
+                    this.$refs.form.resetValidation();
+                    console.log(data);
+                    this.manejarAlerta(1,0);
+                }
             }catch(err){
                 this.manejarAlerta(1,0);
             }

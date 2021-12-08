@@ -236,22 +236,21 @@ export default {
         },
         obtenerNuevasRutas(jsonGreeting){
             if(!this.primerWebSocket){
-                this.fechaSimulacionStr=data.data.data.otros[0].rutas[0].horaSalida;
+                this.fechaSimulacionStr=jsonGreeting.otros[0].rutas[0].horaSalida;
                 this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
-                this.fechaFinEjecucion=this.transformarFechaStrADate(data.data.data.fechaFin);
                 console.log(this.fechaSimulacion);
-                console.log(this.fechaFinEjecucion);
                 console.log(this.fechaFinSimulacion);
                 this.primerWebSocket=true;
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
-            this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.data.fechaFin);
+            this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);
+            console.log(this.fechaFinEjecucion);
             let i=0, j=0, k=0;//hashearlos para después
-            for(i=0;i<jsonGreeting.data.otros.length;i++){
+            for(i=0;i<jsonGreeting.otros.length;i++){
                 for(j=0;j<this.camiones.length;j++){
-                    if(this.camiones[j].codigo==jsonGreeting.data.otros[i].codigo){
-                        for(k=0;k<jsonGreeting.data.otros[i].rutas.length;k++){
-                            this.camiones[j].rutas.push(jsonGreeting.data.otros[i].rutas[k]);
+                    if(this.camiones[j].codigo==jsonGreeting.otros[i].codigo){
+                        for(k=0;k<jsonGreeting.otros[i].rutas.length;k++){
+                            this.camiones[j].rutas.push(jsonGreeting.otros[i].rutas[k]);
                             this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=this.transformarFechaStrADate(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
                         }
                     }
