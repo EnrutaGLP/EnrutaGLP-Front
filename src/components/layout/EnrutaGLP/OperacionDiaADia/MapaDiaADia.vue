@@ -17,7 +17,7 @@
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
-import {getBloqueosActuales, getRutasActuales, getPedidosActuales} from '../../../util/services/index';
+import {getBloqueosActuales, getRutasActuales, getPedidosActuales, URL} from '../../../util/services/index';
 
 export default {
     props:[
@@ -454,7 +454,7 @@ export default {
             
         //setInterval(this.actualizarCamionesMapa,5000);
 
-        this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
+        this.socket=new SockJS(URL+'/stomp-endpoint');
         this.stompClient=Stomp.over(this.socket);
         this.stompClient.connect({}, (frame) => {
             this.stompClient.subscribe('/topic/estado-general',(greeting)=>{

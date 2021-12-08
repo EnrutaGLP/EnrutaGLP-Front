@@ -15,7 +15,7 @@
 import P5 from 'p5';
 import SockJS from 'sockjs-client';
 import {Stomp} from '@stomp/stompjs';
-import {getBloqueosProximos, getRutasSimulacion, getCamiones} from '../../../util/services/index';
+import {getBloqueosProximos, getRutasSimulacion, getCamiones, URL} from '../../../util/services/index';
 
 export default {
     props:[
@@ -333,7 +333,7 @@ export default {
             
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
 
-                this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
+                this.socket=new SockJS(URL+'/stomp-endpoint');
                 this.stompClient=Stomp.over(this.socket);
                 this.stompClient.connect({}, (frame) => {
                     this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
@@ -500,7 +500,7 @@ export default {
                 p5.textSize(this.escalaPixeles);
                 p5.strokeWeight(2);
                 for(let i=0;i<this.indicesCamionesMostrar.length;i++){
-                    c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
+                    c=p5.color(this.camiones[this.indicesCamionesMostrar[i]].color);
                     //c=p5.color(this.listaColoresCamiones[i]);
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
@@ -524,7 +524,7 @@ export default {
                         +this.escalaPixeles);
                         //c=p5.color(this.listaColoresCamiones[i]);
                         //p5.fill(c);
-                        c=p5.color(this.camiones[indicesCamionesMostrar[i]].color);
+                        c=p5.color(this.camiones[this.indicesCamionesMostrar[i]].color);
                         p5.fill(c);
                     }
                     p5.stroke(this.listaColoresCamiones[i]);
