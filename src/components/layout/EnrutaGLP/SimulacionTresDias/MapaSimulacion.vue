@@ -333,7 +333,7 @@ export default {
             
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
 
-                this.socket=new SockJS('http://54.145.192.162:8080/stomp-endpoint');
+                this.socket=new SockJS('http://localhost:8080/stomp-endpoint');
                 this.stompClient=Stomp.over(this.socket);
                 this.stompClient.connect({}, (frame) => {
                     this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
