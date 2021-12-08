@@ -5,7 +5,8 @@ import * as base from '../../../../base-config.json';
 var direccion = "https://" + base.url + ':' + base.port;
 //const URL = "http://100.25.226.224:80";
 //const URL = "http://54.174.91.225:80";
-const URL = "http://54.145.192.162:8080";
+//const URL = "http://54.145.192.162:8080";
+const URL = "http://localhost:8080";
 //const URL = direccion;
 export function getAcceso(correo, constrasena) {
     setIdPersonaLoggeada(correo, constrasena);
