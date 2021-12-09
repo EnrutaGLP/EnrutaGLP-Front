@@ -169,6 +169,7 @@ export default {
                                     this.camiones[i].rutas.shift();
                                     if(this.camiones[i].rutas.length==0 || this.camiones[i].rutas[0].horaSalida>this.fechaSimulacion){
                                         //en caso el camion tenga su siguiente ruta automaticamente despues no se dejará de mostrar
+                                        console.log(this.indicesCamionesMostrar);
                                         this.indicesCamionesMostrar.splice(this.indicesCamionesMostrar.indexOf(i),1);
                                     }else{//se mueve un punto en caso exista una ruta siguiente inmediatamente
                                         if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){
@@ -339,6 +340,7 @@ export default {
                     this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
                         let jsonGreeting=JSON.parse(greeting.body);
                         console.log(jsonGreeting);
+                        console.log(jsonGreeting.otros[0].rutas[0].horaSalida);
                         this.obtenerNuevasRutas(jsonGreeting);
                     });
                 });
@@ -527,7 +529,7 @@ export default {
                         c=p5.color(this.camiones[this.indicesCamionesMostrar[i]].color);
                         p5.fill(c);
                     }
-                    p5.stroke(this.listaColoresCamiones[i]);
+                    p5.stroke(this.camiones[this.indicesCamionesMostrar[i]].color);
                     for(let j=0;j<this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos.length-1;j++){
                         p5.line(this.escalaPixeles*this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionX,
                         this.escalaPixeles*(this.tamYMapa-this.camiones[this.indicesCamionesMostrar[i]].rutas[0].puntos[j].ubicacionY),
