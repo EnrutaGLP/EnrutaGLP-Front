@@ -88,31 +88,6 @@ export default {
             }catch(err){
                 console.log(err);
             }
-
-            /*this.camiones.push({
-                codigo:"TA01",
-                placa:"xdx-dxd",
-                rutas:[],
-            });
-            this.camiones.push({codigo:"TA02",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TB01",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TB02",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TB03",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TB04",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TC01",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TC02",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TC03",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TC04",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD01",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD02",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD03",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD04",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD05",placa:"xdx-dxd",rutas:[],});            
-            this.camiones.push({codigo:"TD06",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD07",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD08",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD09",placa:"xdx-dxd",rutas:[],});
-            this.camiones.push({codigo:"TD10",placa:"xdx-dxd",rutas:[],});*/
         },
         actualizarMapa(){
             
@@ -378,6 +353,12 @@ export default {
             let fechaAux=fechaStrAux[0].split('-');
             let horaAux=fechaStrAux[1].split(':');
             return new Date(parseInt(fechaAux[2]),parseInt(fechaAux[1])+1,parseInt(fechaAux[0]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
+        },
+        transformarFechaStrDateT(fechaStr){
+            let fechaStrAux=fechaStr.split('T');
+            let fechaAux=fechaStrAux[0].split('-');
+            let horaAux=fechaStrAux[1].split(':');
+            return new Date(parseInt(fechaAux[0]),parseInt(fechaAux[1])+1,parseInt(fechaAux[2]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
         }
     },
     watch:{
