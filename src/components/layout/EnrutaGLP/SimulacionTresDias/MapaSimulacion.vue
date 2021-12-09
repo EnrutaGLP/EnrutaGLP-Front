@@ -354,13 +354,13 @@ export default {
             let fechaStrAux=fechaStr.split(' ');
             let fechaAux=fechaStrAux[0].split('-');
             let horaAux=fechaStrAux[1].split(':');
-            return new Date(parseInt(fechaAux[2]),parseInt(fechaAux[1])+1,parseInt(fechaAux[0]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
+            return new Date(parseInt(fechaAux[2]),parseInt(fechaAux[1])-1,parseInt(fechaAux[0]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
         },
-        transformarFechaStrDateT(fechaStr){
-            let fechaStrAux=fechaStr.split('T');
+        transformarFechaStrDateYYYYmmDD(fechaStr){
+            let fechaStrAux=fechaStr.split(' ');
             let fechaAux=fechaStrAux[0].split('-');
             let horaAux=fechaStrAux[1].split(':');
-            return new Date(parseInt(fechaAux[0]),parseInt(fechaAux[1])+1,parseInt(fechaAux[2]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
+            return new Date(parseInt(fechaAux[0]),parseInt(fechaAux[1])-1,parseInt(fechaAux[2]),parseInt(horaAux[0]),parseInt(horaAux[1]),parseInt(horaAux[2]));
         }
     },
     watch:{
@@ -374,7 +374,8 @@ export default {
             }
         },
         fechaInicioSim: function(nuevaFechaInicioSim){
-            this.fechaInicioSimulacion=this.transformarFechaStrADate(nuevaFechaInicioSim);
+            this.fechaInicioSimulacion=this.transformarFechaStrDateYYYYmmDD(nuevaFechaInicioSim);
+            console.log(this.fechaInicioSimulacion);
             this.fechaFinSimulacion=new Date(this.fechaInicioSimulacion.setDate(this.fechaInicioSimulacion.getDate()+3));
         }
     },
