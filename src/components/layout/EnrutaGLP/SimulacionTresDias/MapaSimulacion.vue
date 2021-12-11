@@ -64,6 +64,7 @@ export default {
 
             indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
             indiceBloqueosMostrar:[],//los dos funcionan igual que el de camiones
+            averiasMostrar:[],
 
             interval:null,
 
@@ -128,8 +129,18 @@ export default {
         actualizarAverias(){
             for(let i=0;i<this.averiasActuales.length;i++){
                 if(this.averiasActuales[i].fechaInicio>=this.fechaSimulacion){
-
-                    
+                    for(let j=0;j<this.camiones.length;j++){
+                        if(this.camiones[j].codigo==this.averiasActuales[i].codigoCamion){//eliminar rutas camion
+                            this.averiasMostrar.push({
+                                codigo:camiones[j].codigo,
+                                ubicacionX:camiones[j].rutas[0].puntos[0].ubicacionX,
+                                ubicacionY:camiones[j].rutas[0].puntos[0].ubicacionY,
+                            });
+                            this.camiones[j].rutas=[];
+                        }
+                    }              
+                    this.averiasActuales.splice(i,1);
+                    break;
                 }
             }
         },
@@ -399,8 +410,24 @@ export default {
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
                 p5.actualizarBloqueos();
+                p5.actualizarAverias();
                 p5.dibujarAlmacenes();
                 p5.mostrarFechaSimulacionYPorcentajeOcupado();
+            };
+            p5.actualizarAverias = () => {
+                let c=p5.color("#FF0000");
+                p5.fill(c);
+                p5.textSize(this.escalaPixeles);
+                p5.stroke("#EEEEEE");
+                for(let i=0;i<this.averiasMostrar.length;i++){
+                    p5.ellipse(this.escalaPixeles*this.averiasMostrar[i].ubicacionX,
+                    this.escalaPixeles*(this.tamYMapa-this.averiasMostrar[i].ubicacionY),
+                    this.escalaPixeles,this.escalaPixeles);
+                    p5.text(this.averiasMostrar[i].codigo,
+                    this.escalaPixeles*this.averiasMostrar[i].ubicacionX-this.escalaPixeles,
+                    this.escalaPixeles*(this.tamYMapa-this.averiasMostrar[i].ubicacionY)
+                    +this.escalaPixeles);
+                }
             };
             p5.mostrarFechaSimulacionYPorcentajeOcupado = () => {
                 p5.stroke("#EEEEEE");
