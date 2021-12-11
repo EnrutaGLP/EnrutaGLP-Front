@@ -71,6 +71,7 @@ export default {
             primerEsFinal:false,
             primerWebSocket:false,
             yaInicioSimulacion:false,
+            velocidadActual:1,
         };
     },
     methods:{
@@ -362,7 +363,7 @@ export default {
                 this.yaInicioSimulacion=true;
             }
             if(nuevaReanudoSimulacion){//play
-                this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
+                this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/this.velocidadSimulacion);
             }else{//pausa
                 clearInterval(this.interval);
             }
