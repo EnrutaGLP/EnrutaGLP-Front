@@ -95,6 +95,8 @@ export default {
             if(this.esFinalSimulacion){
                 if(!this.primerEsFinal){
                     this.fechaFinEjecucion.setMinutes(this.fechaFinEjecucion.getMinutes()+2);
+                    this.bloqueosActuales=[];
+                    this.indiceBloqueosMostrar=[];
                     this.primerEsFinal=true;
                 }
                 noHayCamionesConRutas=true;
@@ -109,6 +111,7 @@ export default {
         },
         actualizarMapa(){
             if(this.verificarFinSimulacion()){
+                this.esFinalSimulacion=false;
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
             }
@@ -125,7 +128,7 @@ export default {
             for(let i=0;i<this.averiasActuales.length;i++){
                 if(this.averiasActuales[i].fechaInicio>=this.fechaSimulacion){
 
-                    
+                    this.averiasActuales
                 }
             }
         },
