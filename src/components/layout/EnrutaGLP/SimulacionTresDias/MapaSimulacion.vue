@@ -64,7 +64,10 @@ export default {
 
             indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
             indiceBloqueosMostrar:[],//los dos funcionan igual que el de camiones
+            
             averiasMostrar:[],
+            averiaActiva:false,
+            contadorAveria:0,
 
             interval:null,
 
@@ -127,20 +130,31 @@ export default {
             //this.actualizarAveriasEnMapa();  
         },
         actualizarAverias(){
-            for(let i=0;i<this.averiasActuales.length;i++){
-                if(this.averiasActuales[i].fechaInicio>=this.fechaSimulacion){
-                    for(let j=0;j<this.camiones.length;j++){
-                        if(this.camiones[j].codigo==this.averiasActuales[i].codigoCamion){//eliminar rutas camion
-                            this.averiasMostrar.push({
-                                codigo:camiones[j].codigo,
-                                ubicacionX:camiones[j].rutas[0].puntos[0].ubicacionX,
-                                ubicacionY:camiones[j].rutas[0].puntos[0].ubicacionY,
-                            });
-                            this.camiones[j].rutas=[];
-                        }
-                    }              
-                    this.averiasActuales.splice(i,1);
-                    break;
+            if(this.averiaActiva){
+                if(this.contadorAveria<9){
+                    this.contadorAveria++;
+                }else{
+                    this.averiaActiva=false;
+                    this.averiasMostrar.shift();
+                }
+            }else{
+                for(let i=0;i<this.averiasActuales.length;i++){
+                    if(this.averiasActuales[i].fechaInicio>=this.fechaSimulacion){
+                        for(let j=0;j<this.camiones.length;j++){
+                            if(this.camiones[j].codigo==this.averiasActuales[i].codigoCamion){//eliminar rutas camion
+                                this.averiasMostrar.push({
+                                    codigo:camiones[j].codigo,
+                                    ubicacionX:camiones[j].rutas[0].puntos[0].ubicacionX,
+                                    ubicacionY:camiones[j].rutas[0].puntos[0].ubicacionY,
+                                });
+                                this.camiones[j].rutas=[];
+                                this.averiaActiva=true;
+                                break;
+                            }
+                        }              
+                        this.averiasActuales.splice(i,1);
+                        break;
+                    }
                 }
             }
         },
