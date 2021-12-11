@@ -147,7 +147,7 @@ export default {
             reanudoSimulacion:false,
             velocidadSimulacion:1,
             velocidadMinima:1,
-            velocidadMaxima:256,
+            velocidadMaxima:4096,
             sePasoDeIncremento:false,
             sePasoDeDecremento:false,
             yaInicioSimulacion:false,

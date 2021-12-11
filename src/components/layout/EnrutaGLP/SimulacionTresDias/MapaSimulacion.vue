@@ -380,7 +380,7 @@ export default {
             this.obtenerDatosSimulacion();
         },
         velocidadSimulacion: function(nuevaVelocidad){
-            if(nuevaVelocidad>=1 && nuevaVelocidad<=256){
+            if(nuevaVelocidad>=1 && nuevaVelocidad<=4096){
                 clearInterval(this.interval);
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/nuevaVelocidad);  
             }
