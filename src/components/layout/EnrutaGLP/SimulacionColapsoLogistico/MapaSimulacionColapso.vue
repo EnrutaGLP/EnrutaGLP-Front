@@ -75,6 +75,8 @@ export default {
             primerEsFinal:false,
             primerWebSocket:false,
             yaInicioSimulacion:false,
+            esColapso:false,
+            codigoColapso:"",
             velocidadActual:1,
         };
     },
@@ -115,8 +117,9 @@ export default {
             return noHayCamionesConRutas;
         },
         actualizarMapa(){
-            if(this.verificarFinSimulacion()){
+            if(this.verificarFinSimulacion() && this.esColapso && this.fechaSimulacion>=this.fechaFinEjecucion){
                 this.esFinalSimulacion=false;
+                this.$emit("llegoColapso",this.codigoColapso);
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
             }
@@ -126,7 +129,7 @@ export default {
             }
             this.actualizarRutasEnMapa();
             this.actualizarBloqueos();
-            this.actualizarAverias();
+            //this.actualizarAverias();
             //this.actualizarAveriasEnMapa();  
         },
         actualizarAverias(){
@@ -281,6 +284,8 @@ export default {
                 console.log("bloqueos actuales:" + this.bloqueosActuales);
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
+            this.esColapso=jsonGreeting.llegoAlColapso;
+            this.codigoColapso=jsonGreeting.codigoPedidoColapso;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);
             console.log(this.fechaFinEjecucion);
@@ -424,7 +429,7 @@ export default {
                 p5.dibujarLeyenda();
                 p5.actualizarCamiones();
                 p5.actualizarBloqueos();
-                p5.actualizarAverias();
+                //p5.actualizarAverias();
                 p5.dibujarAlmacenes();
                 p5.mostrarFechaSimulacionYPorcentajeOcupado();
             };

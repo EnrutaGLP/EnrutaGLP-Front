@@ -1,17 +1,10 @@
 <template>
     <div class="contenedorPrincipal">
         <div class="simulación3dias">
-            <Title texto="Simulación de 3 días"/>
+            <Title texto="Simulación hasta el colapso logístico"/>
             <br>
             <div class="botones">
-                <v-row>
-                    <v-col>
-                        <ModalInputFileAlumnos
-                            :disabled="false"
-                            v-on:importarDatos="subirPedidos"
-                            :cargando="cargaPedidos"
-                        />
-                    </v-col>
+                <v-row> 
                     <v-col>
                         <ModalInputFileUsuarios
                             :disabled="false"
@@ -21,7 +14,7 @@
                     </v-col>
                 </v-row>
             </div>
-            <p v-if="importoArchivos">Debe seleccionar una fecha antes de empezar la simulación</p>
+            <p v-if="importoArchivos">Debe seleccionar una fecha y hora antes de empezar la simulación</p>
             <br>
             <br>
             <v-alert
@@ -33,12 +26,29 @@
             </v-alert>
             <div class="fechaPicker">
                 <DatePicker
-                    v-bind:date="fechaEntrega"
-                    v-on:cambio-fecha="cambioFechaEntrega"
-                    texto="Fecha de entrega"
+                    v-bind:date="fechaInicio"
+                    v-on:cambio-fecha="cambioFechaInicio"
+                    texto="Fecha de inicio de simulación"
+                />
+                <TimePicker
+                    v-bind:hour="horaInicio"
+                    v-on:cambio-hora="cambioHoraInicio"
+                    texto="Hora de inicio de simulación"
                 />
             </div>
+            <br>
             <div class="controlesSimulacion">
+                <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    small
+                    color="#7434EB"
+                    :disabled="importoArchivos"
+                    @click="disminuyoVelocidad"
+                >
+                    <v-icon>mdi-rewind</v-icon>
+                </v-btn>
                 <v-btn
                     class="mx-2"
                     fab
@@ -57,17 +67,50 @@
                     small
                     color="#7434EB"
                     :disabled="importoArchivos"
-                    @click="dioStop"
+                    @click="dioPausa"
                 >
-                    <v-icon>mdi-stop</v-icon>
+                    <v-icon>mdi-pause</v-icon>
                 </v-btn>
+                <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    small
+                    color="#7434EB"
+                    :disabled="importoArchivos"
+                    @click="aumentoVelocidad"
+                >
+                    <v-icon>mdi-fast-forward</v-icon>
+                </v-btn>
+                <v-btn
+                    elevation="2"
+                    disabled=true
+                    v-if="!importoArchivos"
+                >
+                    x{{velocidadSimulacion}}
+                </v-btn>
+                <v-progress-circular
+                    indeterminate
+                    color="7434EB"
+                    v-if="cargandoSimulacion"
+                >
+                </v-progress-circular>
+                <p style="color:#FF0000" v-if="sePasoDeIncremento">No se puede incrementar la velocidad más allá de x256</p>
+                <p style="color:#FF0000" v-if="sePasoDeDecremento">No se puede disminuir la velocidad más allá de x1</p>
+                <p style="color:#FF0000" v-if="cargandoDataBack">Cargando las rutas</p>
+                <p v-if="llegoAlColapso">{{mensajeColapso}}</p>
+
             </div>
             <br>
             <div class="mapa">
-                <MapaDiaADia
-                    esSimulacion=1
+                <MapaSimulacionColapso
                     :reanudoSimulacion="reanudoSimulacion"
                     :velocidadSimulacion="velocidadSimulacion"
+                    :fechaInicioSim="fechaInicioEnvio"
+                    v-on:cargandoSimulacion="cargandoSimul"
+                    v-on:finSimulacion="finSimul"
+                    v-on:faltaDeDataDeBack="faltaDataBack"
+                    v-on:llegoColapso="llegoColapsoLogistico"
                 />
                 
             </div>
@@ -81,15 +124,16 @@
 </template>
 
 <script>
-import MapaDiaADia from '../OperacionDiaADia/MapaDiaADia.vue'
+import MapaSimulacionColapso from '../SimulacionColapsoLogistico/MapaSimulacionColapso.vue'
 import {
-    setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionColapsoLogistico
+    setPedidosMasivo, setBloqueosMasivo, setConfiguracionSimulacionColapsoLogistico, setConfiguracionSimulacionTresDias, setFechaInicioSimulacion,
 } from '../../../util/services/index';
 import Title from '../../../shared/Title.vue';
 import BackButton from '../../../shared/BackButton.vue';
 import ModalInputFileUsuarios from "../../../shared/ModalInputFileUsuarios.vue";
 import ModalInputFileAlumnos from "../../../shared/ModalInputFileAlumnos.vue";
 import DatePicker from "../../../shared/DatePicker.vue";
+import TimePicker from "../../../shared/TimePicker.vue";
 
 export default {
     name: 'SimulacionTresDias',
@@ -98,8 +142,9 @@ export default {
         Title,
         ModalInputFileUsuarios,
         ModalInputFileAlumnos,
-        MapaDiaADia,
+        MapaSimulacionColapso,
         DatePicker,
+        TimePicker,
     },
     data() {
         return {
@@ -115,12 +160,28 @@ export default {
 
             reanudoSimulacion:false,
             velocidadSimulacion:1,
+            velocidadMinima:1,
+            velocidadMaxima:4096,
+            sePasoDeIncremento:false,
+            sePasoDeDecremento:false,
+            yaInicioSimulacion:false,
 
-            fechaEntrega:'',
+            fechaInicio:'',
+            horaInicio:'',
+            fechaInicioEnvio:'',
 
+            cargandoSimulacion:false,
+            cargandoDataBack:false,
+
+            llegoAlColapso:false,
+            mensajeColapso:"",
         };
     },
     methods: {
+        llegoColapsoLogistico(codigo){
+            this.mensajeColapso="Se produjo el colapso logístico, no se pudo entregar a tiempo el pedido "+codigo+" a tiempo."
+            this.llegoColapsoLogistico=true;
+        },
         async subirBloqueos(listaBloqueos){
             this.cargaBloqueos=true;
             console.log(listaBloqueos);
@@ -170,13 +231,45 @@ export default {
                 this.hayAlerta = false;
             }, 2000);
         },
+        dioPausa(){
+            this.reanudoSimulacion=false;
+        },
         async dioPlay(){
             this.reanudoSimulacion=true;
-            try {
-                let data=await setConfiguracionSimulacionColapsoLogistico();
-                console.log(data);
-            } catch (err) {
-                console.log(err);
+            if(!this.yaInicioSimulacion){
+                this.cargandoSimulacion=true;
+                try {
+                    let fechaIniAux=this.fechaInicio.split("-");
+                    this.fechaInicioEnvio=fechaIniAux[0]+"-"+fechaIniAux[1]+"-"+fechaIniAux[2]+" "+this.horaInicio+":00";
+                    let data=await setConfiguracionSimulacionColapsoLogistico(this.fechaInicioEnvio);
+                    //let data2=await setFechaInicioSimulacion(this.fechaInicioEnvio);
+                    console.log(data);
+                    //console.log(data2);
+                } catch (err) {
+                    this.cargandoSimulacion=false;
+                    console.log(err);
+                }
+                this.yaInicioSimulacion=true;
+            }
+        },
+        disminuyoVelocidad(){
+            if(this.velocidadSimulacion>this.velocidadMinima){
+                this.velocidadSimulacion=this.velocidadSimulacion/2;
+            }else{
+                this.sePasoDeDecremento=true;
+                setTimeout(()=>{
+                    this.sePasoDeDecremento=false;
+                },2000);
+            }
+        },
+        aumentoVelocidad(){
+            if(this.velocidadSimulacion<this.velocidadMaxima){
+                this.velocidadSimulacion=this.velocidadSimulacion*2;
+            }else{
+                this.sePasoDeIncremento=true;
+                setTimeout(()=>{
+                    this.sePasoDeIncremento=false;
+                },2000);
             }
         },
         async dioStop(){
@@ -188,17 +281,32 @@ export default {
                 console.log(err);
             }
         },
-        cambioFechaEntrega(dato){
-            this.fechaEntrega=dato;
-            console.log("Selecciono data");
+        cambioFechaInicio(dato){
+            this.fechaInicio=dato;
+            console.log(this.fechaInicio);
             this.importoPedidos=true;
+        },
+        cambioHoraInicio(dato){
+            this.horaInicio=dato;
+            console.log(this.horaInicio);
             this.importoBloqueos=true;
         },
+        cargandoSimul(){
+            this.cargandoDataBack=false;
+            this.cargandoSimulacion=false;
+        },
+        finSimul(){
+            alert("FIN DE LA SIMULACIÓN!");
+        },
+        faltaDataBack(){
+            this.cargandoDataBack=true;
+            this.cargandoSimulacion=true;
+        }
     },
     computed:{
         importoArchivos:function(){
             return !(this.importoPedidos&&this.importoBloqueos);
-        }  
+        },
     },
     async created() {
         
@@ -207,12 +315,16 @@ export default {
 
     },
 };
+
 </script>
 <style scoped>
     .botones{
         float:right;
     }
     .fechaPicker{
-        width: 40rem;
+        width: 30rem;
+    }
+    .horaPicker{
+        width: 30rem;
     }
 </style>
