@@ -337,6 +337,7 @@ export default {
                 this.stompClient.connect({}, (frame) => {
                     this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
                         let jsonGreeting=JSON.parse(greeting.body);
+                        console.log(greeting);
                         console.log(jsonGreeting);
                         //console.log(jsonGreeting.otros[0].rutas[0].horaSalida);
                         this.obtenerNuevasRutas(jsonGreeting);
@@ -483,7 +484,7 @@ export default {
                 p5.stroke("#FF0000");
                 p5.strokeWeight(5);
                 for(let i=0;i<this.indiceBloqueosMostrar.length;i++){
-                    for(let j=0;this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos.length-1;j++){
+                    for(let j=0;j<this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos.length-1;j++){
                         p5.line(this.escalaPixeles*this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j].ubicacionX,
                         this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j].ubicacionY),
                         this.escalaPixeles*this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j+1].ubicacionX,
