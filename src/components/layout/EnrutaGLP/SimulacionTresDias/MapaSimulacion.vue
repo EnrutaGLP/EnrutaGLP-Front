@@ -120,18 +120,20 @@ export default {
             let indiceAux;
             for(let i=0;i<this.bloqueosActuales.length;i++){
                 indiceAux=this.indiceBloqueosMostrar.indexOf(i);
-                if(indiceAux!=-1){
+                if(indiceAux!=-1){//esta el bloqueo
                     if(!this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
                         ,this.fechaSimulacion)){
                         this.indiceBloqueosMostrar.splice(indiceAux,1);
                     }
-                }else{
+                }else{//no esta el bloqueo
                     if(this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
                         ,this.fechaSimulacion)){
                         this.indiceBloqueosMostrar.push(i);
                     }
                 }
             }
+            console.log(this.indiceBloqueosMostrar);
+            console.log(this.fechaSimulacion);
         },
         actualizarRutasEnMapa(){
             this.fechaSimulacionStr=`${this.fechaSimulacion.getDate()}`.padStart(2,'0')+"-"+`${this.fechaSimulacion.getMonth()+1}`.padStart(2,'0')
@@ -157,7 +159,7 @@ export default {
                                     this.camiones[i].rutas.shift();
                                     if(this.camiones[i].rutas.length==0 || this.camiones[i].rutas[0].horaSalida>this.fechaSimulacion){
                                         //en caso el camion tenga su siguiente ruta automaticamente despues no se dejará de mostrar
-                                        console.log(this.indicesCamionesMostrar);
+                                        //console.log(this.indicesCamionesMostrar);
                                         this.indicesCamionesMostrar.splice(this.indicesCamionesMostrar.indexOf(i),1);
                                     }else{//se mueve un punto en caso exista una ruta siguiente inmediatamente
                                         if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){

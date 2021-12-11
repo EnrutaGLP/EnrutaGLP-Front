@@ -221,6 +221,9 @@ export default {
                 this.hayAlerta = false;
             }, 2000);
         },
+        dioPausa(){
+
+        },
         async dioPlay(){
             if(!this.yaInicioSimulacion){
                 this.reanudoSimulacion=true;
