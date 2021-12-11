@@ -128,7 +128,7 @@ export default {
             for(let i=0;i<this.averiasActuales.length;i++){
                 if(this.averiasActuales[i].fechaInicio>=this.fechaSimulacion){
 
-                    this.averiasActuales
+                    
                 }
             }
         },
