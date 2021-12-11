@@ -121,14 +121,14 @@ export default {
             for(let i=0;i<this.bloqueosActuales.length;i++){
                 indiceAux=this.indiceBloqueosMostrar.indexOf(i);
                 if(indiceAux!=-1){
-                    if(this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
-                        ,this.fechaSimulacion)){
-                        this.indiceBloqueosMostrar.push(i);
-                    }
-                }else{
                     if(!this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
                         ,this.fechaSimulacion)){
                         this.indiceBloqueosMostrar.splice(indiceAux,1);
+                    }
+                }else{
+                    if(this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                        ,this.fechaSimulacion)){
+                        this.indiceBloqueosMostrar.push(i);
                     }
                 }
             }
