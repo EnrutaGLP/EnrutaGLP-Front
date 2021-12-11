@@ -244,6 +244,7 @@ export default {
                 });
                 console.log("bloqueos actuales",this.bloqueosActuales);
                 this.primerWebSocket=true;
+                console.log("bloqueos actuales:" + this.bloqueosActuales);
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
@@ -309,6 +310,7 @@ export default {
                 this.stompClient.connect({}, (frame) => {
                     this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
                         let jsonGreeting=JSON.parse(greeting.body);
+                        console.log(greeting);
                         console.log(jsonGreeting);
                         //console.log(jsonGreeting.otros[0].rutas[0].horaSalida);
                         this.obtenerNuevasRutas(jsonGreeting);
