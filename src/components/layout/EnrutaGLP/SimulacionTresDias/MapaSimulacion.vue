@@ -68,6 +68,7 @@ export default {
             interval:null,
 
             esFinalSimulacion:false,
+            primerEsFinal:false,
             primerWebSocket:false,
             yaInicioSimulacion:false,
         };
@@ -92,6 +93,10 @@ export default {
         verificarFinSimulacion(){
             let noHayCamionesConRutas=false;
             if(this.esFinalSimulacion){
+                if(!this.primerEsFinal){
+                    this.fechaFinEjecucion.setMinutes(this.fechaFinEjecucion.getMinutes()+2);
+                    this.primerEsFinal=true;
+                }
                 noHayCamionesConRutas=true;
                 for(let i=0;i<this.camiones.length;i++){
                     if(this.camiones[i].rutas.length>0){
