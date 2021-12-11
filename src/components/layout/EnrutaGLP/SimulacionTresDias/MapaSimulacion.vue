@@ -121,13 +121,13 @@ export default {
             for(let i=0;i<this.bloqueosActuales.length;i++){
                 indiceAux=this.indiceBloqueosMostrar.indexOf(i);
                 if(indiceAux!=-1){
-                    if(this.verificarInterseccionEntreDosRangoDeFechas(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
-                        ,this.fechaSimulacion,this.fechaSimulacion)){
+                    if(this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                        ,this.fechaSimulacion)){
                         this.indiceBloqueosMostrar.push(i);
                     }
                 }else{
-                    if(!this.verificarInterseccionEntreDosRangoDeFechas(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
-                        ,this.fechaSimulacion,this.fechaSimulacion)){
+                    if(!this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                        ,this.fechaSimulacion)){
                         this.indiceBloqueosMostrar.splice(indiceAux,1);
                     }
                 }
@@ -230,11 +230,9 @@ export default {
                 console.log(this.fechaSimulacion);
                 console.log(this.fechaFinSimulacion);
                 jsonGreeting.bloqueos.forEach(element => {              
-                    if(this.verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
-                        this.bloqueosActuales.push(element);
-                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
-                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);
-                    }
+                    this.bloqueosActuales.push(element);
+                    this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
+                    this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);                    
                 });
                 this.primerWebSocket=true;
                 console.log("bloqueos actuales:" + this.bloqueosActuales);
@@ -349,6 +347,12 @@ export default {
         },
         verificarInterseccionEntreDosRangoDeFechas(fechaIni1,fechaFin1,fechaIni2,fechaFin2){
             if((fechaIni1<=fechaFin2)&&(fechaFin1>=fechaIni2)){
+                return true;
+            }
+            return false;
+        },
+        verificarInterseccionRangoFechaYFecha(fechaIni1,fechaFin1,fechaIni2){
+            if((fechaIni2>=fechaIni1)&&(fechaIni2<=fechaFin1)){
                 return true;
             }
             return false;
