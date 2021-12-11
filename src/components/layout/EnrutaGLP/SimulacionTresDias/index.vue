@@ -67,6 +67,17 @@
                     small
                     color="#7434EB"
                     :disabled="importoArchivos"
+                    @click="dioPausa"
+                >
+                    <v-icon>mdi-pause</v-icon>
+                </v-btn>
+                <v-btn
+                    class="mx-2"
+                    fab
+                    dark
+                    small
+                    color="#7434EB"
+                    :disabled="importoArchivos"
                     @click="aumentoVelocidad"
                 >
                     <v-icon>mdi-fast-forward</v-icon>
