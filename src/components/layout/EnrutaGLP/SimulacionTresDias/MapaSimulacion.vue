@@ -121,14 +121,14 @@ export default {
             for(let i=0;i<this.bloqueosActuales.length;i++){
                 indiceAux=this.indiceBloqueosMostrar.indexOf(i);
                 if(indiceAux!=-1){
-                    if(this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
-                        ,this.fechaSimulacion)){
-                        this.indiceBloqueosMostrar.push(i);
-                    }
-                }else{
                     if(!this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
                         ,this.fechaSimulacion)){
                         this.indiceBloqueosMostrar.splice(indiceAux,1);
+                    }
+                }else{
+                    if(this.verificarInterseccionRangoFechaYFecha(this.bloqueosActuales[i].fechaInicio,this.bloqueosActuales[i].fechaFin
+                        ,this.fechaSimulacion)){
+                        this.indiceBloqueosMostrar.push(i);
                     }
                 }
             }
@@ -234,6 +234,7 @@ export default {
                     this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
                     this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);                    
                 });
+                console.log("bloqueos actuales",this.bloqueosActuales);
                 this.primerWebSocket=true;
                 console.log("bloqueos actuales:" + this.bloqueosActuales);
             }
