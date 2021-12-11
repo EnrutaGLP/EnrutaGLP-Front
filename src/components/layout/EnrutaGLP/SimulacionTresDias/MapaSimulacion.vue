@@ -234,6 +234,7 @@ export default {
                     this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
                     this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);                    
                 });
+                console.log("bloqueos actuales",this.bloqueosActuales);
                 this.primerWebSocket=true;
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
