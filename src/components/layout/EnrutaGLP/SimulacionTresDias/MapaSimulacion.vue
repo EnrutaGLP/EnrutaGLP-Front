@@ -60,6 +60,7 @@ export default {
             fechaInicioSimulacion:null,//fecha que definio el usuario en Date
             fechaFinSimulacion:null,//fecha limite que definiio el usuario en Date
             fechaFinEjecucion:null,
+            porcentajePlazoOcupadoPromedio:0,
 
             indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
             //indicesCamionesEliminar:[],//indices(los datos del arreglo indicesCamionesMostrar) que se deberán eliminar(creo que ya no es necesario)
@@ -228,9 +229,17 @@ export default {
                 this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
                 console.log(this.fechaSimulacion);
                 console.log(this.fechaFinSimulacion);
+                jsonGreeting.bloqueos.forEach(element => {              
+                    if(verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
+                        this.bloqueosActuales.push(element);
+                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
+                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);
+                    }
+                });
                 this.primerWebSocket=true;
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
+            this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);
             console.log(this.fechaFinEjecucion);
             let i=0, j=0, k=0;//hashearlos para después
@@ -317,7 +326,7 @@ export default {
                         }
                     }
                 }*/
-                await this.obtenerBloqueosSimulacion();
+                //await this.obtenerBloqueosSimulacion();
             
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
 
@@ -335,25 +344,6 @@ export default {
             }catch(err){
                 console.log(err);
                 this.$emit("cargandoSimulacion");
-            }
-        },
-        async obtenerBloqueosSimulacion(){
-            try{
-                let auxFechaInicioSimulacion=this.fechaInicioSim.split(" ");
-                let auxFechaSim=auxFechaInicioSimulacion[0].split("-");
-                let auxHoraSim=auxFechaInicioSimulacion[1].split(":");
-
-                const data=await getBloqueosProximos(auxFechaSim[0]+"-"+auxFechaSim[1]+"-"+auxFechaSim[2]+" "+auxHoraSim[0]+":"+auxHoraSim[1]+":"+auxHoraSim[2]);
-                console.log(data);
-                data.data.data.forEach(element => {              
-                    if(verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
-                        this.bloqueosActuales.push(element);
-                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
-                        this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);
-                    }
-                });
-            }catch(err){
-                console.log(err);
             }
         },
         verificarInterseccionEntreDosRangoDeFechas(fechaIni1,fechaFin1,fechaIni2,fechaFin2){
@@ -411,12 +401,15 @@ export default {
                 p5.actualizarCamiones();
                 p5.actualizarBloqueos();
                 p5.dibujarAlmacenes();
-                p5.mostrarFechaSimulacion();
+                p5.mostrarFechaSimulacionYPorcentajeOcupado();
             };
-            p5.mostrarFechaSimulacion = () => {
+            p5.mostrarFechaSimulacionYPorcentajeOcupado = () => {
                 p5.stroke("#EEEEEE");
                 let c=p5.color("#000000");
                 p5.fill(c);
+                p5.textSize(13);
+                p5.text("Porcentaje plazo ocupado promedio:",this.escalaPixeles*(this.tamXMapa+1),this.tamYMapa*this.escalaPixeles-60);
+                p5.text(this.porcentajePlazoOcupadoPromedio+"%",this.escalaPixeles*(this.tamXMapa+8),this.tamYMapa*this.escalaPixeles-40);
                 p5.textSize(18);
                 p5.text(this.fechaSimulacionStr,this.escalaPixeles*(this.tamXMapa+3),this.tamYMapa*this.escalaPixeles-20);
             };

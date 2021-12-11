@@ -84,7 +84,7 @@ export default {
         };
     },
     methods: {
-        async subirPedidos(){
+        async subirPedidos(listaPedidos){
             this.cargaPedidos=true;
             console.log(listaPedidos);
             try {

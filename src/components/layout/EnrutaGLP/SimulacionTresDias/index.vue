@@ -4,7 +4,7 @@
             <Title texto="Simulación de 3 días"/>
             <br>
             <div class="botones">
-                <v-row>
+                <v-row> 
                     <v-col>
                         <ModalInputFileUsuarios
                             :disabled="false"
