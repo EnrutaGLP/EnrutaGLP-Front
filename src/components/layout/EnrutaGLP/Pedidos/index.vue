@@ -17,7 +17,13 @@
                                 >
                                 </v-text-field>
                             </td>
-                            
+                            <td class="col sm-12">
+                                <ModalInputFileAlumnos
+                                    :disabled="false"
+                                    v-on:importarDatos="subirPedidos"
+                                    :cargando="cargaPedidos"
+                                />
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -46,11 +52,12 @@
 </template>
 
 <script>
-import { getPedidos } from '../../../util/services/index';
+import { getPedidos, setPedidosMasivo} from '../../../util/services/index';
 import BackButton from '../../../shared/BackButton.vue';
 import DataTablePedido from '../Pedidos/DataTablePedido/DataTablePedido.vue';
 import Title from '../../../shared/Title.vue';
 import Alert from '../../../shared/Alert.vue';
+import ModalInputFileAlumnos from '../../../shared/ModalInputFileAlumnos.vue';
 
 
 export default {
@@ -60,6 +67,7 @@ export default {
         DataTablePedido,
         Title,
         Alert,
+        ModalInputFileAlumnos,
     },
     data() {
         return {
@@ -71,10 +79,25 @@ export default {
             cargando:true,
 
             busqueda:"",
-            acceso:-1,
+            
+            cargaPedidos:false,
         };
     },
     methods: {
+        async subirPedidos(){
+            this.cargaPedidos=true;
+            console.log(listaPedidos);
+            try {
+                let data=await setPedidosMasivo(listaPedidos);
+                console.log(data);
+                this.cargaPedidos=false;
+                this.importoPedidos=true;
+                this.manejarAlerta(0,0);
+            } catch (err) {
+                this.cargaPedidos=false;
+                this.manejarAlerta(1,0);
+            }
+        },
         async listarPedidos() {
             try {
                 const data = await getPedidos();

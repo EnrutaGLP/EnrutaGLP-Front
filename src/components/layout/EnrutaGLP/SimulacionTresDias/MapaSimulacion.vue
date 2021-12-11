@@ -89,9 +89,21 @@ export default {
                 console.log(err);
             }
         },
-        actualizarMapa(){
-            
+        verificarFinSimulacion(){
+            let noHayCamionesConRutas=false;
             if(this.esFinalSimulacion){
+                noHayCamionesConRutas=true;
+                for(let i=0;i<this.camiones.length;i++){
+                    if(this.camiones[i].rutas.length>0){
+                        noHayCamionesConRutas=false;
+                        break;
+                    }
+                }
+            }
+            return noHayCamionesConRutas;
+        },
+        actualizarMapa(){
+            if(this.verificarFinSimulacion()){
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
             }

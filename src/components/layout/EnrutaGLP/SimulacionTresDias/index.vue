@@ -6,13 +6,6 @@
             <div class="botones">
                 <v-row>
                     <v-col>
-                        <ModalInputFileAlumnos
-                            :disabled="false"
-                            v-on:importarDatos="subirPedidos"
-                            :cargando="cargaPedidos"
-                        />
-                    </v-col>
-                    <v-col>
                         <ModalInputFileUsuarios
                             :disabled="false"
                             v-on:importarDatos="subirBloqueos"
