@@ -6,7 +6,7 @@
             <div class="rutas" v-for="indiceMostrar in indicesCamionesMostrar">
                 <span>Camión: {{camiones[indiceMostrar].codigo}}<div :style="{'background-color':camiones[indiceMostrar].color}"><div class="circulo"></div></div></span>                
                 <div>Placa: {{camiones[indiceMostrar].placa}}</div>
-                <span>Ubicación Actual: {{camiones[indiceMostrar].rutas[0].puntos[0].ubicacionX}}, {{camiones[indiceMostrar].rutas[0].puntos[0].ubicacionActualY}}</span>
+                <span>Ubicación Actual: {{camiones[indiceMostrar].rutas[0].puntos[0].ubicacionX}}, {{camiones[indiceMostrar].rutas[0].puntos[0].ubicacionY}}</span>
             </div>
         </div>
     </div>
@@ -63,14 +63,13 @@ export default {
             porcentajePlazoOcupadoPromedio:0,
 
             indicesCamionesMostrar:[],//indice del arreglo de camiones a mostrar
-            //indicesCamionesEliminar:[],//indices(los datos del arreglo indicesCamionesMostrar) que se deberán eliminar(creo que ya no es necesario)
             indiceBloqueosMostrar:[],//los dos funcionan igual que el de camiones
-            indiceBloqueosEliminar:[],
 
             interval:null,
 
             esFinalSimulacion:false,
             primerWebSocket:false,
+            yaInicioSimulacion:false,
         };
     },
     methods:{
@@ -114,7 +113,16 @@ export default {
             }
             this.actualizarRutasEnMapa();
             this.actualizarBloqueos();
+            this.actualizarAverias();
             //this.actualizarAveriasEnMapa();  
+        },
+        actualizarAverias(){
+            for(let i=0;i<this.averiasActuales.length;i++){
+                if(this.averiasActuales[i].fechaInicio>=this.fechaSimulacion){
+
+                    
+                }
+            }
         },
         actualizarBloqueos(){
             let indiceAux;
@@ -132,8 +140,6 @@ export default {
                     }
                 }
             }
-            console.log(this.indiceBloqueosMostrar);
-            console.log(this.fechaSimulacion);
         },
         actualizarRutasEnMapa(){
             this.fechaSimulacionStr=`${this.fechaSimulacion.getDate()}`.padStart(2,'0')+"-"+`${this.fechaSimulacion.getMonth()+1}`.padStart(2,'0')
@@ -254,22 +260,11 @@ export default {
                     }
                 }
             }
+            for(let m=0;m<jsonGreeting.averias.length;m++){
+                this.averiasActuales.push(jsonGreeting.averias[m]);
+                this.averiasActuales[this.averiasActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.averiasActuales[this.averiasActuales.length-1].fechaInicio);                
+            }
             this.$emit("cargandoSimulacion");
-            //suponiendo que las rutas que ya se mostraron en pantalla, se elim inaran del arreglo
-            //Pensar luego como adaptarlo para retroceder la simulacion
-            
-            //Posible cambio, a que recién se agreguen rutas cuando se acabe la ruta de un camión
-            //Cuando se acabe la ruta de un camión se podría verificar en un arreglo auxiliar y ver si tiene más rutas
-            //Para recién allí añadirlo, este nuevo arreglo ver si sería bueno que para cada camión se tenga arreglos
-            //de rutas para representar en caso de que llegue bastante data y el camión se le asignen varias rutas
-            //cuando no acabo ni la primera
-
-            //Otra forma es que aparte de añadir la ruta, añadir la fecha de salida y el codigo del pedido
-            //Añadir todo el objeto ruta, simplemente cambiando el formato de horaSalida a Date
-
-
-
-
             //Se anda haciendo esta opción:
             //Otra opción, tener un arreglo ya definido de objetos camion con el codigo del camion, su placa y infobasica
             //lo importante es que tendrá un atributo que sean las rutas como tal.|Listo|
@@ -305,30 +300,8 @@ export default {
             //llegue nueva data del back. Se debe detener todo cuando fechaSimulación sea igual o mayor a fechaFinSimulacion|Listo|
             
         },
-        async obtenerDatosSimulacion(){
+        obtenerDatosSimulacion(){
             try{
-                //const data=await getRutasSimulacion();
-                
-                //console.log(data);
-                
-                
-                /*for(let i=0;i<data.data.data.otros.length;i++){
-                    let indiceHasheado=Integer.parseInt(data.data.data.otros[i].codigo.substring(2))-1;
-                }*/
-
-                /*let i=0, j=0, k=0;//hashearlos para después
-                for(i=0;i<data.data.data.otros.length;i++){
-                    for(j=0;j<this.camiones.length;j++){
-                        if(this.camiones[j].codigo==data.data.data.otros[i].codigo){
-                            for(k=0;k<data.data.data.otros[i].rutas.length;k++){
-                                this.camiones[j].rutas.push(data.data.data.otros[i].rutas[k]);
-                                this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida=this.transformarFechaStrADate(this.camiones[j].rutas[this.camiones[j].rutas.length-1].horaSalida);
-                            }
-                        }
-                    }
-                }*/
-                //await this.obtenerBloqueosSimulacion();
-            
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
 
                 this.socket=new SockJS(URL+'/stomp-endpoint');
@@ -374,7 +347,15 @@ export default {
     },
     watch:{
         reanudoSimulacion: function(nuevaReanudoSimulacion){
-            this.obtenerDatosSimulacion();
+            if(!this.yaInicioSimulacion){
+                this.obtenerDatosSimulacion();
+                this.yaInicioSimulacion=true;
+            }
+            if(nuevaReanudoSimulacion){//play
+                this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion);
+            }else{//pausa
+                clearInterval(this.interval);
+            }
         },
         velocidadSimulacion: function(nuevaVelocidad){
             if(nuevaVelocidad>=1 && nuevaVelocidad<=4096){
@@ -482,7 +463,7 @@ export default {
                 p5.stroke("#FF0000");
                 p5.strokeWeight(5);
                 for(let i=0;i<this.indiceBloqueosMostrar.length;i++){
-                    for(let j=0;this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos.length-1;j++){
+                    for(let j=0;j<this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos.length-1;j++){
                         p5.line(this.escalaPixeles*this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j].ubicacionX,
                         this.escalaPixeles*(this.tamYMapa-this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j].ubicacionY),
                         this.escalaPixeles*this.bloqueosActuales[this.indiceBloqueosMostrar[i]].puntos[j+1].ubicacionX,

@@ -222,11 +222,11 @@ export default {
             }, 2000);
         },
         dioPausa(){
-
+            this.reanudoSimulacion=false;
         },
         async dioPlay(){
+            this.reanudoSimulacion=true;
             if(!this.yaInicioSimulacion){
-                this.reanudoSimulacion=true;
                 this.cargandoSimulacion=true;
                 try {
                     let fechaIniAux=this.fechaInicio.split("-");
