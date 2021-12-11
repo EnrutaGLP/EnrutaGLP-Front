@@ -230,13 +230,14 @@ export default {
                 console.log(this.fechaSimulacion);
                 console.log(this.fechaFinSimulacion);
                 jsonGreeting.bloqueos.forEach(element => {              
-                    if(verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
+                    if(this.verificarInterseccionEntreDosRangoDeFechas(this.fechaInicioSimulacion,this.fechaFinSimulacion,this.transformarFechaStrADate(element.fechaInicio),this.transformarFechaStrADate(element.fechaFin))){
                         this.bloqueosActuales.push(element);
                         this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaInicio);
                         this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin=this.transformarFechaStrADate(this.bloqueosActuales[this.bloqueosActuales.length-1].fechaFin);
                     }
                 });
                 this.primerWebSocket=true;
+                console.log("bloqueos actuales:" + this.bloqueosActuales);
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
@@ -336,7 +337,7 @@ export default {
                     this.stompClient.subscribe('/topic/actualizacion-simulacion',(greeting)=>{
                         let jsonGreeting=JSON.parse(greeting.body);
                         console.log(jsonGreeting);
-                        console.log(jsonGreeting.otros[0].rutas[0].horaSalida);
+                        //console.log(jsonGreeting.otros[0].rutas[0].horaSalida);
                         this.obtenerNuevasRutas(jsonGreeting);
                     });
                 });
