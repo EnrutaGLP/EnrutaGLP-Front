@@ -109,14 +109,14 @@ export default {
                 fecha=`${hoy.getDate()}`.padStart(2,'0')+"-"+`${hoy.getMonth()}`.padStart(2,'0')+"-"+
                 hoy.getFullYear()+" "+`${hoy.getHours()}`.padStart(2,'0')+":"+`${hoy.getMinutes()}`.padStart(2,'0')+':11';
 
-                /*let data=await setAveria(dato,fecha);
+                let data=await setAveria(dato,fecha);
                 console.log(data);
                 if(data.data.status!="error"){
                     this.nuevaAveria=dato;
                     this.manejarAlerta(0,0);
                 }else{
                     this.manejarAlerta(1,0);
-                }*/
+                }
                 this.manejarAlerta(0,0);
             } catch (err) {
                 this.manejarAlerta(1,0);
