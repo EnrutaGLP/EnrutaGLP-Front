@@ -3,6 +3,11 @@
         <div class="simulación3dias">
             <Title texto="Simulación hasta el colapso logístico"/>
             <br>
+            <div class="row">
+                <div class="col sm-5">
+                    <BackButton></BackButton>
+                </div>
+            </div>
             <div class="botones">
                 <v-row> 
                     <v-col>
@@ -113,11 +118,6 @@
                     v-on:llegoColapso="llegoColapsoLogistico"
                 />
                 
-            </div>
-            <div class="row">
-                <div class="col sm-5">
-                    <BackButton></BackButton>
-                </div>
             </div>
         </div>
     </div>

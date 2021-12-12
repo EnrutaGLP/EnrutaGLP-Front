@@ -26,7 +26,7 @@
                     title="Simulación hasta colapso logístico"
                     description="Permite simular como trabajaría el sistema hasta que no pueda entregar un pedido."
                     route="enruta-glp/SimulacionColapsoLogistico/"
-                    :imgSrc="ListaVerificacionimg"
+                    :imgSrc="ColapsoLogisticoimg"
                 />
             </div>
         </div>
@@ -37,6 +37,8 @@
 import REimg from '@/components/assets/shared_icons/resultados-estudiante.png';
 import Rubricaimg from '@/components/assets/shared_icons/rubrica.png';
 import ListaVerificacionimg from '@/components/assets/shared_icons/listaVerificacion.png';
+import ColapsoLogisticoimg from '@/components/assets/shared_icons/colapsoLogistico.png';
+import Pedidosimg from '@/components/assets/shared_icons/pedidos.png';
 import Title from '../../shared/Title.vue';
 import Card from '../../shared/Card.vue';
 import * as CryptoJS from 'crypto-js';
@@ -53,6 +55,8 @@ export default {
             REimg,
             Rubricaimg,
             ListaVerificacionimg,
+            ColapsoLogisticoimg,
+            Pedidosimg,
             datosUsuario:{
 
             },

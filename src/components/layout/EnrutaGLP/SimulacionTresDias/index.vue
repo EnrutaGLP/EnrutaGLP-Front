@@ -3,6 +3,11 @@
         <div class="simulación3dias">
             <Title texto="Simulación de 3 días"/>
             <br>
+            <div class="row">
+                <div class="col sm-5">
+                    <BackButton></BackButton>
+                </div>
+            </div>
             <div class="botones">
                 <v-row> 
                     <v-col>
@@ -110,11 +115,6 @@
                     v-on:faltaDeDataDeBack="faltaDataBack"
                 />
                 
-            </div>
-            <div class="row">
-                <div class="col sm-5">
-                    <BackButton></BackButton>
-                </div>
             </div>
         </div>
     </div>

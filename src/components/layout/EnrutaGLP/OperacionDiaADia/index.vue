@@ -3,6 +3,11 @@
         <div class="rubrica">
             <Title texto="Operaciones del día a día"/>
             <br>
+            <div class="row">
+                <div class="col sm-5">
+                    <BackButton></BackButton>
+                </div>
+            </div>
             <div class="botones">
                 <v-row>
                     <v-col>
