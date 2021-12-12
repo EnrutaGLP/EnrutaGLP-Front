@@ -42,6 +42,7 @@
                 />
             </div>
             <br>
+            
             <div class="controlesSimulacion">
                 <v-btn
                     class="mx-2"
@@ -148,6 +149,8 @@ export default {
     },
     data() {
         return {
+            dialog:true,
+            
             tipoAlerta:"success",
             textoAlerta:"",
             hayAlerta: false,

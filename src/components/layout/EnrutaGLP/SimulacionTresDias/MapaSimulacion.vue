@@ -269,6 +269,8 @@ export default {
             if(!this.primerWebSocket){
                 if(jsonGreeting.otros.length>0){
                     this.fechaSimulacionStr=jsonGreeting.otros[0].rutas[0].horaSalida;
+                }else{
+                    this.fechaSimulacionStr=jsonGreeting.fechaInicio;
                 }
                 this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
                 console.log(this.fechaSimulacion);
