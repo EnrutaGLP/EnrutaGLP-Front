@@ -119,6 +119,7 @@ export default {
                 this.esFinalSimulacion=false;
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
+                return;
             }
             if(this.fechaSimulacion>=this.fechaFinEjecucion){
                 this.$emit("faltaDeDataDeBack");

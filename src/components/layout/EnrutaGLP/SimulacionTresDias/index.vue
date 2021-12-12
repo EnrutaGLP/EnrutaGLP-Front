@@ -342,6 +342,8 @@ export default {
             this.cargandoSimulacion=false;
         },
         finSimul(){
+            this.tituloColapso="Fin de la simulación";
+            this.mensajeColapso="Terminó la simulación de los 3 días";
             this.dialog=true;
         },
         faltaDataBack(){
