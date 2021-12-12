@@ -123,6 +123,7 @@ export default {
                 this.$emit("llegoColapso",this.codigoColapso);
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
+                return;
             }
             if(this.fechaSimulacion>=this.fechaFinEjecucion){
                 this.$emit("faltaDeDataDeBack");

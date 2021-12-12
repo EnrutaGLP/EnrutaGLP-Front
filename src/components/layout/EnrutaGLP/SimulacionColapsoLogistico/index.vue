@@ -351,7 +351,7 @@ export default {
             this.cargandoSimulacion=false;
         },
         finSimul(){
-            alert("FIN DE LA SIMULACIÓN!");
+            //alert("FIN DE LA SIMULACIÓN!");
         },
         faltaDataBack(){
             this.cargandoDataBack=true;
