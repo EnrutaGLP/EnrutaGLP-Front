@@ -100,8 +100,8 @@ export default {
             if(this.esFinalSimulacion){
                 if(!this.primerEsFinal){
                     this.fechaFinEjecucion.setMinutes(this.fechaFinEjecucion.getMinutes()+2);
-                    this.bloqueosActuales=[];
-                    this.indiceBloqueosMostrar=[];
+                    //this.bloqueosActuales=[];
+                    //this.indiceBloqueosMostrar=[];
                     this.primerEsFinal=true;
                 }
                 noHayCamionesConRutas=true;
