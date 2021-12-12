@@ -267,7 +267,7 @@ export default {
         },
         obtenerNuevasRutas(jsonGreeting){
             if(!this.primerWebSocket){
-                if(jsonGreeting.otros.length<=0){
+                if(jsonGreeting.otros.length>=0){
                     this.fechaSimulacionStr=jsonGreeting.otros[0].rutas[0].horaSalida;
                 }
                 this.fechaSimulacion=this.transformarFechaStrADate(this.fechaSimulacionStr);
