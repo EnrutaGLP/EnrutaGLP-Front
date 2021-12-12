@@ -77,6 +77,9 @@ export function getCamionesUbicacionesActuales(){
 export function getRutasActuales(){
     return axios.get(URL+"/rutas/actuales");
 }
+export function deleteRutas(){
+    return axios.put(URL+"/rutas/eliminar");
+}
 //#endregion
 
 //#region configuraciones

@@ -119,6 +119,7 @@ export default {
         actualizarMapa(){
             if(this.verificarFinSimulacion() && this.esColapso && this.fechaSimulacion>=this.fechaFinEjecucion){
                 this.esFinalSimulacion=false;
+                this.esColapso=false;
                 this.$emit("llegoColapso",this.codigoColapso);
                 this.$emit("finSimulacion");
                 clearInterval(this.interval);
@@ -397,6 +398,7 @@ export default {
                 this.yaInicioSimulacion=true;
             }
             if(nuevaReanudoSimulacion){//play
+                clearInterval(this.interval);
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/this.velocidadSimulacion);
             }else{//pausa
                 clearInterval(this.interval);

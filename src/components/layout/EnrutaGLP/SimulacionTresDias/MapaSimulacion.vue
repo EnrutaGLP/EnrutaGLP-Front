@@ -392,6 +392,7 @@ export default {
                 this.yaInicioSimulacion=true;
             }
             if(nuevaReanudoSimulacion){//play
+                clearInterval(this.interval);
                 this.interval=setInterval(this.actualizarMapa,this.tiempoDeSimulacion/this.velocidadSimulacion);
             }else{//pausa
                 clearInterval(this.interval);

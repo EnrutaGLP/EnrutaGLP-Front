@@ -17,6 +17,13 @@
                             :cargando="cargaBloqueos"
                         />
                     </v-col>
+                    <v-col>
+                        <v-btn
+                            @click="eliminarRutas"
+                        >
+                            Eliminar rutas
+                        </v-btn>
+                    </v-col>
                 </v-row>
             </div>
             <p v-if="importoArchivos">Debe seleccionar una fecha y hora antes de empezar la simulación</p>
@@ -48,7 +55,7 @@
             >
                 <v-card>
                     <v-card-title>
-                        <span class="headline">Fin de la simulación</span>
+                        <span class="headline">{{tituloColapso}}</span>
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
@@ -129,7 +136,7 @@
                     v-if="cargandoSimulacion"
                 >
                 </v-progress-circular>
-                <p style="color:#FF0000" v-if="sePasoDeIncremento">No se puede incrementar la velocidad más allá de x256</p>
+                <p style="color:#FF0000" v-if="sePasoDeIncremento">No se puede incrementar la velocidad más allá de x4096</p>
                 <p style="color:#FF0000" v-if="sePasoDeDecremento">No se puede disminuir la velocidad más allá de x1</p>
                 <p style="color:#FF0000" v-if="cargandoDataBack">Cargando las rutas</p>
             </div>
@@ -153,6 +160,7 @@
 import MapaSimulacion from '../SimulacionTresDias/MapaSimulacion.vue'
 import {
     setPedidosMasivo, setBloqueosMasivo, setConfiguracionDiaADia, setConfiguracionSimulacionTresDias, setFechaInicioSimulacion,
+    deleteRutas,
 } from '../../../util/services/index';
 import Title from '../../../shared/Title.vue';
 import BackButton from '../../../shared/BackButton.vue';
@@ -201,10 +209,22 @@ export default {
             cargandoSimulacion:false,
             cargandoDataBack:false,
 
+            tituloColapso:"Fin de la simulacion",
             mensajeColapso:"Terminó la simulación de los 3 días",
         };
     },
     methods: {
+        async eliminarRutas(){
+            try{
+                const data=await deleteRutas();
+                this.tituloColapso="Rutas eliminadas";
+                this.mensajeColapso="Se eliminaron las rutas";
+                this.dialog=true;
+                console.log(data);
+            }catch(err){
+                console.log(err);
+            }
+        },
         dioOk(){
             this.dialog=false;
         },
