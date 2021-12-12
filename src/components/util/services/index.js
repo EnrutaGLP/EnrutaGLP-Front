@@ -90,7 +90,7 @@ export function setConfiguracionSimulacionTresDias(fechaInicio){
     });
 }
 export function setConfiguracionSimulacionColapsoLogistico(fechaInicio){
-    return axios.put(URL+"/configuracion/simulacion-colapso-logisico",{
+    return axios.put(URL+"/configuracion/simulacion-colapso-logistico",{
         "fechaInicio":fechaInicio,
     });
 }
