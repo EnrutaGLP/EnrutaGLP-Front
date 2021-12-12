@@ -42,6 +42,35 @@
                 />
             </div>
             <br>
+            <v-dialog
+                v-model="dialog"
+                max-width="700px"
+            >
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Fin de la simulación</span>
+                    </v-card-title>
+                    <v-form  ref="form">
+                        <v-card-text>
+                            <v-row>
+                                <v-col cols="12" sm="6" md="12">
+                                    <p>{{mensajeColapso}}</p>
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
+                    </v-form>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="dioOk"
+                        ><v-icon left>mdi-check</v-icon>
+                            Ok
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             <div class="controlesSimulacion">
                 <v-btn
                     class="mx-2"
@@ -145,6 +174,8 @@ export default {
     },
     data() {
         return {
+            dialog:false,
+
             tipoAlerta:"success",
             textoAlerta:"",
             hayAlerta: false,
@@ -169,9 +200,14 @@ export default {
 
             cargandoSimulacion:false,
             cargandoDataBack:false,
+
+            mensajeColapso:"Terminó la simulación de los 3 días",
         };
     },
     methods: {
+        dioOk(){
+            this.dialog=false;
+        },
         async subirBloqueos(listaBloqueos){
             this.cargaBloqueos=true;
             console.log(listaBloqueos);
@@ -286,7 +322,7 @@ export default {
             this.cargandoSimulacion=false;
         },
         finSimul(){
-            alert("FIN DE LA SIMULACIÓN!");
+            this.dialog=true;
         },
         faltaDataBack(){
             this.cargandoDataBack=true;

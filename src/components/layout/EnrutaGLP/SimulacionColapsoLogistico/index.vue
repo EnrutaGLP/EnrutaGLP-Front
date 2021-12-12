@@ -42,7 +42,35 @@
                 />
             </div>
             <br>
-            
+            <v-dialog
+                v-model="dialog"
+                max-width="700px"
+            >
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Pedido no entregado</span>
+                    </v-card-title>
+                    <v-form  ref="form">
+                        <v-card-text>
+                            <v-row>
+                                <v-col cols="12" sm="6" md="12">
+                                    <p>{{mensajeColapso}}</p>
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
+                    </v-form>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="dioOk"
+                        ><v-icon left>mdi-check</v-icon>
+                            Ok
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             <div class="controlesSimulacion">
                 <v-btn
                     class="mx-2"
@@ -149,7 +177,7 @@ export default {
     },
     data() {
         return {
-            dialog:true,
+            dialog:false,
             
             tipoAlerta:"success",
             textoAlerta:"",
@@ -183,7 +211,7 @@ export default {
     methods: {
         llegoColapsoLogistico(codigo){
             this.mensajeColapso="Se produjo el colapso logístico, no se pudo entregar a tiempo el pedido "+codigo+" a tiempo."
-            this.llegoColapsoLogistico=true;
+            this.dialog=true;
         },
         async subirBloqueos(listaBloqueos){
             this.cargaBloqueos=true;
@@ -233,6 +261,9 @@ export default {
             setTimeout(() => {
                 this.hayAlerta = false;
             }, 2000);
+        },
+        dioOk(){
+            this.dialog=false;
         },
         dioPausa(){
             this.reanudoSimulacion=false;
