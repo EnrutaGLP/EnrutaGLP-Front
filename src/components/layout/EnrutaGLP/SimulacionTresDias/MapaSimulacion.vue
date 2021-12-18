@@ -286,7 +286,7 @@ export default {
                 console.log("bloqueos actuales:" + this.bloqueosActuales);
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
-            this.hojaDeRuta=jsonGreeting.hojaDeRuta;
+            this.hojaDeRuta=jsonGreeting.hojaRuta;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);
             console.log(this.fechaFinEjecucion);
