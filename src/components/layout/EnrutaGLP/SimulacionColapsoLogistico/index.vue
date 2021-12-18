@@ -88,13 +88,13 @@
                         ><v-icon left>mdi-check</v-icon>
                             Ok
                         </v-btn>
-                        <v-btn
+                        <!--<v-btn
                             color="var(--turquoise)"
                             outlined
                             @click="descargarHojaDeRutas"
                         ><v-icon dark left>mdi-account-box-multiple-outline</v-icon>
                             Descargar
-                        </v-btn>
+                        </v-btn>-->
                     </v-card-actions>
                 </v-card>
             </v-dialog>
