@@ -128,6 +128,8 @@ export default {
     },
     methods: {
         mostrarHojaDeRuta(hojaDeRuta){
+            console.log("saliendo del componente de mapa");
+            console.log(hojaDeRuta);
             this.tituloHojaDeRuta="Hoja de ruta del camión "+hojaDeRuta[0].codigoCamion;
             this.hojaDeRuta=hojaDeRuta;
             this.dialog=true;

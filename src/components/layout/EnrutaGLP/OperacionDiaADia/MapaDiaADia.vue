@@ -5,10 +5,10 @@
             <p class="tituloRutas">Rutas:</p>
             <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual" v-on:click="mostrarHojaDeRuta(camionUbicacionActual.hojaDeRuta)">
                 <div v-on:click="mostrarHojaDeRuta(camionUbicacionActual.hojaDeRuta)">
-                <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':camionUbicacionActual.color}"><div class="circulo"></div></div></span>
-                <div>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</div>
-                <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
-                <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
+                    <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':camionUbicacionActual.color}"><div class="circulo"></div></div></span>
+                    <div>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</div>
+                    <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
+                    <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
                 </div>
             </div>
         </div>
@@ -127,7 +127,8 @@ export default {
                         }
                     }
                 }
-                console.log(this.rutasActuales);
+                console.log("al llegar la data con el get");
+                console.log(this.camionesUbicacionActual);
                 const data=await getBloqueosActuales();
                 console.log(data);
                 console.log(data.data.data);
@@ -191,7 +192,8 @@ export default {
                         }
                     }
                 }
-                console.log(this.rutasActuales);
+                console.log("al llegar la data con el get");
+                console.log(this.camionesUbicacionActual);
                 for(let m=0;m<jsonGreeting.bloqueos.length;m++){
                     this.bloqueosActuales.push({
                         bloqueo:[],
