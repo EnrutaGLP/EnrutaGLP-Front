@@ -119,15 +119,16 @@ export default {
                         ruta:element.ruta,
                     });
                 });
-                for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
+                //for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
-                        if(data1.data.data.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
+                        this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaDeRuta[0]);
+                        /*if(data1.data.data.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
                             console.log("entro al if de añadir ruta");
                             this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaDeRuta[i]);
                             //break;
-                        }
+                        }*/
                     }
-                }
+                //}
                 console.log("al llegar la data con el get");
                 console.log(this.camionesUbicacionActual);
                 const data=await getBloqueosActuales();
@@ -185,15 +186,16 @@ export default {
                         ruta:element.ruta,
                     });
                 });
-                for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
+                //for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
-                        if(jsonGreeting.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
+                        this.camionesUbicacionActual.hojaDeRuta.push(jsonGreeting.hojaDeRuta[0]);
+                        /*if(jsonGreeting.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
                             console.log("entro al if de añadir ruta");
                             this.camionesUbicacionActual[j].hojaDeRuta.push(jsonGreeting.hojaDeRuta[i]);
                             //break;
-                        }
+                        }*/
                     }
-                }
+                //}
                 console.log("al llegar la data con el get");
                 console.log(this.camionesUbicacionActual);
                 for(let m=0;m<jsonGreeting.bloqueos.length;m++){
