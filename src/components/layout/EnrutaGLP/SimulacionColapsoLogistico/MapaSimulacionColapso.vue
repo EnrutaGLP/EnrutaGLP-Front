@@ -292,7 +292,7 @@ export default {
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
             this.esColapso=jsonGreeting.llegoAlColapso;
-            this.hojaDeRuta=jsonGreeting.hojaDeRuta;
+            this.hojaDeRuta=jsonGreeting.hojaRuta;
             this.codigoColapso=jsonGreeting.codigoPedidoColapso;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);
