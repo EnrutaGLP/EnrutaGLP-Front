@@ -108,21 +108,23 @@ export default {
                         color:element.color,
                         estado:{
                             id:element.estadoId,
-                            nombre:element.nombre,
+                            nombre:element.estadoNombre,
                         },
                         hojaDeRuta:[],
                     });
-                    for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
-                        if(data1.data.data.hojaDeRuta[i].codigoCamion==element.codigo){
-                            this.camionesUbicacionActual[this.camionesUbicacionActual.length-1].hojaDeRuta.push(data1.data.data.hojaDeRuta[i]);
-                            //break;
-                        }
-                    }
                     this.rutasActuales.push({
                         codigo:element.codigo,
                         ruta:element.ruta,
-                    })
+                    });
                 });
+                for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
+                    for(let j=0;j<this.camionesUbicacionActual.length;j++){
+                        if(data1.data.data.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
+                            this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaDeRuta[i]);
+                            //break;
+                        }
+                    }
+                }
                 console.log(this.rutasActuales);
                 const data=await getBloqueosActuales();
                 console.log(data);
@@ -171,21 +173,23 @@ export default {
                         color:element.color,
                         estado:{
                             id:element.estadoId,
-                            nombre:element.nombre,
+                            nombre:element.estadoNombre,
                         },
                         hojaDeRuta:[],
                     });
-                    for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
-                        if(jsonGreeting.hojaDeRuta[i].codigoCamion==element.codigo){
-                            this.camionesUbicacionActual[this.camionesUbicacionActual.length-1].hojaDeRuta.push(jsonGreeting.hojaDeRuta[i]);
-                            //break;
-                        }
-                    }
                     this.rutasActuales.push({
                         codigo:element.codigo,
                         ruta:element.ruta,
-                    })
+                    });
                 });
+                for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
+                    for(let j=0;j<this.camionesUbicacionActual.length;j++){
+                        if(jsonGreeting.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
+                            this.camionesUbicacionActual[j].hojaDeRuta.push(jsonGreeting.hojaDeRuta[i]);
+                            //break;
+                        }
+                    }
+                }
                 console.log(this.rutasActuales);
                 for(let m=0;m<jsonGreeting.bloqueos.length;m++){
                     this.bloqueosActuales.push({

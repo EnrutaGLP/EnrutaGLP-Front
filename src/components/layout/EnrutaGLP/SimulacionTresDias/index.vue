@@ -257,6 +257,10 @@ export default {
         };
     },
     methods: {
+        finSimul(hojaDeRuta){
+            this.hojaDeRuta=hojaDeRuta;
+            this.dialog=true;
+        },
         async eliminarRutas(){
             try{
                 const data=await deleteRutas();
@@ -384,10 +388,6 @@ export default {
         cargandoSimul(){
             this.cargandoDataBack=false;
             this.cargandoSimulacion=false;
-        },
-        finSimul(hojaDeRuta){
-            this.hojaDeRuta=hojaDeRuta;
-            this.dialog=true;
         },
         faltaDataBack(){
             this.cargandoDataBack=true;

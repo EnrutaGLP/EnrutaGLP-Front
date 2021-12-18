@@ -126,7 +126,7 @@ export default {
     },
     methods: {
         mostrarHojaDeRuta(hojaDeRuta){
-            this.tituloHojaDeRuta="Hoja de ruta del camión "+hojaDeRuta.codigoCamion;
+            this.tituloHojaDeRuta="Hoja de ruta del camión "+hojaDeRuta[0].codigoCamion;
             this.hojaDeRuta=hojaDeRuta;
         },
         cargandoRutas(dato){
