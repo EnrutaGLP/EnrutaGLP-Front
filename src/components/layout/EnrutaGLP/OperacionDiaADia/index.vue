@@ -137,6 +137,9 @@ export default {
         cargandoRutas(dato){
             this.cargaRutas=dato;
         },
+        dioOk(){
+            this.dialog=false;
+        },
         async subirBloqueos(listaBloqueos){
             this.cargaBloqueos=true;
             console.log(listaBloqueos);
