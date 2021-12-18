@@ -111,6 +111,8 @@ export default {
     },
     data() {
         return {
+            dialog:false,
+
             tipoAlerta:"success",
             textoAlerta:"",
             hayAlerta: false,
@@ -128,6 +130,7 @@ export default {
         mostrarHojaDeRuta(hojaDeRuta){
             this.tituloHojaDeRuta="Hoja de ruta del camión "+hojaDeRuta[0].codigoCamion;
             this.hojaDeRuta=hojaDeRuta;
+            this.dialog=true;
         },
         cargandoRutas(dato){
             this.cargaRutas=dato;

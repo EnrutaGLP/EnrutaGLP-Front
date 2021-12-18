@@ -4,10 +4,12 @@
         <div class="rutasCamiones">
             <p class="tituloRutas">Rutas:</p>
             <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual" v-on:click="mostrarHojaDeRuta(camionUbicacionActual.hojaDeRuta)">
+                <div v-on:click="mostrarHojaDeRuta(camionUbicacionActual.hojaDeRuta)">
                 <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':camionUbicacionActual.color}"><div class="circulo"></div></div></span>
                 <div>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</div>
                 <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
                 <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
+                </div>
             </div>
         </div>
     </div>
@@ -164,7 +166,6 @@ export default {
 
                 this.averiasActuales=jsonGreeting.rutas.averiados;
 
-                
                 jsonGreeting.rutas.otros.forEach(element => {
                     this.camionesUbicacionActual.push({
                         codigo:element.codigo,
