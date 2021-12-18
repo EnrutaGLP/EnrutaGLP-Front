@@ -123,11 +123,11 @@ export default {
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         if(data1.data.data.hojaRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
                             console.log("entro al if de añadir ruta");
-                            /*data1.data.data.hojaRuta[i].horaSalida=cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].horaSalida);
-                            data1.data.data.hojaRuta[i].horaLlegada=cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].horaLlegada);
+                            data1.data.data.hojaRuta[i].horaSalida=this.cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].horaSalida);
+                            data1.data.data.hojaRuta[i].horaLlegada=this.cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].horaLlegada);
                             if(data1.data.data.hojaRuta[i].tipo==1){
-                                data1.data.data.hojaRuta[i].fechaLimite=cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].fechaLimite);
-                            }*/
+                                data1.data.data.hojaRuta[i].fechaLimite=this.cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].fechaLimite);
+                            }
                             this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaRuta[i]);
                             //break;
                         }
@@ -196,11 +196,11 @@ export default {
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         if(jsonGreeting.hojaRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
                             console.log("entro al if de añadir ruta");
-                            /*jsonGreeting.hojaRuta[i].horaSalida=cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].horaSalida);
-                            jsonGreeting.hojaRuta[i].horaLlegada=cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].horaLlegada);
+                            jsonGreeting.hojaRuta[i].horaSalida=this.cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].horaSalida);
+                            jsonGreeting.hojaRuta[i].horaLlegada=this.cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].horaLlegada);
                             if(jsonGreeting.hojaRuta[i].tipo==1){
-                                jsonGreeting.hojaRuta[i].fechaLimite=cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].fechaLimite);
-                            }*/
+                                jsonGreeting.hojaRuta[i].fechaLimite=this.cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].fechaLimite);
+                            }
                             this.camionesUbicacionActual[j].hojaDeRuta.push(jsonGreeting.hojaRuta[i]);
                             //break;
                         }
