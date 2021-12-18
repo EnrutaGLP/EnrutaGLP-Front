@@ -45,7 +45,7 @@
                                 </span><br>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Código del pedido:</b> {{hojaDeRutaMostrar.codigoPedido}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP entregada:</b>{{hojaDeRutaMostrar.cantidadEntregada}}m³<br></span>
-                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP en el camión:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP del pedido:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Fecha y hora límite de entrega:</b> {{hojaDeRutaMostrar.fechaLimite}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Nombre de planta:</b> {{hojaDeRutaMostrar.nombrePlanta}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Cantidad de GLP recargada:</b> {{hojaDeRutaMostrar.cantidadRecargada}}m³<br></span>

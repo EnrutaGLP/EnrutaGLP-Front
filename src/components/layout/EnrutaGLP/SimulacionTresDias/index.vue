@@ -59,8 +59,9 @@
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
-                            <div class="hojaDeRutas" v-for="hojaDeRutaMostrar in hojaDeRuta">
-                                <span><b>Camión:</b> {{hojaDeRutaMostrar.codigoCamion}}</span><br>
+                            <div class="hojaDeRutas" v-for="hojaDeRutaMost in hojaDeRutaOrdenada">
+                                <h2><b>Camión:</b> {{hojaDeRutaMost.codigoCamion}}</h2><br>
+                                <div v-for="hojaDeRutaMostrar in hojaDeRutaMost.datosHojaDeRuta">
                                 <span><b>Hora de salida:</b> {{hojaDeRutaMostrar.horaSalida}}</span><br>
                                 <span><b>Hora de llegada:</b> {{hojaDeRutaMostrar.horaLlegada}}</span><br>
                                 <span><b>Consumo de Petróleo:</b> {{hojaDeRutaMostrar.consumoPetroleo}}m³</span><br>
@@ -70,11 +71,12 @@
                                 </span><br>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Código del pedido:</b> {{hojaDeRutaMostrar.codigoPedido}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP entregada:</b>{{hojaDeRutaMostrar.cantidadEntregada}}m³<br></span>
-                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP en el camión:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP del pedido:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Fecha y hora límite de entrega:</b> {{hojaDeRutaMostrar.fechaLimite}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Nombre de planta:</b> {{hojaDeRutaMostrar.nombrePlanta}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Cantidad de GLP recargada:</b> {{hojaDeRutaMostrar.cantidadRecargada}}m³<br></span>
                                 <hr>
+                                </div>
                             </div>
                         </v-card-text>
                     </v-form>
@@ -193,6 +195,12 @@
                 />
                 
             </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
         </div>
     </div>
 </template>
@@ -254,11 +262,37 @@ export default {
             tituloColapso:"Fin de la simulacion (Hoja de rutas)",
 
             hojaDeRuta:[],
+            hojaDeRutaOrdenada:[],
         };
     },
     methods: {
         finSimul(hojaDeRuta){
             this.hojaDeRuta=hojaDeRuta;
+            this.hojaDeRuta.sort(function (a,b){
+                if(a.codigoCamion>b.codigoCamion){
+                    return 1;
+                }
+                if(a.codigoCamion<b.codigoCamion){
+                    return -1;
+                }
+                return 0;
+            });
+            let i=0;
+            let j=0;
+            let codigoCamionAux;
+            while(i<this.hojaDeRuta.length){
+                codigoCamionAux=this.hojaDeRuta[i].codigoCamion;
+                this.hojaDeRutaOrdenada.push({
+                    codigoCamion:codigoCamionAux,
+                    datosHojaDeRuta:[],
+                });
+                while(codigoCamionAux==this.hojaDeRuta[i].codigoCamion){
+                    console.log("xd");
+                    this.hojaDeRutaOrdenada[j].datosHojaDeRuta.push(this.hojaDeRuta[i]);
+                    i++;
+                }
+                j++;
+            }
             this.dialog=true;
         },
         async eliminarRutas(){

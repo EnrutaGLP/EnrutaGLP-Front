@@ -59,8 +59,9 @@
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
-                            <div class="hojaDeRutas" v-for="hojaDeRutaMostrar in hojaDeRuta">
-                                <span><b>Camión:</b> {{hojaDeRutaMostrar.codigoCamion}}</span><br>
+                            <div class="hojaDeRutas" v-for="hojaDeRutaMost in hojaDeRutaOrdenada">
+                                <h2><b>Camión:</b> {{hojaDeRutaMost.codigoCamion}}</h2><br>
+                                <div v-for="hojaDeRutaMostrar in hojaDeRutaMost.datosHojaDeRuta">
                                 <span><b>Hora de salida:</b> {{hojaDeRutaMostrar.horaSalida}}</span><br>
                                 <span><b>Hora de llegada:</b> {{hojaDeRutaMostrar.horaLlegada}}</span><br>
                                 <span><b>Consumo de Petróleo:</b> {{hojaDeRutaMostrar.consumoPetroleo}}m³</span><br>
@@ -70,11 +71,12 @@
                                 </span><br>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Código del pedido:</b> {{hojaDeRutaMostrar.codigoPedido}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP entregada:</b>{{hojaDeRutaMostrar.cantidadEntregada}}m³<br></span>
-                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP en el camión:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP del pedido:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Fecha y hora límite de entrega:</b> {{hojaDeRutaMostrar.fechaLimite}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Nombre de planta:</b> {{hojaDeRutaMostrar.nombrePlanta}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Cantidad de GLP recargada:</b> {{hojaDeRutaMostrar.cantidadRecargada}}m³<br></span>
                                 <hr>
+                                </div>
                             </div>
                         </v-card-text>
                     </v-form>
@@ -195,6 +197,12 @@
                 />
                 
             </div>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
         </div>
     </div>
 </template>
@@ -257,6 +265,9 @@ export default {
             tituloColapso:"Fin de la simulacion",
             mensajeColapso:"",
             codigoColapso:"",
+
+            hojaDeRuta:[],
+            hojaDeRutaOrdenada:[],
         };
     },
     methods: {
@@ -274,6 +285,31 @@ export default {
         },
         llegoColapsoLogistico(codigo,hojaDeRuta){
             this.hojaDeRuta=hojaDeRuta;
+            this.hojaDeRuta.sort(function (a,b){
+                if(a.codigoCamion>b.codigoCamion){
+                    return 1;
+                }
+                if(a.codigoCamion<b.codigoCamion){
+                    return -1;
+                }
+                return 0;
+            });
+            let i=0;
+            let j=0;
+            let codigoCamionAux;
+            while(i<this.hojaDeRuta.length){
+                codigoCamionAux=this.hojaDeRuta[i].codigoCamion;
+                this.hojaDeRutaOrdenada.push({
+                    codigoCamion:codigoCamionAux,
+                    datosHojaDeRuta:[],
+                });
+                while(codigoCamionAux==this.hojaDeRuta[i].codigoCamion){
+                    console.log("xd");
+                    this.hojaDeRutaOrdenada[j].datosHojaDeRuta.push(this.hojaDeRuta[i]);
+                    i++;
+                }
+                j++;
+            }
             this.codigoColapso=codigo;
             this.tituloColapso="Fin de la simulación por el pedido "+this.codigoColapso;
             this.dialog=true;
@@ -405,7 +441,113 @@ export default {
         },
     },
     async created() {
-        
+        /*this.hojaDeRuta=[
+            {
+                id : 1,
+                codigoCamion: "TA01", 
+                horaSalida : "29-05-2021 15:59:33",
+                horaLlegada : "30-05-2021 15:59:33",
+                consumoPetroleo: 0.5, 
+                puntos : [
+                    {
+                        ubicacionX : 12,
+                        ubicacionY : 8
+                    },
+                    {
+                        ubicacionX : 25,
+                        ubicacionY : 8
+                    }
+                ],
+                tipo: 1,
+                codigoPedido : "ABCD1234",
+                cantidadEntregada : 5,
+                cantidadGlp: 20,
+                fechaLimite: "30-05-2021 15:59:33",
+                nombrePlanta : null,
+                cantidadRecargada: null,
+            },
+            {
+                id : 2,
+                codigoCamion: "TA02", 
+                horaSalida : "29-05-2021 15:59:33",
+                horaLlegada : "30-05-2021 15:59:33",
+                consumoPetroleo: 0.5, 
+                puntos : [
+                    {
+                        ubicacionX : 12,
+                        ubicacionY : 8
+                    },
+                    {
+                        ubicacionX : 25,
+                        ubicacionY : 8
+                    },
+                    {
+                        ubicacionX : 25,
+                        ubicacionY : 18
+                    }
+                ],
+                tipo: 2,
+                codigoPedido : null,
+                cantidadEntregada : null,
+                cantidadGlp: null,
+                fechaLimite: null,
+                nombrePlanta : "Principal",
+                cantidadRecargada: 25,
+            },
+            {
+                id : 3,
+                codigoCamion: "TA01", 
+                horaSalida : "29-05-2021 15:59:33",
+                horaLlegada : "30-05-2021 15:59:33",
+                consumoPetroleo: 0.5, 
+                puntos : [
+                    {
+                        ubicacionX : 12,
+                        ubicacionY : 8
+                    },
+                    {
+                        ubicacionX : 5,
+                        ubicacionY : 8
+                    },
+                    {
+                        ubicacionX : 5,
+                        ubicacionY : 18
+                    }
+                ],
+                tipo: 2,
+                codigoPedido : null,
+                cantidadEntregada : null,
+                cantidadGlp: null,
+                fechaLimite: null,
+                nombrePlanta : "Secundaria",
+                cantidadRecargada: 12,
+            },
+        ];
+        this.hojaDeRuta.sort(function (a,b){
+            if(a.codigoCamion>b.codigoCamion){
+                return 1;
+            }
+            if(a.codigoCamion<b.codigoCamion){
+                return -1;
+            }
+            return 0;
+        });
+        let i=0;
+        let j=0;
+        let codigoCamionAux;
+        while(i<this.hojaDeRuta.length){
+            codigoCamionAux=this.hojaDeRuta[i].codigoCamion;
+            this.hojaDeRutaOrdenada.push({
+                codigoCamion:codigoCamionAux,
+                datosHojaDeRuta:[],
+            });
+            while(codigoCamionAux==this.hojaDeRuta[i].codigoCamion){
+                console.log("xd");
+                this.hojaDeRutaOrdenada[j].datosHojaDeRuta.push(this.hojaDeRuta[i]);
+                i++;
+            }
+            j++;
+        }*/
     },
     mounted() {
 
