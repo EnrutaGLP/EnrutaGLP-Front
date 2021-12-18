@@ -196,6 +196,11 @@ export default {
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         if(jsonGreeting.hojaRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
                             console.log("entro al if de añadir ruta");
+                            jsonGreeting.hojaRuta[i].horaSalida=cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].horaSalida);
+                            jsonGreeting.hojaRuta[i].horaLlegada=cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].horaLlegada);
+                            if(jsonGreeting.hojaRuta[i].tipo==1){
+                                jsonGreeting.hojaRuta[i].fechaLimite=cambiarFormatoFechaTaEspacio(jsonGreeting.hojaRuta[i].fechaLimite);
+                            }
                             this.camionesUbicacionActual[j].hojaDeRuta.push(jsonGreeting.hojaRuta[i]);
                             //break;
                         }
