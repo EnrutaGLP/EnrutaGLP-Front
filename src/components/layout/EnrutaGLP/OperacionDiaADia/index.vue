@@ -38,17 +38,17 @@
                             <div class="hojaDeRutas" v-for="hojaDeRutaMostrar in hojaDeRuta">
                                 <span><b>Hora de salida:</b> {{hojaDeRutaMostrar.horaSalida}}</span><br>
                                 <span><b>Hora de llegada:</b> {{hojaDeRutaMostrar.horaLlegada}}</span><br>
-                                <span><b>Consumo de Petróleo:</b> {{hojaDeRutaMostrar.consumoPetroleo}}</span><br>
+                                <span><b>Consumo de Petróleo:</b> {{hojaDeRutaMostrar.consumoPetroleo}}m³</span><br>
                                 <span>
                                     <b>Puntos:</b>
                                     <span v-for="punto in hojaDeRutaMostrar.puntos"> ({{punto.ubicacionX}},{{punto.ubicacionY}})</span>
                                 </span><br>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Código del pedido:</b> {{hojaDeRutaMostrar.codigoPedido}}<br></span>
-                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP entregada:</b>{{hojaDeRutaMostrar.cantidadEntregada}}<br></span>
-                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP en el camión:</b> {{hojaDeRutaMostrar.cantidadGlp}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP entregada:</b>{{hojaDeRutaMostrar.cantidadEntregada}}m³<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1"><b>Cantidad de GLP en el camión:</b> {{hojaDeRutaMostrar.cantidadGlp}}m³<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1"><b>Fecha y hora límite de entrega:</b> {{hojaDeRutaMostrar.fechaLimite}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==2"><b>Nombre de planta:</b> {{hojaDeRutaMostrar.nombrePlanta}}<br></span>
-                                <span v-if="hojaDeRutaMostrar.tipo==2"><b>Cantidad de GLP recargada:</b> {{hojaDeRutaMostrar.cantidadRecargada}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==2"><b>Cantidad de GLP recargada:</b> {{hojaDeRutaMostrar.cantidadRecargada}}m³<br></span>
                                 <hr>
                             </div>
                         </v-card-text>
