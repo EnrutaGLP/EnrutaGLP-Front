@@ -157,9 +157,9 @@ export default {
         },
         obtenerPosicionesYBloqueosActuales(jsonGreeting){
             try{
-                for(let o=0;this.camionesUbicacionActual.length;o++){
+                /*for(let o=0;this.camionesUbicacionActual.length;o++){
                     this.camionesUbicacionActual[o].hojaDeRuta=[];
-                }
+                }*/
                 this.camionesUbicacionActual=[];
                 this.rutasActuales=[];
                 this.bloqueosActuales=[];
