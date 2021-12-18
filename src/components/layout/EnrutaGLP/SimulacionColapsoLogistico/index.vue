@@ -56,6 +56,14 @@
                 <v-card>
                     <v-card-title>
                         <span class="headline">{{tituloColapso}}</span>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="descargarHojaDeRutas"
+                        ><v-icon dark left>mdi-account-box-multiple-outline</v-icon>
+                            Descargar
+                        </v-btn>
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
@@ -219,6 +227,7 @@ import {
     setPedidosMasivo, setBloqueosMasivo, setConfiguracionSimulacionColapsoLogistico, setConfiguracionSimulacionTresDias, setFechaInicioSimulacion,
     deleteRutas
 } from '../../../util/services/index';
+import { DExcel } from '../../../util/reports/exportExcel';
 import Title from '../../../shared/Title.vue';
 import BackButton from '../../../shared/BackButton.vue';
 import ModalInputFileUsuarios from "../../../shared/ModalInputFileUsuarios.vue";
@@ -277,19 +286,16 @@ export default {
         };
     },
     methods: {
-        dioOkEliminarRutas(){
-            this.dialogEliminarRutas=false;
-        },
-        async eliminarRutas(){
+        descargarHojaDeRutas(){
             try{
-                const data=await deleteRutas();
-                this.dialogEliminarRutas=true;
-                console.log(data);
+                DExcel("Hoja de rutas de la simulación hasta el colapso logístico","Hoja de rutas",null,this.hojaDeRuta);
             }catch(err){
                 console.log(err);
             }
+            this.dialog=false;
         },
         llegoColapsoLogistico(codigo,hojaDeRuta){
+            console.log(hojaDeRuta);
             this.hojaDeRuta=hojaDeRuta;
             this.hojaDeRuta.sort(function (a,b){
                 if(a.codigoCamion>b.codigoCamion){
@@ -304,7 +310,7 @@ export default {
                 this.hojaDeRuta[i].horaSalida=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaSalida);
                 this.hojaDeRuta[i].horaLlegada=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaLlegada);
                 if(this.hojaDeRuta[i].tipo==1){
-                    this.hojaDeRuta[i].fechaLimite=this.cambiarFormatoFechaTaEspacio(this.hojaDeuta[i].fechaLimite);
+                    this.hojaDeRuta[i].fechaLimite=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].fechaLimite);
                 }
             }
             /*this.hojaDeRuta.sort(function (a,b){
@@ -456,6 +462,18 @@ export default {
             this.cargandoDataBack=true;
             this.cargandoSimulacion=true;
         },
+        dioOkEliminarRutas(){
+            this.dialogEliminarRutas=false;
+        },
+        async eliminarRutas(){
+            try{
+                const data=await deleteRutas();
+                this.dialogEliminarRutas=true;
+                console.log(data);
+            }catch(err){
+                console.log(err);
+            }
+        },
         cambiarFormatoFechaTaEspacio(fechaConT){
             let auxFechaArray=fechaConT.split("T");
             return auxFechaArray[0]+" "+auxFechaArray[1];
@@ -557,8 +575,8 @@ export default {
                 return -1;
             }
             return 0;
-        });
-        let i=0;
+        });*/
+        /*let i=0;
         let j=0;
         let codigoCamionAux;
         while(i<this.hojaDeRuta.length){

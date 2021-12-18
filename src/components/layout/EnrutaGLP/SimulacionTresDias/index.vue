@@ -56,6 +56,14 @@
                 <v-card>
                     <v-card-title>
                         <span class="headline">{{tituloColapso}}</span>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="descargarHojaDeRutas"
+                        ><v-icon dark left>mdi-account-box-multiple-outline</v-icon>
+                            Descargar
+                        </v-btn>
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
@@ -311,7 +319,11 @@ export default {
             this.dialog=true;
         },
         descargarHojaDeRutas(){
-            
+            try{
+                DExcel("Hoja de rutas de la simulación de 3 días","Hoja de rutas",null,this.hojaDeRuta);
+            }catch(err){
+                console.log(err);
+            }
             this.dialog=false;
         },
         async eliminarRutas(){
