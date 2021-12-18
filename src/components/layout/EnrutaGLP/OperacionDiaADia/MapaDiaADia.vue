@@ -122,6 +122,7 @@ export default {
                 for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         if(data1.data.data.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
+                            console.log("entro al if de añadir ruta");
                             this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaDeRuta[i]);
                             //break;
                         }
@@ -187,6 +188,7 @@ export default {
                 for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         if(jsonGreeting.hojaDeRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
+                            console.log("entro al if de añadir ruta");
                             this.camionesUbicacionActual[j].hojaDeRuta.push(jsonGreeting.hojaDeRuta[i]);
                             //break;
                         }
