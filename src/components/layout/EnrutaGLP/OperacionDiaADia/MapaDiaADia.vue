@@ -123,6 +123,11 @@ export default {
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         if(data1.data.data.hojaRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
                             console.log("entro al if de añadir ruta");
+                            data1.data.data.hojaRuta[i].horaSalida=cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].horaSalida);
+                            data1.data.data.hojaRuta[i].horaLlegada=cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].horaLlegada);
+                            if(data1.data.data.hojaRuta[i].tipo==1){
+                                data1.data.data.hojaRuta[i].fechaLimite=cambiarFormatoFechaTaEspacio(data1.data.data.hojaRuta[i].fechaLimite);
+                            }
                             this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaRuta[i]);
                             //break;
                         }
@@ -275,7 +280,11 @@ export default {
             }
 
             this.$emit("mostrarHojaRuta",hojaDeRuta);
-        }
+        },
+        cambiarFormatoFechaTaEspacio(fechaConT){
+            let auxFechaArray=fechaConT.split("T");
+            return auxFechaArray[0]+" "+auxFechaArray[1];
+        },
     },
     mounted(){
         this.script = p5 => {
