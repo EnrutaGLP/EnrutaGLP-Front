@@ -264,6 +264,12 @@ export default {
             }
         },
         mostrarHojaDeRuta(hojaDeRuta){
+            if(this.camionesUbicacionActual==[]){
+                console.log("javascript de mierda");
+            }else{
+                console.log(this.camionesUbicacionActual);
+            }
+
             this.$emit("mostrarHojaRuta",hojaDeRuta);
         }
     },
