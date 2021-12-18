@@ -59,9 +59,9 @@
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
-                            <div class="hojaDeRutas" v-for="hojaDeRutaMost in hojaDeRutaOrdenada">
-                                <h2><b>Camión:</b> {{hojaDeRutaMost.codigoCamion}}</h2><br>
-                                <div v-for="hojaDeRutaMostrar in hojaDeRutaMost.datosHojaDeRuta">
+                            <div class="hojaDeRutas" v-for="hojaDeRutaMostrar in hojaDeRuta">
+                                <h2><b>Camión:</b> {{hojaDeRutaMostrar.codigoCamion}}</h2><br>
+                                
                                 <span><b>Hora de salida:</b> {{hojaDeRutaMostrar.horaSalida}}</span><br>
                                 <span><b>Hora de llegada:</b> {{hojaDeRutaMostrar.horaLlegada}}</span><br>
                                 <span><b>Consumo de Petróleo:</b> {{hojaDeRutaMostrar.consumoPetroleo}}m³</span><br>
@@ -88,6 +88,13 @@
                             @click="dioOk"
                         ><v-icon left>mdi-check</v-icon>
                             Ok
+                        </v-btn>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="descargarHojaDeRutas"
+                        ><v-icon dark left>mdi-account-box-multiple-outline</v-icon>
+                            Descargar
                         </v-btn>
                     </v-card-actions>
                 </v-card>
@@ -118,7 +125,6 @@
                         ><v-icon left>mdi-check</v-icon>
                             Ok
                         </v-btn>
-                        
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -269,7 +275,7 @@ export default {
     methods: {
         finSimul(hojaDeRuta){
             this.hojaDeRuta=hojaDeRuta;
-            this.hojaDeRuta.sort(function (a,b){
+            /*this.hojaDeRuta.sort(function (a,b){
                 if(a.codigoCamion>b.codigoCamion){
                     return 1;
                 }
@@ -293,8 +299,13 @@ export default {
                     i++;
                 }
                 j++;
-            }
+            }*/
+            console.log("saliendo del modal");
+            console.log(this.hojaDeRuta);
             this.dialog=true;
+        },
+        descargarHojaDeRutas(){
+
         },
         async eliminarRutas(){
             try{
