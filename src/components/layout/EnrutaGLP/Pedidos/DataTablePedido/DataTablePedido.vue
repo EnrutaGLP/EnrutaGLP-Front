@@ -266,7 +266,7 @@ export default {
                 let hoy=new Date();
                 
                 let fechaPedido;
-                fechaPedido=`${hoy.getDate()}`.padStart(2,'0')+"-"+`${hoy.getMonth()}`.padStart(2,'0')+"-"+
+                fechaPedido=`${hoy.getDate()}`.padStart(2,'0')+"-"+`${hoy.getMonth()+1}`.padStart(2,'0')+"-"+
                 hoy.getFullYear()+" "+`${hoy.getHours()}`.padStart(2,'0')+":"+`${hoy.getMinutes()}`.padStart(2,'0')+':11';
 
                 let fechaEntregaAux=fechaEntrega.split('-');

@@ -59,9 +59,50 @@
                     </v-card-title>
                     <v-form  ref="form">
                         <v-card-text>
+                            <div class="hojaDeRutas" v-for="hojaDeRutaMostrar in hojaDeRuta">
+                                <span>Camión: {{hojaDeRutaMostrar.codigoCamion}}</span><br>
+                                <span>Hora de salida: {{hojaDeRutaMostrar.horaSalida}}</span><br>
+                                <span>Hora de llegada: {{hojaDeRutaMostrar.horaLlegada}}</span><br>
+                                <span>Consumo de Petróleo: {{hojaDeRutaMostrar.consumoPetroleo}}</span><br>
+                                <span>
+                                    Puntos:
+                                    <span v-for="punto in hojaDeRutaMostrar.puntos"> ({{punto.ubicacionX}},{{punto.ubicacionX}})</span>
+                                </span><br>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Código del pedido: {{hojaDeRutaMostrar.codigoPedido}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Cantidad de GLP entregada: {{hojaDeRutaMostrar.cantidadEntregada}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Cantidad de GLP en el camión: {{hojaDeRutaMostrar.cantidadGlp}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Fecha y hora límite de entrega: {{hojaDeRutaMostrar.fechaLimite}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==2">Nombre de planta: {{hojaDeRutaMostrar.nombrePlanta}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==2">Cantidad de GLP recargada: {{hojaDeRutaMostrar.cantidadRecargada}}<br></span>
+                                <hr>
+                            </div>
+                        </v-card-text>
+                    </v-form>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="dioOk"
+                        ><v-icon left>mdi-check</v-icon>
+                            Ok
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+            <v-dialog
+                v-model="dialogEliminarRutas"
+                max-width="700px"
+            >
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Rutas Eliminadas</span>
+                    </v-card-title>
+                    <v-form  ref="form">
+                        <v-card-text>
                             <v-row>
                                 <v-col cols="12" sm="6" md="12">
-                                    <p>{{mensajeColapso}}</p>
+                                    <p>Se eliminaron las rutas</p>
                                 </v-col>
                             </v-row>
                         </v-card-text>
@@ -71,7 +112,7 @@
                         <v-btn
                             color="var(--turquoise)"
                             outlined
-                            @click="dioOk"
+                            @click="dioOkEliminarRutas"
                         ><v-icon left>mdi-check</v-icon>
                             Ok
                         </v-btn>
@@ -149,7 +190,6 @@
                     :velocidadSimulacion="velocidadSimulacion"
                     :fechaInicioSim="fechaInicioEnvio"
                     v-on:cargandoSimulacion="cargandoSimul"
-                    v-on:finSimulacion="finSimul"
                     v-on:faltaDeDataDeBack="faltaDataBack"
                     v-on:llegoColapso="llegoColapsoLogistico"
                 />
@@ -186,6 +226,7 @@ export default {
     data() {
         return {
             dialog:false,
+            dialogEliminarRutas:false,
             
             tipoAlerta:"success",
             textoAlerta:"",
@@ -215,23 +256,26 @@ export default {
             llegoAlColapso:false,
             tituloColapso:"Fin de la simulacion",
             mensajeColapso:"",
+            codigoColapso:"",
         };
     },
     methods: {
+        dioOkEliminarRutas(){
+            this.dialogEliminarRutas=false;
+        },
         async eliminarRutas(){
             try{
                 const data=await deleteRutas();
-                this.tituloColapso="Rutas eliminadas";
-                this.mensajeColapso="Se eliminaron las rutas";
-                this.dialog=true;
+                this.dialogEliminarRutas=true;
                 console.log(data);
             }catch(err){
                 console.log(err);
             }
         },
-        llegoColapsoLogistico(codigo){
-            this.tituloColapso="Fin de la simulación";
-            this.mensajeColapso="Se produjo el colapso logístico, no se pudo entregar a tiempo el pedido "+codigo+" a tiempo."
+        llegoColapsoLogistico(codigo,hojaDeRuta){
+            this.hojaDeRuta=hojaDeRuta;
+            this.codigoColapso=codigo;
+            this.tituloColapso="Fin de la simulación por el pedido "+this.codigoColapso;
             this.dialog=true;
         },
         async subirBloqueos(listaBloqueos){
@@ -350,9 +394,6 @@ export default {
             this.cargandoDataBack=false;
             this.cargandoSimulacion=false;
         },
-        finSimul(){
-            //alert("FIN DE LA SIMULACIÓN!");
-        },
         faltaDataBack(){
             this.cargandoDataBack=true;
             this.cargandoSimulacion=true;
@@ -381,5 +422,10 @@ export default {
     }
     .horaPicker{
         width: 30rem;
+    }
+    .hojaDeRutas{
+        font-size: 14px;
+        margin: 10px;
+        padding: 0.5rem;
     }
 </style>

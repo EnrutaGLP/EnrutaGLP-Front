@@ -69,6 +69,8 @@ export default {
             averiaActiva:false,
             contadorAveria:0,
 
+            hojaDeRuta:[],
+
             interval:null,
 
             esFinalSimulacion:false,
@@ -120,8 +122,7 @@ export default {
             if(this.verificarFinSimulacion() && this.esColapso && this.fechaSimulacion>=this.fechaFinEjecucion){
                 this.esFinalSimulacion=false;
                 this.esColapso=false;
-                this.$emit("llegoColapso",this.codigoColapso);
-                this.$emit("finSimulacion");
+                this.$emit("llegoColapso",this.codigoColapso,this.hojaDeRuta);
                 clearInterval(this.interval);
                 return;
             }
@@ -291,6 +292,7 @@ export default {
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
             this.esColapso=jsonGreeting.llegoAlColapso;
+            this.hojaDeRuta=jsonGreeting.hojaDeRuta;
             this.codigoColapso=jsonGreeting.codigoPedidoColapso;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);

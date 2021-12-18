@@ -25,6 +25,46 @@
                     
                 </v-row>
             </div>
+            <v-dialog
+                v-model="dialog"
+                max-width="700px"
+            >
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">{{tituloHojaDeRuta}}</span>
+                    </v-card-title>
+                    <v-form  ref="form">
+                        <v-card-text>
+                            <div class="hojaDeRutas" v-for="hojaDeRutaMostrar in hojaDeRuta">
+                                <span>Hora de salida: {{hojaDeRutaMostrar.horaSalida}}</span><br>
+                                <span>Hora de llegada: {{hojaDeRutaMostrar.horaLlegada}}</span><br>
+                                <span>Consumo de Petróleo: {{hojaDeRutaMostrar.consumoPetroleo}}</span><br>
+                                <span>
+                                    Puntos:
+                                    <span v-for="punto in hojaDeRutaMostrar.puntos"> ({{punto.ubicacionX}},{{punto.ubicacionX}})</span>
+                                </span><br>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Código del pedido: {{hojaDeRutaMostrar.codigoPedido}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Cantidad de GLP entregada: {{hojaDeRutaMostrar.cantidadEntregada}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Cantidad de GLP en el camión: {{hojaDeRutaMostrar.cantidadGlp}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==1">Fecha y hora límite de entrega: {{hojaDeRutaMostrar.fechaLimite}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==2">Nombre de planta: {{hojaDeRutaMostrar.nombrePlanta}}<br></span>
+                                <span v-if="hojaDeRutaMostrar.tipo==2">Cantidad de GLP recargada: {{hojaDeRutaMostrar.cantidadRecargada}}<br></span>
+                                <hr>
+                            </div>
+                        </v-card-text>
+                    </v-form>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="dioOk"
+                        ><v-icon left>mdi-check</v-icon>
+                            Ok
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             <v-progress-circular indeterminate color="#7434EB" v-if="cargaRutas"></v-progress-circular>
             <br>
             <br>
@@ -39,13 +79,9 @@
                 <MapaDiaADia
                     v-bind:averia="nuevaAveria"
                     v-on:cargoRutas="cargandoRutas"
+                    v-on:mostrarHojaRuta="mostrarHojaDeRuta"
                 />
                 
-            </div>
-            <div class="row">
-                <div class="col sm-5">
-                    <BackButton></BackButton>
-                </div>
             </div>
         </div>
     </div>
@@ -83,9 +119,16 @@ export default {
             cargaRutas:false,
 
             nuevaAveria:"",
+
+            tituloHojaDeRuta:"",
+            hojaDeRuta:[],
         };
     },
     methods: {
+        mostrarHojaDeRuta(hojaDeRuta){
+            this.tituloHojaDeRuta="Hoja de ruta del camión "+hojaDeRuta.codigoCamion;
+            this.hojaDeRuta=hojaDeRuta;
+        },
         cargandoRutas(dato){
             this.cargaRutas=dato;
         },
@@ -165,5 +208,10 @@ export default {
 <style scoped>
     .botones{
         float:right;
+    }
+    .hojaDeRutas{
+        font-size: 14px;
+        margin: 10px;
+        padding: 0.5rem;
     }
 </style>

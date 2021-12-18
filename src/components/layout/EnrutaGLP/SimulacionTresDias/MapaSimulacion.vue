@@ -69,6 +69,8 @@ export default {
             averiaActiva:false,
             contadorAveria:0,
 
+            hojaDeRuta:[],
+
             interval:null,
 
             esFinalSimulacion:false,
@@ -117,7 +119,7 @@ export default {
         actualizarMapa(){
             if(this.verificarFinSimulacion()){
                 this.esFinalSimulacion=false;
-                this.$emit("finSimulacion");
+                this.$emit("finSimulacion",this.hojaDeRuta);
                 clearInterval(this.interval);
                 return;
             }
@@ -222,8 +224,6 @@ export default {
                                     //a largo plazo puede descuadrar bastante, esto solo pasa en el caso que la ctual ruta vaya a una
                                     //planta y su siguiente empiece automaticamente yendo a un cliente.
                                     //verificar si la siguiente ruta (rutas[1]) su horaSalida es igual a la nueva fechaSimulacion
-
-                                    //no olvidar hacer lo del arreglo indicaesCamionesEliminar(creo que ya no es necesario)
                                 }else{//si no se acabo la ruta aún debe avanzar un espacio
                                     if(this.camiones[i].rutas[0].puntos[0].ubicacionX==this.camiones[i].rutas[0].puntos[1].ubicacionX){
                                         if(this.camiones[i].rutas[0].puntos[0].ubicacionY<this.camiones[i].rutas[0].puntos[1].ubicacionY){
@@ -286,6 +286,7 @@ export default {
                 console.log("bloqueos actuales:" + this.bloqueosActuales);
             }
             this.esFinalSimulacion=jsonGreeting.esFinal;
+            this.hojaDeRuta=jsonGreeting.hojaDeRuta;
             this.porcentajePlazoOcupadoPromedio=jsonGreeting.porcentajePlazoOcupadoPromedio;
             this.fechaFinEjecucion=this.transformarFechaStrADate(jsonGreeting.fechaFin);
             console.log(this.fechaFinEjecucion);

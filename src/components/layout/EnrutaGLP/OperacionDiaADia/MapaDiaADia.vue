@@ -3,9 +3,8 @@
         <div id="canvas" class="mapa"></div>
         <div class="rutasCamiones">
             <p class="tituloRutas">Rutas:</p>
-            <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual">
-                <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':listaColoresCamiones[k]}"><div class="circulo"></div></div></span>
-                
+            <div class="rutas" :key="camionUbicacionActual.id" v-for="(camionUbicacionActual,k) in camionesUbicacionActual" v-on:click="mostrarHojaDeRuta(camionUbicacionActual.hojaDeRuta)">
+                <span>Camión: {{camionUbicacionActual.codigo}}<div :style="{'background-color':camionUbicacionActual.color}"><div class="circulo"></div></div></span>
                 <div>Cantidad GLP: {{camionUbicacionActual.cargaActualGLP}}</div>
                 <div>Estado: {{camionUbicacionActual.estado.nombre}}</div>
                 <span>Ubicación Actual: {{camionUbicacionActual.ubicacionActualX}}, {{camionUbicacionActual.ubicacionActualY}}</span>
@@ -94,6 +93,7 @@ export default {
         async obtenerPosicionesYBloqueosActualesPrimeraVez(){
             try{
                 const data1=await getRutasActuales();
+                console.log("servicio de rutas actuales");
                 console.log(data1);
                 const data2=await getPedidosActuales();
                 console.log(data2);
@@ -105,11 +105,19 @@ export default {
                         codigo:element.codigo,
                         ubicacionActualX:element.ubicacionActualX,
                         ubicacionActualY:element.ubicacionActualY,
+                        color:element.color,
                         estado:{
                             id:element.estadoId,
                             nombre:element.nombre,
-                        }
+                        },
+                        hojaDeRuta:[],
                     });
+                    for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
+                        if(data1.data.data.hojaDeRuta[i].codigoCamion==element.codigo){
+                            this.camionesUbicacionActual[this.camionesUbicacionActual.length-1].hojaDeRuta.push(data1.data.data.hojaDeRuta[i]);
+                            //break;
+                        }
+                    }
                     this.rutasActuales.push({
                         codigo:element.codigo,
                         ruta:element.ruta,
@@ -133,10 +141,10 @@ export default {
                 console.log(this.bloqueosActuales);
                 
                 //this.auxRutasActuales=JSON.parse(JSON.stringify(this.rutasActuales));
-                for(let i=0;i<this.rutasActuales.length;i++){
+                /*for(let i=0;i<this.rutasActuales.length;i++){
                     this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
                     this.posicionRutasActuales.push(0);
-                }
+                }*/
             }catch(err){
                 
             }
@@ -160,11 +168,19 @@ export default {
                         codigo:element.codigo,
                         ubicacionActualX:element.ubicacionActualX,
                         ubicacionActualY:element.ubicacionActualY,
+                        color:element.color,
                         estado:{
                             id:element.estadoId,
                             nombre:element.nombre,
-                        }
+                        },
+                        hojaDeRuta:[],
                     });
+                    for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
+                        if(jsonGreeting.hojaDeRuta[i].codigoCamion==element.codigo){
+                            this.camionesUbicacionActual[this.camionesUbicacionActual.length-1].hojaDeRuta.push(jsonGreeting.hojaDeRuta[i]);
+                            //break;
+                        }
+                    }
                     this.rutasActuales.push({
                         codigo:element.codigo,
                         ruta:element.ruta,
@@ -185,10 +201,10 @@ export default {
                 console.log(this.bloqueosActuales);
                 
                 //this.auxRutasActuales=JSON.parse(JSON.stringify(this.rutasActuales));
-                for(let i=0;i<this.rutasActuales.length;i++){
+                /*for(let i=0;i<this.rutasActuales.length;i++){
                     this.longitudRutasActuales.push(this.rutasActuales[i].ruta.length);
                     this.posicionRutasActuales.push(0);
-                }
+                }*/
             }catch(err){
                 
             }
@@ -240,6 +256,9 @@ export default {
                 }
             }
         },
+        mostrarHojaDeRuta(hojaDeRuta){
+            this.$emit("mostrarHojaRuta",hojaDeRuta);
+        }
     },
     mounted(){
         this.script = p5 => {
@@ -373,7 +392,7 @@ export default {
                 p5.textSize(this.escalaPixeles);
                 p5.strokeWeight(2);
                 for(let i=0;i<this.camionesUbicacionActual.length;i++){
-                    c=p5.color(this.listaColoresCamiones[i]);
+                    c=p5.color(this.camionesUbicacionActual[i].color);
                     p5.fill(c);
                     p5.stroke("#EEEEEE");
                     p5.ellipse(this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX,
@@ -381,7 +400,7 @@ export default {
                     p5.text(this.camionesUbicacionActual[i].codigo,
                     this.escalaPixeles*this.camionesUbicacionActual[i].ubicacionActualX-this.escalaPixeles,
                     this.escalaPixeles*(this.tamYMapa-this.camionesUbicacionActual[i].ubicacionActualY)+this.escalaPixeles);
-                    p5.stroke(this.listaColoresCamiones[i]);
+                    p5.stroke(this.camionesUbicacionActual[i].color);
                     for(let j=0;j<this.rutasActuales[i].ruta.length-1;j++){
                         p5.line(this.escalaPixeles*this.rutasActuales[i].ruta[j].ubicacionX,
                         this.escalaPixeles*(this.tamYMapa-this.rutasActuales[i].ruta[j].ubicacionY),
