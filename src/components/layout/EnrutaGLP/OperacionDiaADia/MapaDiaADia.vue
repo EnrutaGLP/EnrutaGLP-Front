@@ -119,7 +119,7 @@ export default {
                         ruta:element.ruta,
                     });
                 });
-                for(let i=0;i<data1.data.data.hojaDeRuta.length;i++){
+                for(let i=0;i<data1.data.data.hojaRuta.length;i++){
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         this.camionesUbicacionActual[j].hojaDeRuta.push(data1.data.data.hojaRuta[0]);
                         if(data1.data.data.hojaRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
@@ -186,7 +186,7 @@ export default {
                         ruta:element.ruta,
                     });
                 });
-                for(let i=0;i<jsonGreeting.hojaDeRuta.length;i++){
+                for(let i=0;i<jsonGreeting.hojaRuta.length;i++){
                     for(let j=0;j<this.camionesUbicacionActual.length;j++){
                         this.camionesUbicacionActual.hojaDeRuta.push(jsonGreeting.hojaRuta[0]);
                         if(jsonGreeting.hojaRuta[i].codigoCamion==this.camionesUbicacionActual[j].codigo){
