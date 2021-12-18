@@ -534,6 +534,7 @@ export default {
         overflow-y:scroll;
         border-style: ridge;
         background: #B6B6E3;
+        cursor:pointer;
     }
     .circulo{
         width: 10px;
