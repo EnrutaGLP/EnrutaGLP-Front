@@ -291,6 +291,15 @@ export default {
         },
         llegoColapsoLogistico(codigo,hojaDeRuta){
             this.hojaDeRuta=hojaDeRuta;
+            this.hojaDeRuta.sort(function (a,b){
+                if(a.codigoCamion>b.codigoCamion){
+                    return 1;
+                }
+                if(a.codigoCamion<b.codigoCamion){
+                    return -1;
+                }
+                return 0;
+            });
             for(let i=0;i<this.hojaDeRuta.length;i++){
                 this.hojaDeRuta[i].horaSalida=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaSalida);
                 this.hojaDeRuta[i].horaLlegada=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaLlegada);
