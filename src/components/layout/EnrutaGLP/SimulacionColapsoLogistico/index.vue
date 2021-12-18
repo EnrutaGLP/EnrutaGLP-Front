@@ -88,6 +88,13 @@
                         ><v-icon left>mdi-check</v-icon>
                             Ok
                         </v-btn>
+                        <v-btn
+                            color="var(--turquoise)"
+                            outlined
+                            @click="descargarHojaDeRutas"
+                        ><v-icon dark left>mdi-account-box-multiple-outline</v-icon>
+                            Descargar
+                        </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -284,6 +291,13 @@ export default {
         },
         llegoColapsoLogistico(codigo,hojaDeRuta){
             this.hojaDeRuta=hojaDeRuta;
+            for(let i=0;i<this.hojaDeRuta.length;i++){
+                this.hojaDeRuta[i].horaSalida=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaSalida);
+                this.hojaDeRuta[i].horaLlegada=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaLlegada);
+                if(this.hojaDeRuta[i].tipo==1){
+                    this.hojaDeRuta[i].fechaLimite=this.cambiarFormatoFechaTaEspacio(this.hojaDeuta[i].fechaLimite);
+                }
+            }
             /*this.hojaDeRuta.sort(function (a,b){
                 if(a.codigoCamion>b.codigoCamion){
                     return 1;
@@ -310,7 +324,7 @@ export default {
                 j++;
             }*/
             this.codigoColapso=codigo;
-            this.tituloColapso="Fin de la simulación por el pedido "+this.codigoColapso;
+            this.tituloColapso="Se llegó al colapso logístico";
             this.dialog=true;
         },
         async subirBloqueos(listaBloqueos){
@@ -432,7 +446,11 @@ export default {
         faltaDataBack(){
             this.cargandoDataBack=true;
             this.cargandoSimulacion=true;
-        }
+        },
+        cambiarFormatoFechaTaEspacio(fechaConT){
+            let auxFechaArray=fechaConT.split("T");
+            return auxFechaArray[0]+" "+auxFechaArray[1];
+        },
     },
     computed:{
         importoArchivos:function(){

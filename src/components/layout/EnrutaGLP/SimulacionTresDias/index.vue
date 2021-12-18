@@ -283,6 +283,13 @@ export default {
                 }
                 return 0;
             });
+            for(let i=0;i<this.hojaDeRuta.length;i++){
+                this.hojaDeRuta[i].horaSalida=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaSalida);
+                this.hojaDeRuta[i].horaLlegada=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].horaLlegada);
+                if(this.hojaDeRuta[i].tipo==1){
+                    this.hojaDeRuta[i].fechaLimite=this.cambiarFormatoFechaTaEspacio(this.hojaDeRuta[i].fechaLimite);
+                }
+            }
             /*let i=0;
             let j=0;
             let codigoCamionAux;
@@ -304,7 +311,8 @@ export default {
             this.dialog=true;
         },
         descargarHojaDeRutas(){
-
+            
+            this.dialog=false;
         },
         async eliminarRutas(){
             try{
@@ -437,7 +445,11 @@ export default {
         faltaDataBack(){
             this.cargandoDataBack=true;
             this.cargandoSimulacion=true;
-        }
+        },
+        cambiarFormatoFechaTaEspacio(fechaConT){
+            let auxFechaArray=fechaConT.split("T");
+            return auxFechaArray[0]+" "+auxFechaArray[1];
+        },
     },
     computed:{
         importoArchivos:function(){
