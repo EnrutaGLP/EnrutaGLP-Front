@@ -41,7 +41,7 @@
                                 <span>Consumo de Petróleo: {{hojaDeRutaMostrar.consumoPetroleo}}</span><br>
                                 <span>
                                     Puntos:
-                                    <span v-for="punto in hojaDeRutaMostrar.puntos"> ({{punto.ubicacionX}},{{punto.ubicacionX}})</span>
+                                    <span v-for="punto in hojaDeRutaMostrar.puntos"> ({{punto.ubicacionX}},{{punto.ubicacionY}})</span>
                                 </span><br>
                                 <span v-if="hojaDeRutaMostrar.tipo==1">Código del pedido: {{hojaDeRutaMostrar.codigoPedido}}<br></span>
                                 <span v-if="hojaDeRutaMostrar.tipo==1">Cantidad de GLP entregada: {{hojaDeRutaMostrar.cantidadEntregada}}<br></span>
