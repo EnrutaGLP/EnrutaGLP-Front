@@ -274,7 +274,7 @@ export default {
     methods: {
         finSimul(hojaDeRuta){
             this.hojaDeRuta=hojaDeRuta;
-            /*this.hojaDeRuta.sort(function (a,b){
+            this.hojaDeRuta.sort(function (a,b){
                 if(a.codigoCamion>b.codigoCamion){
                     return 1;
                 }
@@ -283,7 +283,7 @@ export default {
                 }
                 return 0;
             });
-            let i=0;
+            /*let i=0;
             let j=0;
             let codigoCamionAux;
             while(i<this.hojaDeRuta.length){
