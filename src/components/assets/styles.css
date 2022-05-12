@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed');
+
+:root {
+    --wb1: #fffffc;
+    --wb1pto5: #f8f8f8;
+    --wb2: #ebebeb;
+    --wb3: #cccccc;
+    --wb4: #adadad;
+    --wb5: #333333;
+    --wb6: #2b2b29;
+    --wb7: #242424;
+    --wb8: #050302;
+
+    --turquoise: #209987;
+    --blueish-grey: #3a506b;
+    --dark-blue: #1c2541;
+    --dark-turquoise: #2e7792;
+    --light-blue: #3568F2;
+    --coral: #e86264;
+    --dark-coral: #c44244;
+
+}
+
+#app {
+    font-family: 'Roboto', sans-serif !important;
+}
